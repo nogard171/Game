@@ -1,0 +1,8 @@
+<materials texture_file='data/textures/tileset.png'>
+	<material name='GRASS'>
+		<data file="data/materials/grass.mat" />
+	</material>
+	<material name='DIRT'>
+		<data file="data/materials/dirt.mat" />
+	</material>
+</materials>
