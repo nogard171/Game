@@ -1,5 +1,0 @@
-<models>
-	<model name='TILE'>
-		<data file="data/models/tile.obj" />
-	</model>
-</models>
