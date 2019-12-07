@@ -1,4 +1,4 @@
-package core;
+package classes;
 
 public class GLFrame {
 	private int dl = -1;	

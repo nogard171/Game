@@ -1,4 +1,4 @@
-package core;
+package utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +18,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import classes.GLSize;
+import classes.GLSpriteData;
 import game.Main;
+import game.Settings;
 
 public class GLLoader {
-	public static void loadSprites(String filename) {
-
+	public static void loadSprites() {
+		String filename = Settings.getSpriteDataFile();
 		float textureWidth = Main.texture.getImageWidth();
 		float textureHeight = Main.texture.getImageHeight();
 

@@ -1,4 +1,4 @@
-package core;
+package utils;
 
 import java.awt.Font;
 import java.util.HashMap;

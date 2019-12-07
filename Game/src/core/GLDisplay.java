@@ -41,11 +41,9 @@ public class GLDisplay {
 		glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
-		// GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-
 
 		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
 	}
@@ -54,9 +52,9 @@ public class GLDisplay {
 		Display.destroy();
 	}
 
-	public void postRender() {
+	public void sync() {
 		Display.update();
-		// Display.sync(60);
+		//Display.sync(120);
 	}
 
 	public void render() {

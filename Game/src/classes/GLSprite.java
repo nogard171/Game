@@ -1,4 +1,4 @@
-package core;
+package classes;
 
 import org.lwjgl.opengl.GL11;
 

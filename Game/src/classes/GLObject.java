@@ -1,4 +1,4 @@
-package core;
+package classes;
 
 import java.awt.Point;
 import java.awt.Polygon;
@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class GLObject {
 	private GLType type = GLType.AIR;
 	public Polygon bounds = new Polygon();
-	private Vector3f positionIndex = new Vector3f(0, 0, 0);
+	private GLIndex positionGLIndex = new GLIndex(0, 0, 0);
 	private boolean isVisible = false;
 	private boolean isKnown = false;
 
@@ -26,7 +26,6 @@ public class GLObject {
 	}
 
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return isVisible;
 	}
 
@@ -36,7 +35,6 @@ public class GLObject {
 	}
 
 	public boolean isKnown() {
-		// TODO Auto-generated method stub
 		return isKnown;
 	}
 
@@ -45,11 +43,11 @@ public class GLObject {
 
 	}
 
-	public void setPositionIndex(int x, int y, int z) {
-		this.positionIndex = new Vector3f(x, y, z);
+	public void setPositionGLIndex(int x, int y, int z, int cx, int cy, int cz) {
+		this.positionGLIndex = new GLIndex(x, y, z, cx, cy, cz);
 	}
 
-	public Vector3f getPositionIndex() {
-		return this.positionIndex;
+	public GLIndex getPositionGLIndex() {
+		return this.positionGLIndex;
 	}
 }

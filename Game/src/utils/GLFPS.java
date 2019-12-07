@@ -1,4 +1,4 @@
-package core;
+package utils;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -14,6 +14,10 @@ public class GLFPS {
 	private static long lastFPS = 0;
 
 	public GLFPS() {
+
+	}
+
+	public static void setup() {
 		getDelta(); // call once before loop to initialise lastFrame
 		lastFPS = getTime(); // call before loop to initialise fps timer
 	}

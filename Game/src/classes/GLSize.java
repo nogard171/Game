@@ -1,4 +1,4 @@
-package core;
+package classes;
 
 public class GLSize {
 	private float width = 0;
