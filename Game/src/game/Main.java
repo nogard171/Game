@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.SwingUtilities;
 
@@ -34,6 +35,7 @@ import classes.GLMenuItem;
 import core.GLChunk;
 import core.GLChunkManager;
 import core.GLDisplay;
+import core.GLQueueManager;
 import core.GLUIManager;
 import utils.GLDebug;
 import utils.GLFPS;
@@ -48,6 +50,7 @@ public class Main extends GLDisplay {
 
 	GLChunkManager manager;
 	GLUIManager uiManager;
+	GLQueueManager queueManager;
 
 	public static GLView view;
 
@@ -59,6 +62,9 @@ public class Main extends GLDisplay {
 
 		uiManager = new GLUIManager();
 		uiManager.setup();
+		
+		queueManager = new GLQueueManager();
+		queueManager.setup();
 
 		view = new GLView();
 
@@ -78,6 +84,7 @@ public class Main extends GLDisplay {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
 
+		
 
 		while (!Display.isCloseRequested()) {
 			GLFPS.updateFPS();
@@ -87,6 +94,11 @@ public class Main extends GLDisplay {
 
 			this.sync();
 		}
+		this.destroy();
+	}
+
+	private void destroy() {
+		
 		this.destroyDisplay();
 	}
 
@@ -95,6 +107,8 @@ public class Main extends GLDisplay {
 		float speed = 0.5f * GLFPS.getDelta();
 		manager.update();
 		uiManager.update();
+		
+		queueManager.update();
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			view.move(new Vector2f(speed, 0));
@@ -120,9 +134,7 @@ public class Main extends GLDisplay {
 		GL11.glTranslatef(-view.getPosition().x, -view.getPosition().y, 0);
 		manager.render();
 		GL11.glPopMatrix();
-
 		uiManager.render();
-
 	}
 
 	public static void main(String[] args) {

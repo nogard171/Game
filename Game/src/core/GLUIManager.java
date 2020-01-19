@@ -1,27 +1,32 @@
 package core;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import classes.GLIndex;
 import classes.GLMenu;
 import classes.GLObject;
+import game.GLWorldMenu;
 import game.Main;
 import utils.GLDebug;
 import utils.GLFPS;
 
 public class GLUIManager {
+	public static ArrayList<GLMessage> messages = new ArrayList<GLMessage>();
 
-	GLMenu menu;
+	GLWorldMenu menu;
 
 	public void setup() {
-		menu = new GLMenu();
+		menu = new GLWorldMenu();
 		menu.setup();
 	}
 
 	public void update() {
 		if (Mouse.isButtonDown(1)) {
-			menu.visible = true;
 			if (GLChunkManager.mouseGLIndex.size() > 0) {
 				GLIndex hover = GLChunkManager.mouseGLIndex.get(GLChunkManager.mouseGLIndex.size() - 1);
 				GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(hover.chunkX, hover.chunkY, hover.chunkZ));
@@ -34,7 +39,9 @@ public class GLUIManager {
 							int posY = chunk.position.y - ((obj.getPositionGLIndex().y - 1) * 32);
 							int posZ = (int) (((obj.getPositionGLIndex().z + obj.getPositionGLIndex().x) * 16) + posY);
 
+							menu.setIndex(hover);
 							menu.setPosition(posX, posZ);
+							menu.showMenu(obj.getType());
 						}
 					}
 				}
@@ -42,6 +49,14 @@ public class GLUIManager {
 		}
 
 		menu.update();
+
+		for (GLMessage message : messages) {
+			message.setShowTime(System.currentTimeMillis());
+			if (message.getTimeout() - message.getShowTime() < 0) {
+				messages.remove(message);
+				break;
+			}
+		}
 	}
 
 	public void render() {
@@ -72,6 +87,25 @@ public class GLUIManager {
 				}
 			}
 		}
+
+		for (GLMessage message : messages) {
+
+			GLDebug.RenderBackground(-Main.view.getPosition().getX() + message.getPosition().x,
+					-Main.view.getPosition().getY() + message.getPosition().y, message.getMessage().length() * 8, 16);
+			GLDebug.RenderString(-Main.view.getPosition().getX() + message.getPosition().x,
+					-Main.view.getPosition().getY() + message.getPosition().y, message.getMessage(), 12, Color.white);
+
+		}
+	}
+
+	public static void showMessage(Vector2f position, String string) {
+		GLMessage newMessage = new GLMessage();
+		newMessage.setMessage(string);
+		newMessage.setPosition(position);
+		newMessage.setShowTime(System.currentTimeMillis());
+		newMessage.setTimeout(10);
+		newMessage.setVisible(true);
+		messages.add(newMessage);
 	}
 
 	public void destroy() {

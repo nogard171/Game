@@ -2,11 +2,13 @@ package classes;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.UUID;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class GLObject {
+	private String hash = "";
 	private GLType type = GLType.AIR;
 	public Polygon bounds = new Polygon();
 	private GLIndex positionGLIndex = new GLIndex(0, 0, 0);
@@ -15,6 +17,7 @@ public class GLObject {
 
 	public GLObject(GLType newType) {
 		this.type = newType;
+		hash = UUID.randomUUID().toString();
 	}
 
 	public GLType getType() {
@@ -49,5 +52,9 @@ public class GLObject {
 
 	public GLIndex getPositionGLIndex() {
 		return this.positionGLIndex;
+	}
+
+	public String getHash() {
+		return this.hash;
 	}
 }

@@ -2,15 +2,16 @@ package classes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.LongStream;
 
 public enum GLType {
-	AIR(0, true), UNKNOWN(0, false), GRASS(0, false), DIRT(0, false), TREE(0, true), SAND(0, false), WATER(0, true),
-	BUSH(0, true), SUNFLOWER(0, true), WOOD_PLANKS(0, false), TIN_ORE(0, false), COPPER_ORE(0, false),
-	IRON_ORE(0, false),
-	CHARACTER(0,true);
+	AIR(0, true), UNKNOWN(-1, false), GRASS(1, false), DIRT(2, false), TREE(3, true), SAND(4, false), WATER(5, true),
+	BUSH(6, true), SUNFLOWER(7, true), WOOD_PLANKS(8, false), TIN_ORE(9, false), COPPER_ORE(10, false),
+	IRON_ORE(11, false), CHARACTER(12, true), STONE(13, false);
 
 	private int value;
 	private boolean mask;
+
 	private static Map<Integer, GLType> map = new HashMap<>();
 
 	private GLType(int newValue, boolean newMask) {
@@ -34,5 +35,95 @@ public enum GLType {
 
 	public boolean isMask() {
 		return mask;
+	}
+
+	public boolean isHarvestable() {
+		boolean harvestable = false;
+
+		GLType[] harvestables = { SUNFLOWER, BUSH };
+
+		for (int i = 0; i < harvestables.length; i++) {
+			if (this == harvestables[i]) {
+				harvestable = true;
+				break;
+			}
+		}
+
+		return harvestable;
+	}
+
+	public boolean isDigable() {
+		boolean harvestable = false;
+
+		GLType[] harvestables = { GRASS, DIRT, SAND };
+
+		for (int i = 0; i < harvestables.length; i++) {
+			if (this == harvestables[i]) {
+				harvestable = true;
+				break;
+			}
+		}
+
+		return harvestable;
+	}
+
+	public boolean isChopable() {
+		boolean harvestable = false;
+
+		GLType[] harvestables = { BUSH, TREE, WOOD_PLANKS };
+
+		for (int i = 0; i < harvestables.length; i++) {
+			if (this == harvestables[i]) {
+				harvestable = true;
+				break;
+			}
+		}
+
+		return harvestable;
+	}
+
+	public boolean isMineable() {
+		boolean harvestable = false;
+
+		GLType[] harvestables = { IRON_ORE, COPPER_ORE, TIN_ORE, STONE };
+
+		for (int i = 0; i < harvestables.length; i++) {
+			if (this == harvestables[i]) {
+				harvestable = true;
+				break;
+			}
+		}
+
+		return harvestable;
+	}
+
+	public boolean isCollectable() {
+		boolean collectable = false;
+
+		GLType[] collectables = { WATER };
+
+		for (int i = 0; i < collectables.length; i++) {
+			if (this == collectables[i]) {
+				collectable = true;
+				break;
+			}
+		}
+
+		return collectable;
+	}
+
+	public boolean isMoveable() {
+		boolean moveable = false;
+
+		GLType[] moveables = { AIR,BUSH,GRASS };
+
+		for (int i = 0; i < moveables.length; i++) {
+			if (this == moveables[i]) {
+				moveable = true;
+				break;
+			}
+		}
+
+		return moveable;
 	}
 }

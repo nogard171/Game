@@ -21,6 +21,7 @@ import classes.GLView;
 import classes.GLIndex;
 import game.Main;
 import utils.GLGenerator;
+import utils.GLLogger;
 
 public class GLChunk {
 	// the chunks display list id
@@ -30,7 +31,7 @@ public class GLChunk {
 	// the chunks index
 	public GLIndex index;
 	// the chunks sizing for the object data
-	public Vector3f size = new Vector3f(16, 16, 16);
+	public Vector3f size = new Vector3f(16, 2, 16);
 	// the objects for the map
 	public HashMap<GLIndex, GLObject> objects = new HashMap<GLIndex, GLObject>();
 	// the list of the rendered objects
@@ -79,27 +80,12 @@ public class GLChunk {
 					}
 
 					if (x == 7 && z == 5 && y == 0) {
-						obj = new GLObject(GLType.SUNFLOWER);
-					}
-
-					if (x == 8 && z == 8 && y == 0) {
-						 obj = new GLObject(GLType.CHARACTER);
-					}
-
-					if (x == 5 && z == 5 && y == 1) {
-						obj = new GLObject(GLType.SAND);
-					}
-					if (x == 7 && z == 5 && y == 1) {
-						obj = new GLObject(GLType.SAND);
-					}
-
-					if (x == 7 && z == 5 && y == 1) {
 						obj = new GLObject(GLType.COPPER_ORE);
 					}
-					if (x == 7 && z == 6 && y == 1) {
+					if (x == 7 && z == 6 && y == 0) {
 						obj = new GLObject(GLType.IRON_ORE);
 					}
-					if (x == 8 && z == 6 && y == 1) {
+					if (x == 8 && z == 6 && y == 0) {
 						obj = new GLObject(GLType.TIN_ORE);
 					}
 
@@ -124,7 +110,7 @@ public class GLChunk {
 					obj.bounds = poly;
 
 					obj.setPositionGLIndex(x, y, z, index.chunkX, index.chunkY, index.chunkZ);
-					objects.put(new GLIndex(x, y, z), obj);
+					objects.put(obj.getPositionGLIndex(), obj);
 				}
 			}
 		}
@@ -141,13 +127,13 @@ public class GLChunk {
 				(int) (position.y + (size.x * 16 + ((this.currentLevel - 1) * 32))));
 
 		bounds.addPoint((int) (position.x + ((size.x + 1) * 32)), (int) (position.y
-				+ (size.x * 16 + ((this.currentLevel - 1) * 32)) + ((size.x - this.currentLevel) * 32)));
+				+ (size.x * 16 + ((this.currentLevel - 1) * 32)) + ((size.y - this.currentLevel) * 32)));
 
 		bounds.addPoint((int) (position.x + (size.x - size.z + 1) * 32), (int) (position.y
-				+ ((size.z + size.x) * 16 + ((this.currentLevel - 1) * 32) + ((size.x - this.currentLevel) * 32))));
+				+ ((size.z + size.x) * 16 + ((this.currentLevel - 1) * 32) + ((size.y - this.currentLevel) * 32))));
 
 		bounds.addPoint((int) (position.x + ((1 - size.z) * 32)), (int) (position.y
-				+ (size.z * 16 + (((this.currentLevel - 1)) * 32)) + ((size.x - this.currentLevel) * 32)));
+				+ (size.z * 16 + (((this.currentLevel - 1)) * 32)) + ((size.y - this.currentLevel) * 32)));
 
 		bounds.addPoint((int) (position.x + ((1 - size.z) * 32)),
 				(int) (position.y + (size.z * 16 + ((this.currentLevel - 1) * 32))));
@@ -233,7 +219,6 @@ public class GLChunk {
 			GLObject right = objects.get(new GLIndex(x + 1, y, z));
 			if (right != null) {
 				if (right.getType().isMask()) {
-					System.out.println("Mask: " + right.getType());
 					obj.setKnown(true);
 					visible = true;
 				}
@@ -317,12 +302,8 @@ public class GLChunk {
 	public void update() {
 		Point mousePoint = new Point(Mouse.getX() + (int) Main.view.getPosition().x,
 				Display.getHeight() - Mouse.getY() + (int) Main.view.getPosition().y);
-		// boolean mouseInChunk = ((bounds == null) ? false :
-		// bounds.contains(mousePoint));
-		// boolean mouseIsDown = ((Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) ?
-		// true : false);
-
 		if (renderedObjects.size() > 0) {
+			GLChunkManager.mouseGLIndex.clear();
 			for (GLObject obj : renderedObjects) {
 				if (obj.bounds.contains(mousePoint)) {
 					GLChunkManager.mouseGLIndex.add(obj.getPositionGLIndex());
@@ -376,12 +357,47 @@ public class GLChunk {
 
 	public boolean inView(GLView view) {
 		boolean inView = false;
-
 		if (bounds.intersects(new Rectangle((int) view.getPosition().x, (int) view.getPosition().y,
 				(int) view.getSize().getWidth(), (int) view.getSize().getHeight()))) {
 			inView = true;
 		}
-
 		return inView;
+	}
+
+	public void moveObject(GLIndex index, GLIndex newIndex) {
+
+	}
+
+	public void setObject(GLIndex index, GLObject newObj) {
+		GLObject obj = this.objects.get(index);
+		if (obj != null) {
+
+			int posX = position.x + (index.x - index.z) * 32;
+			int posY = position.y + (index.y - 1) * 32;
+			int posZ = ((index.z + index.x) * 16) + posY;
+			Polygon poly = new Polygon();
+
+			poly.addPoint(posX + 32, posZ);
+
+			poly.addPoint(posX + 64, posZ + 16);
+
+			poly.addPoint(posX + 64, posZ + 48);
+
+			poly.addPoint(posX + 32, posZ + 64);
+
+			poly.addPoint(posX, posZ + 48);
+
+			poly.addPoint(posX, posZ + 16);
+
+			newObj.bounds = poly;
+
+			newObj.setPositionGLIndex(index.x, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ);
+			this.objects.put(index, newObj);
+			updateDisplayList();
+
+		} else {
+			GLLogger.writeLog("Index(Chunk / Object): " + index.chunkX + "," + index.chunkY + "," + index.chunkZ + " / "
+					+ index.x + "," + index.y + "," + index.z + " - Cannot place object");
+		}
 	}
 }

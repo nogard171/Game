@@ -26,10 +26,10 @@ public class GLDebug {
 		enabled = newEnabled;
 	}
 
-	public static void RenderBackground(float x, float y, float width, float height) {
+	public static void RenderBackground(float x, float y, float width, float height, Color color) {
 		TextureImpl.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glColor4f(0, 0, 0, 0.5f);
+		GL11.glColor4f(color.r,color.g,color.b,color.a);
 
 		GL11.glVertex2f(x, y);
 		GL11.glVertex2f(x + width, y);
@@ -37,6 +37,9 @@ public class GLDebug {
 		GL11.glVertex2f(x, y + height);
 
 		GL11.glEnd();
+	}
+	public static void RenderBackground(float x, float y, float width, float height) {
+		RenderBackground( x,  y,  width,  height, new Color(0,0,0,0.5f));
 	}
 
 	public static void RenderString(float x, float y, String text) {

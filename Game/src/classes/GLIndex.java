@@ -1,7 +1,6 @@
 package classes;
 
 public class GLIndex {
-
 	public int x = 0;
 	public int y = 0;
 	public int z = 0;
@@ -28,23 +27,42 @@ public class GLIndex {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + x + y + z;
-		return result;
+		int hash = 1;
+		hash = hash * 31 + x + y + z + chunkX + chunkY + chunkZ;
+		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		// Not strictly necessary, but often a good optimization
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof GLIndex))
 			return false;
 		GLIndex other = (GLIndex) obj;
-		if (x != other.x || y != other.y || z != other.z)
-			return false;
-		return true;
+		if (x == other.x && y == other.y && z == other.z) {
+			return true;
+		}
+		if(above(obj)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean above(Object obj) {
+		GLIndex other = (GLIndex) obj;
+		if (x == other.x && y + 1 == other.y && z == other.z) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean beside(Object obj) {
+		GLIndex other = (GLIndex) obj;
+		if ((x >= other.x - 1 && x <= other.x + 1) && (y >= other.y - 1 && y <= other.y + 1)
+				&& (z >= other.z - 1 && z <= other.z + 1)) {
+			return true;
+		}
+		return false;
 	}
 }

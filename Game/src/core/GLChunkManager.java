@@ -50,7 +50,7 @@ public class GLChunkManager {
 			}
 		}
 		
-		
+		/*
 
 		int mouseWheel = Mouse.getDWheel();
 		if (mouseWheel < 0 && currentLevel < mapMaxHeight - 1) {
@@ -60,9 +60,7 @@ public class GLChunkManager {
 		if (mouseWheel > 0 && currentLevel > 0) {
 			currentLevel--;
 		}
-		
-		
-
+		*/
 	}
 
 	public void render() {
@@ -80,6 +78,8 @@ public class GLChunkManager {
 			}
 		}
 	}
+	
+	
 
 	public void destroy() {
 
