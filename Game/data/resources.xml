@@ -1,0 +1,6 @@
+<resources>
+<resource name="TREE" empty="TREE_TRUNK" tickLength="10" actions="CHOP"/>
+<resource name="COPPER_ORE" empty="EMPTY_ORE" tickLength="10" actions="MINE"/>
+<resource name="IRON_ORE" empty="EMPTY_ORE" tickLength="10" actions="MINE"/>
+<resource name="TIN_ORE" empty="EMPTY_ORE" tickLength="10" actions="MINE"/>
+</resources>

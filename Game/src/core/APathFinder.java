@@ -13,6 +13,7 @@ import classes.GLType;
 public class APathFinder {
 	HashMap<Point, Point> parentList = new HashMap<Point, Point>();
 	ArrayList<Point> indexes = new ArrayList<Point>();
+	
 
 	public APathFinder() {
 		indexes.add(new Point(-1, 0));
