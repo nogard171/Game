@@ -1,5 +1,9 @@
 package classes;
 
+import java.util.UUID;
+
+import core.GLChunkManager;
+
 public class GLIndex {
 	public int x = 0;
 	public int y = 0;
@@ -8,6 +12,9 @@ public class GLIndex {
 	public int chunkX = 0;
 	public int chunkY = 0;
 	public int chunkZ = 0;
+
+	public int itemSlotX = 0;
+	public int itemSlotY = 0;
 
 	public GLIndex(int i, int j, int k) {
 		x = i;
@@ -23,12 +30,18 @@ public class GLIndex {
 		chunkX = l;
 		chunkY = m;
 		chunkZ = n;
+
+	}
+
+	public GLIndex(int i, int j) {
+		itemSlotX = i;
+		itemSlotY = j;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 1;
-		hash = hash * 31 + x + y + z + chunkX + chunkY + chunkZ;
+		hash = hash * 31 + (x * 2) + y + z + (chunkX * 2) + chunkY + chunkZ + itemSlotX + itemSlotY;
 		return hash;
 	}
 
@@ -41,9 +54,6 @@ public class GLIndex {
 			return false;
 		GLIndex other = (GLIndex) obj;
 		if (x == other.x && y == other.y && z == other.z) {
-			return true;
-		}
-		if(above(obj)) {
 			return true;
 		}
 		return false;

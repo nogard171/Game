@@ -22,17 +22,27 @@ public class GLChunkManager {
 	// the max map height
 	public static int mapMaxHeight = 16;
 
-	public static int width = 1;
-	public static int height = 1;
+	public static int width = 2;
+	public static int height = 2;
 
 	public void setup() {
 		for (int x = 0; x < width; x++) {
 			for (int z = 0; z < height; z++) {
+
 				GLChunk chunk = new GLChunk(x, 0, z);
 				chunk.setupChunk();
-				chunks.put(new GLIndex(x, 0, z), chunk);
+
+				System.out.println("test: "  +chunk.index.x +","+ chunk.index.y + ","+chunk.index.z + ","+(chunk.index.chunkX*2) + ","+chunk.index.chunkY + ","+chunk.index.chunkZ + " = " + 
+						(chunk.index.x + chunk.index.y +chunk.index.z +(chunk.index.chunkX*2) +chunk.index.chunkY +chunk.index.chunkZ) );
+			    System.out.println("index: " + x+","+z + "="+chunk.index.hashCode());
+
+				chunks.put(chunk.index, chunk);
 			}
 		}
+		for ( GLIndex key : chunks.keySet() ) {
+		    System.out.println("index2: " + key.chunkX+","+key.chunkZ );
+		}
+		
 	}
 
 	public void update() {
@@ -40,7 +50,7 @@ public class GLChunkManager {
 		totalRenderCount = 0;
 		for (int x = 0; x < width; x++) {
 			for (int z = 0; z < height; z++) {
-				GLChunk chunk = chunks.get(new GLIndex(x, 0, z));
+				GLChunk chunk = chunks.get(new GLIndex(0, 0, 0, x, 0, z));
 				if (chunk != null) {
 					chunk.update();
 					if (chunk.inView(Main.view)) {
@@ -49,27 +59,26 @@ public class GLChunkManager {
 				}
 			}
 		}
-		
+
 		/*
-
-		int mouseWheel = Mouse.getDWheel();
-		if (mouseWheel < 0 && currentLevel < mapMaxHeight - 1) {
-			currentLevel++;
-		}
-
-		if (mouseWheel > 0 && currentLevel > 0) {
-			currentLevel--;
-		}
-		*/
+		 * 
+		 * int mouseWheel = Mouse.getDWheel(); if (mouseWheel < 0 && currentLevel <
+		 * mapMaxHeight - 1) { currentLevel++; }
+		 * 
+		 * if (mouseWheel > 0 && currentLevel > 0) { currentLevel--; }
+		 */
 	}
 
 	public void render() {
-		for (int x = 0; x < width; x++) {
+		for (int x = 0; x < width; x++) {			
 			for (int z = 0; z < height; z++) {
-				GLChunk chunk = chunks.get(new GLIndex(x, 0, z));
+				GLChunk chunk = chunks.get(new GLIndex(0, 0, 0, x, 0, z));
 				if (chunk != null) {
+
+					
 					if (chunk.inView(Main.view)) {
 						if (!chunk.isEmpty()) {
+
 							chunk.render();
 							totalRenderCount += chunk.renderCount;
 						}
@@ -78,8 +87,6 @@ public class GLChunkManager {
 			}
 		}
 	}
-	
-	
 
 	public void destroy() {
 

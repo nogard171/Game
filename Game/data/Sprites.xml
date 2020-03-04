@@ -42,6 +42,12 @@
 		<size width='64' height='64' />
 		<texture x='192' y='128' width='64' height='64' />
 	</sprite>
+	
+	<sprite name='EMPTY_ORE'>
+		<offset x='0' y='0' />
+		<size width='64' height='64' />
+		<texture x='192' y='192' width='64' height='64' />
+	</sprite>
 	<sprite name='CHARACTER'>
 		<offset x='10' y='36' />
 		<size width='64' height='32' />
@@ -55,14 +61,26 @@
 		<size width='64' height='190' />
 		<texture x='64' y='64' width='64' height='190' />
 	</sprite>
+	<sprite name='TREE_TRUNK'>
+		<offset x='24' y='20' />
+		<size width='16' height='32' />
+		<texture x='40' y='128' width='16' height='32' />
+	</sprite>
 	<sprite name='BUSH'>
 		<offset x='14' y='10' />
-		<size width='36' height='41' />
-		<texture x='0' y='128' width='36' height='41' />
+		<size width='32' height='41' />
+		<texture x='0' y='128' width='32' height='41' />
 	</sprite>
-	<sprite name='SUNFLOWER'>
-		<offset x='20' y='28' />
-		<size width='25' height='23' />
-		<texture x='36' y='128' width='25' height='23' />
+	<sprite name='BUSH_TRUNK'>
+		<offset x='26' y='41' />
+		<size width='8' height='9' />
+		<texture x='32' y='128' width='8' height='9' />
+	</sprite>
+	
+	
+	<sprite name='ITEM_LOG'>
+		<offset x='0' y='0' />
+		<size width='32' height='32' />
+		<texture x='0' y='224' width='32' height='32' />
 	</sprite>
 </sprites>

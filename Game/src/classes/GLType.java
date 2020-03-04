@@ -6,8 +6,8 @@ import java.util.stream.LongStream;
 
 public enum GLType {
 	AIR(0, true), UNKNOWN(-1, false), GRASS(1, false), DIRT(2, false), TREE(3, true), SAND(4, false), WATER(5, true),
-	BUSH(6, true), SUNFLOWER(7, true), WOOD_PLANKS(8, false), TIN_ORE(9, false), COPPER_ORE(10, false),
-	IRON_ORE(11, false), CHARACTER(12, true), STONE(13, false);
+	BUSH(6, true), WOOD_PLANKS(8, false), TIN_ORE(9, false), COPPER_ORE(10, false), IRON_ORE(11, false),
+	CHARACTER(12, true), STONE(13, false), EMPTY_ORE(14, false), BUSH_TRUNK(7, true), TREE_TRUNK(15, true);
 
 	private int value;
 	private boolean mask;
@@ -40,7 +40,7 @@ public enum GLType {
 	public boolean isHarvestable() {
 		boolean harvestable = false;
 
-		GLType[] harvestables = { SUNFLOWER, BUSH };
+		GLType[] harvestables = { BUSH };
 
 		for (int i = 0; i < harvestables.length; i++) {
 			if (this == harvestables[i]) {
@@ -115,7 +115,7 @@ public enum GLType {
 	public boolean isMoveable() {
 		boolean moveable = false;
 
-		GLType[] moveables = { AIR,BUSH,GRASS };
+		GLType[] moveables = { AIR, BUSH, GRASS };
 
 		for (int i = 0; i < moveables.length; i++) {
 			if (this == moveables[i]) {
@@ -125,5 +125,20 @@ public enum GLType {
 		}
 
 		return moveable;
+	}
+
+	public boolean isObject() {
+		boolean object = false;
+
+		GLType[] objects = { TREE, TREE_TRUNK, BUSH, BUSH_TRUNK, WOOD_PLANKS, TIN_ORE, COPPER_ORE, IRON_ORE };
+
+		for (int i = 0; i < objects.length; i++) {
+			if (this == objects[i]) {
+				object = true;
+				break;
+			}
+		}
+
+		return object;
 	}
 }

@@ -10,6 +10,7 @@ import classes.GLIndex;
 import classes.GLMenu;
 import classes.GLMenuItem;
 import classes.GLObject;
+import classes.GLResourceData;
 import classes.GLTask;
 import classes.GLType;
 import core.GLChunk;
@@ -21,41 +22,129 @@ public class GLWorldMenu extends GLMenu {
 
 	@Override
 	public void setup() {
-		GLMenuItem collectItem = new GLMenuItem("Collect");
-		collectItem.click(new GLActionHandler() {
-			public void onClick(GLMenuItem obj) {
-				GLTask task = new GLTask();
-				task.endIndex = index;
-				task.action = GLAction.COLLECT;
-				GLQueueManager.addTask(task);
-				visible = false;
-			}
-		});
-		menuItems.put(collectItem.getValue().toLowerCase(), collectItem);
-
 		GLMenuItem harvestItem = new GLMenuItem("Harvest");
 		harvestItem.click(new GLActionHandler() {
 			public void onClick(GLMenuItem obj) {
-				GLTask task = new GLTask();
-				task.endIndex = index;
-				task.action = GLAction.HARVEST;
-				GLQueueManager.addTask(task);
-				visible = false;
+
+				GLChunk chunk = GLChunkManager.chunks
+						.get(new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ));
+
+				if (chunk != null) {
+					GLTask moveTask = new GLTask();
+					boolean objectBesideEmpty = false;
+					if (index.x + 1 < chunk.size.x) {
+						GLObject northObj = chunk.objects.get(
+								new GLIndex(index.x + 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (northObj.getType() == GLType.AIR) {
+							moveTask.endIndex = northObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.x - 1 >= 0 && !objectBesideEmpty) {
+						GLObject southObj = chunk.objects.get(
+								new GLIndex(index.x - 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (southObj.getType() == GLType.AIR) {
+							moveTask.endIndex = southObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.z - 1 < chunk.size.z && !objectBesideEmpty) {
+						GLObject eastObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z + 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (eastObj.getType() == GLType.AIR) {
+							moveTask.endIndex = eastObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (index.z + 1 >= 0 && !objectBesideEmpty) {
+						GLObject westObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z - 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (westObj.getType() == GLType.AIR) {
+							moveTask.endIndex = westObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (objectBesideEmpty) {
+						moveTask.isLead = true;
+						moveTask.action = GLAction.MOVE;
+						GLQueueManager.addTask(moveTask);
+						visible = false;
+
+						GLTask task = new GLTask();
+						task.endIndex = index;
+						task.leadIndex = moveTask.endIndex;
+						task.action = GLAction.HARVEST;
+						GLQueueManager.addTask(task);
+						visible = false;
+					}
+				}
 			}
 		});
-		menuItems.put(harvestItem.getValue().toLowerCase(), harvestItem);
+		menuItems.put(harvestItem.getValue().toUpperCase(), harvestItem);
 
 		GLMenuItem mineItem = new GLMenuItem("Mine");
 		mineItem.click(new GLActionHandler() {
 			public void onClick(GLMenuItem obj) {
-				GLTask task = new GLTask();
-				task.endIndex = index;
-				task.action = GLAction.MINE;
-				GLQueueManager.addTask(task);
-				visible = false;
+
+				GLChunk chunk = GLChunkManager.chunks
+						.get(new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ));
+
+				if (chunk != null) {
+					GLTask moveTask = new GLTask();
+					boolean objectBesideEmpty = false;
+					if (index.x + 1 < chunk.size.x) {
+						GLObject northObj = chunk.objects.get(
+								new GLIndex(index.x + 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (northObj.getType() == GLType.AIR) {
+							moveTask.endIndex = northObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.x - 1 >= 0 && !objectBesideEmpty) {
+						GLObject southObj = chunk.objects.get(
+								new GLIndex(index.x - 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (southObj.getType() == GLType.AIR) {
+							moveTask.endIndex = southObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.z - 1 < chunk.size.z && !objectBesideEmpty) {
+						GLObject eastObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z + 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (eastObj.getType() == GLType.AIR) {
+							moveTask.endIndex = eastObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (index.z + 1 >= 0 && !objectBesideEmpty) {
+						GLObject westObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z - 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (westObj.getType() == GLType.AIR) {
+							moveTask.endIndex = westObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (objectBesideEmpty) {
+						moveTask.isLead = true;
+						moveTask.action = GLAction.MOVE;
+						GLQueueManager.addTask(moveTask);
+						visible = false;
+
+						GLTask task = new GLTask();
+						task.endIndex = index;
+						task.leadIndex = moveTask.endIndex;
+						task.action = GLAction.MINE;
+						GLQueueManager.addTask(task);
+						visible = false;
+					}
+				}
 			}
 		});
-		menuItems.put(mineItem.getValue().toLowerCase(), mineItem);
+		menuItems.put(mineItem.getValue().toUpperCase(), mineItem);
 
 		/*
 		 * GLMenuItem digItem = new GLMenuItem("Dig"); digItem.click(new
@@ -65,37 +154,84 @@ public class GLWorldMenu extends GLMenu {
 		 * menuItems.put(digItem.getValue().toLowerCase(), digItem);
 		 */
 
-		GLMenuItem moveItem = new GLMenuItem("Move");
-		moveItem.click(new GLActionHandler() {
-			public void onClick(GLMenuItem obj) {
-				GLTask task = new GLTask();
-				task.endIndex = index;
-				task.action = GLAction.MOVE;
-				GLQueueManager.addTask(task);
-				visible = false;
-			}
-		});
-		menuItems.put(moveItem.getValue().toLowerCase(), moveItem);
+		/*
+		 * GLMenuItem moveItem = new GLMenuItem("Move"); moveItem.click(new
+		 * GLActionHandler() { public void onClick(GLMenuItem obj) { GLTask task = new
+		 * GLTask(); task.endIndex = index; task.action = GLAction.MOVE;
+		 * GLQueueManager.addTask(task); visible = false; } });
+		 * menuItems.put(moveItem.getValue().toUpperCase(), moveItem);
+		 */
 
 		GLMenuItem chopItem = new GLMenuItem("Chop");
 		chopItem.click(new GLActionHandler() {
 			public void onClick(GLMenuItem obj) {
-				GLTask task = new GLTask();
-				task.endIndex = index;
-				task.action = GLAction.CHOP;
-				GLQueueManager.addTask(task);
-				visible = false;
+
+				GLChunk chunk = GLChunkManager.chunks
+						.get(new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ));
+
+				if (chunk != null) {
+					GLTask moveTask = new GLTask();
+					boolean objectBesideEmpty = false;
+					if (index.x + 1 < chunk.size.x) {
+						GLObject northObj = chunk.objects.get(
+								new GLIndex(index.x + 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (northObj.getType() == GLType.AIR) {
+							moveTask.endIndex = northObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.x - 1 >= 0 && !objectBesideEmpty) {
+						GLObject southObj = chunk.objects.get(
+								new GLIndex(index.x - 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
+						if (southObj.getType() == GLType.AIR) {
+							moveTask.endIndex = southObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+
+					if (index.z - 1 < chunk.size.z && !objectBesideEmpty) {
+						GLObject eastObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z + 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (eastObj.getType() == GLType.AIR) {
+							moveTask.endIndex = eastObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (index.z + 1 >= 0 && !objectBesideEmpty) {
+						GLObject westObj = chunk.objects.get(
+								new GLIndex(index.x, index.y, index.z - 1, index.chunkX, index.chunkY, index.chunkZ));
+						if (westObj.getType() == GLType.AIR) {
+							moveTask.endIndex = westObj.getPositionGLIndex();
+							objectBesideEmpty = true;
+						}
+					}
+					if (objectBesideEmpty) {
+						moveTask.isLead = true;
+						moveTask.action = GLAction.MOVE;
+						GLQueueManager.addTask(moveTask);
+						visible = false;
+
+						GLTask task = new GLTask();
+						task.endIndex = index;
+						task.leadIndex = moveTask.endIndex;
+						task.action = GLAction.CHOP;
+						GLQueueManager.addTask(task);
+						visible = false;
+					}
+				}
 			}
 		});
-		menuItems.put(chopItem.getValue().toLowerCase(), chopItem);
+		menuItems.put(chopItem.getValue().toUpperCase(), chopItem);
 
 		GLMenuItem menuItem4 = new GLMenuItem("Inspect");
 		menuItem4.click(new GLActionHandler() {
 			public void onClick(GLMenuItem obj) {
 				if (index != null) {
-					GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(index.chunkX, index.chunkY, index.chunkZ));
+					GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0,0,0,index.chunkX, index.chunkY, index.chunkZ));
 					if (chunk != null) {
-						GLObject object = chunk.objects.get(new GLIndex(index.x, index.y, index.z));
+						System.out.println("tesT");
+						GLObject object = chunk.objects.get(new GLIndex(index.x, index.y, index.z,index.chunkX, index.chunkY, index.chunkZ));
 						if (object != null) {
 							Point position = new Point((int) ((index.chunkX - index.chunkZ) * (chunk.size.x * 32)),
 									(int) (((index.chunkZ + index.chunkX) * (chunk.size.x * 16))
@@ -110,7 +246,7 @@ public class GLWorldMenu extends GLMenu {
 				}
 			}
 		});
-		menuItems.put("inspect", menuItem4);
+		menuItems.put("INSPECT", menuItem4);
 
 		GLMenuItem menuItem3 = new GLMenuItem("Close");
 		menuItem3.click(new GLActionHandler() {
@@ -118,58 +254,31 @@ public class GLWorldMenu extends GLMenu {
 				visible = false;
 			}
 		});
-		menuItems.put("close", menuItem3);
+		menuItems.put("CLOSE", menuItem3);
 		updateBounds(100, 100);
 	}
 
 	public void clearMenu() {
-		menuItems.get("harvest").setVisible(false);
-		menuItems.get("collect").setVisible(false);
-		menuItems.get("chop").setVisible(false);
-		menuItems.get("mine").setVisible(false);
-		menuItems.get("move").setVisible(false);
+		showMenu("harvest".toUpperCase(), false);
+		showMenu("chop".toUpperCase(), false);
+		showMenu("mine".toUpperCase(), false);
 	}
 
-	public void showHarvestableMenu() {
-		menuItems.get("harvest").setVisible(true);
-	}
-
-	public void showCollectableMenu() {
-		menuItems.get("collect").setVisible(true);
-
-	}
-
-	public void showMineableMenu() {
-		menuItems.get("mine").setVisible(true);
-
-	}
-
-	public void showChopableMenu() {
-		menuItems.get("chop").setVisible(true);
-
-	}
-
-	public void showMoveableMenu() {
-		menuItems.get("move").setVisible(true);
-
+	public void showMenu(String menuItemName, boolean visible) {
+		GLMenuItem menuItem = menuItems.get(menuItemName);
+		if (menuItem != null) {
+			menuItem.setVisible(visible);
+		}
 	}
 
 	public void showMenu(GLType type) {
 		clearMenu();
-		if (type.isHarvestable()) {
-			showHarvestableMenu();
-		}
-		if (type.isCollectable()) {
-			showCollectableMenu();
-		}
-		if (type.isMineable()) {
-			showMineableMenu();
-		}
-		if (type.isChopable()) {
-			showChopableMenu();
-		}
-		if (type.isMoveable()) {
-			showMoveableMenu();
+
+		GLResourceData res = Data.resources.get(type.toString().toUpperCase());
+		if (res != null) {
+			for (String action : res.actions) {
+				showMenu(action, true);
+			}
 		}
 		this.visible = true;
 	}

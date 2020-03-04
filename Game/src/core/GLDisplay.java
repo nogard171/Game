@@ -12,13 +12,14 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import game.Data;
+
 public class GLDisplay {
-	public int WIDTH = 800;
-	public int HEIGHT = 600;
 
 	public void createDisplay() {
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			Display.setDisplayMode(new DisplayMode(Integer.parseInt(Data.settings.getProperty("window.width")),
+					Integer.parseInt(Data.settings.getProperty("window.height"))));
 			Display.create();
 
 			Display.setResizable(true);
@@ -32,13 +33,13 @@ public class GLDisplay {
 	}
 
 	public void setupViewPort() {
-		this.WIDTH = Display.getWidth();
-		this.HEIGHT = Display.getHeight();
+		Data.settings.setProperty("window.width", Display.getWidth()+"");
+		Data.settings.setProperty("window.height", Display.getHeight()+"");
 
-		glViewport(0, 0, WIDTH, HEIGHT);
+		glViewport(0, 0, Integer.parseInt(Data.settings.getProperty("window.width")), Integer.parseInt(Data.settings.getProperty("window.height")));
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
+		glOrtho(0, Integer.parseInt(Data.settings.getProperty("window.width")), Integer.parseInt(Data.settings.getProperty("window.height")), 0, -1, 1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
 		GL11.glEnable(GL11.GL_BLEND);
@@ -53,8 +54,11 @@ public class GLDisplay {
 	}
 
 	public void sync() {
-		Display.update();
-		//Display.sync(120);
+		Display.update();		
+		if(Boolean.parseBoolean(Data.settings.getProperty("window.vsync")))
+		{
+			Display.sync(Integer.parseInt(Data.settings.getProperty("window.fps")));
+		}
 	}
 
 	public void render() {

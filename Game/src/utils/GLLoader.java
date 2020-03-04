@@ -1,9 +1,12 @@
 package utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,16 +21,26 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import classes.GLResourceData;
 import classes.GLSize;
 import classes.GLSpriteData;
+import game.Data;
 import game.Main;
-import game.Settings;
 
 public class GLLoader {
+
+	public static void loadSettings(String file) throws IOException {
+		Properties newSettings = new Properties();
+		InputStream is = null;
+		is = new FileInputStream(file);
+		newSettings.load(is);
+		Data.settings = newSettings;
+	}
+
 	public static void loadSprites() {
-		String filename = Settings.getSpriteDataFile();
-		float textureWidth = Main.texture.getImageWidth();
-		float textureHeight = Main.texture.getImageHeight();
+		String filename = Data.settings.getProperty("assets.sprites");
+		float textureWidth = Data.texture.getImageWidth();
+		float textureHeight = Data.texture.getImageHeight();
 		ArrayList<GLSpriteData> spriteData = new ArrayList<GLSpriteData>();
 		try {
 			File fXmlFile = new File(filename);
@@ -77,7 +90,8 @@ public class GLLoader {
 							newSpriteData.textureData = new Vector4f(texX, texY, texWidth, texHeight);
 						}
 					}
-					spriteData.add(newSpriteData);
+					// spriteData.add(newSpriteData);
+					Data.sprites.put(newSpriteData.name.toUpperCase(), newSpriteData);
 				}
 			}
 		} catch (SAXException | IOException e) {
@@ -85,8 +99,53 @@ public class GLLoader {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-		for (GLSpriteData singleSpriteData : spriteData) {
-			Main.sprites.put(singleSpriteData.name.toUpperCase(), singleSpriteData);
+		/*
+		 * for (GLSpriteData singleSpriteData : spriteData) {
+		 * Data.sprites.put(singleSpriteData.name.toUpperCase(), singleSpriteData); }
+		 */
+	}
+
+	public static void loadResources() {
+		String filename = Data.settings.getProperty("assets.resources");
+		ArrayList<GLResourceData> resourceData = new ArrayList<GLResourceData>();
+
+		try {
+			File fXmlFile = new File(filename);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
+			NodeList nList = doc.getElementsByTagName("resource");
+			for (int temp = 0; temp < nList.getLength(); temp++) {
+				Node nNode = nList.item(temp);
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					GLResourceData newResourceData = new GLResourceData();
+					Element eElement = (Element) nNode;
+					newResourceData.name = eElement.getAttribute("name").toUpperCase();
+					newResourceData.empty = eElement.getAttribute("empty").toUpperCase();
+					String actions = eElement.getAttribute("actions");
+					if (actions.contains(",")) {
+						String[] actionsList = actions.split(",");
+						for (String action : actionsList) {
+							newResourceData.actions.add(action);
+						}
+					}
+					else
+					{
+						newResourceData.actions.add(actions);
+					}
+
+					newResourceData.tickLength = Integer.parseInt(eElement.getAttribute("tickLength"));
+					System.out.println("name:" + newResourceData.name);
+
+					Data.resources.put(newResourceData.name, newResourceData);
+				}
+			}
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 		}
+
 	}
 }

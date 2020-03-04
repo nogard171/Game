@@ -15,13 +15,18 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import classes.GLObject;
+import classes.GLResource;
+import classes.GLResourceData;
 import classes.GLSpriteData;
 import classes.GLType;
 import classes.GLView;
 import classes.GLIndex;
+import classes.GLItem;
+import game.Data;
 import game.Main;
 import utils.GLGenerator;
 import utils.GLLogger;
+import utils.GLRenderer;
 
 public class GLChunk {
 	// the chunks display list id
@@ -45,18 +50,26 @@ public class GLChunk {
 
 	int lowestRender = 0;
 	// var for updating the display list
-	boolean needsUpdating = true;
+	public boolean needsUpdating = true;
 	// var for determining if a chunk is empty
 	boolean isEmpty = false;
 	// var for checking the total object count on the screen
 	int renderCount = 0;
 
+	public static Boolean showBounds = true;
+
 	public GLChunk(int x, int y, int z) {
+		
 		index = new GLIndex(0, 0, 0, x, y, z);
+		
 		position = new Point((int) ((x - z) * (size.x * 32)), (int) (((z + x) * (size.x * 16)) + (y * (size.y * 32))));
+		
 	}
 
 	public void setupChunk() {
+		
+
+		index = new GLIndex(0, 0, 0, index.chunkX,index.chunkY,index.chunkZ);
 
 		this.updateBounds();
 
@@ -72,21 +85,26 @@ public class GLChunk {
 					if (y == 0) {
 						obj = new GLObject(GLType.AIR);
 					}
-					if (x == 0 && z == 0 && y == 0) {
-						obj = new GLObject(GLType.SAND);
-					}
-					if (x == 5 && z == 5 && y == 0) {
-						obj = new GLObject(GLType.BUSH);
+					int r = (int) (Math.random() * 100);
+					if (r <= 10 && y == 0) {
+
+						obj = new GLObject(GLType.TREE);
 					}
 
-					if (x == 7 && z == 5 && y == 0) {
+					if (r == 2 && y == 0) {
 						obj = new GLObject(GLType.COPPER_ORE);
 					}
-					if (x == 7 && z == 6 && y == 0) {
+					if (r == 3 && y == 0) {
 						obj = new GLObject(GLType.IRON_ORE);
 					}
-					if (x == 8 && z == 6 && y == 0) {
+					if (r == 4 && y == 0) {
 						obj = new GLObject(GLType.TIN_ORE);
+					}
+
+					GLResourceData resource = Data.resources.get(obj.getType().toString().toUpperCase());
+
+					if (resource != null) {
+						obj = new GLResource(GLType.valueOf(resource.name), GLType.valueOf(resource.empty));
 					}
 
 					int posX = position.x + (x - z) * 32;
@@ -106,6 +124,8 @@ public class GLChunk {
 					poly.addPoint(posX, posZ + 48);
 
 					poly.addPoint(posX, posZ + 16);
+
+					poly.addPoint(posX + 32, posZ);
 
 					obj.bounds = poly;
 
@@ -146,7 +166,7 @@ public class GLChunk {
 		this.isEmpty = false;
 		this.updateBounds();
 
-		HashMap<String, GLSpriteData> sprites = Main.sprites;
+		HashMap<String, GLSpriteData> sprites = Data.sprites;
 
 		renderCount = 0;
 		renderedObjects.clear();
@@ -163,7 +183,8 @@ public class GLChunk {
 		for (int y = yCount - 1; y >= this.currentLevel; y--) {
 			for (int x = 0; x < xCount; x++) {
 				for (int z = 0; z < zCount; z++) {
-					GLObject obj = objects.get(new GLIndex(x, y, z));
+					GLObject obj = objects
+							.get(new GLIndex(x, y, z, this.index.chunkX, this.index.chunkY, this.index.chunkZ));
 
 					if (obj != null) {
 						obj.setVisible(false);
@@ -172,9 +193,11 @@ public class GLChunk {
 							Color c = (Color) Color.WHITE;
 
 							checkObjectVisibility(obj);
-							GLSpriteData sprite = null;
+							GLSpriteData sprite = sprites.get("UNKNOWN");
 
+							
 							if (obj.isVisible() || y == this.currentLevel) {
+
 								if (obj.isKnown()) {
 									sprite = sprites.get(obj.getType().toString());
 								} else {
@@ -183,7 +206,10 @@ public class GLChunk {
 							}
 
 							if (sprite != null) {
-								renderObject(obj, sprite, c);
+								GLRenderer.renderObject(position, obj, sprite, c);
+								if (x == 0 &&z == 1) {
+									System.out.println("tesThello123: " + position.x+","+position.y);
+								}
 								renderedObjects.add(obj);
 								renderCount++;
 								if (lowestRender > y && obj.isKnown()) {
@@ -198,13 +224,12 @@ public class GLChunk {
 		GL11.glEnd();
 		GL11.glEndList();
 		if (renderCount == 0) {
-			this.isEmpty = true;
+			// this.isEmpty = true;
 		}
 
 		if (GLChunkManager.mapMaxHeight > lowestRender) {
 			// GLChunkManager.mapMaxHeight = lowestRender;
 		}
-
 	}
 
 	private void checkObjectVisibility(GLObject obj) {
@@ -216,7 +241,7 @@ public class GLChunk {
 		int z = (int) obj.getPositionGLIndex().z;
 
 		if (x + 1 < size.x) {
-			GLObject right = objects.get(new GLIndex(x + 1, y, z));
+			GLObject right = objects.get(new GLIndex(x + 1, y, z, index.chunkX, index.chunkY, index.chunkZ));
 			if (right != null) {
 				if (right.getType().isMask()) {
 					obj.setKnown(true);
@@ -224,9 +249,11 @@ public class GLChunk {
 				}
 			}
 		} else {
-			GLChunk chunkX = GLChunkManager.chunks.get(new GLIndex(index.chunkX + 1, index.chunkY, index.chunkZ));
+			GLChunk chunkX = GLChunkManager.chunks
+					.get(new GLIndex(0, 0, 0, index.chunkX + 1, index.chunkY, index.chunkZ));
 			if (chunkX != null) {
-				GLObject objectX = chunkX.objects.get(new GLIndex(0, y, z));
+				GLObject objectX = chunkX.objects
+						.get(new GLIndex(0, y, z, index.chunkX + 1, index.chunkY, index.chunkZ));
 				if (objectX != null) {
 					if (objectX.getType().isMask()) {
 						obj.setKnown(true);
@@ -238,7 +265,7 @@ public class GLChunk {
 			}
 		}
 		if (z + 1 < size.z) {
-			GLObject left = objects.get(new GLIndex(x, y, z + 1));
+			GLObject left = objects.get(new GLIndex(x, y, z + 1, index.chunkX, index.chunkY, index.chunkZ));
 			if (left != null) {
 				if (left.getType().isMask()) {
 					obj.setKnown(true);
@@ -246,9 +273,11 @@ public class GLChunk {
 				}
 			}
 		} else {
-			GLChunk chunkZ = GLChunkManager.chunks.get(new GLIndex(index.chunkX, index.chunkY, index.chunkZ + 1));
+			GLChunk chunkZ = GLChunkManager.chunks
+					.get(new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ + 1));
 			if (chunkZ != null) {
-				GLObject objectZ = chunkZ.objects.get(new GLIndex(x, y, 0));
+				GLObject objectZ = chunkZ.objects
+						.get(new GLIndex(x, y, 0, index.chunkX, index.chunkY, index.chunkZ + 1));
 				if (objectZ != null) {
 					if (objectZ.getType().isMask()) {
 						obj.setKnown(true);
@@ -261,7 +290,7 @@ public class GLChunk {
 		}
 
 		if (y - 1 >= 0) {
-			GLObject top = objects.get(new GLIndex(x, y - 1, z));
+			GLObject top = objects.get(new GLIndex(x, y - 1, z, index.chunkX, index.chunkY, index.chunkZ));
 			if (top != null) {
 				if (top.getType().isMask()) {
 					obj.setKnown(true);
@@ -276,38 +305,18 @@ public class GLChunk {
 		obj.setVisible(visible);
 	}
 
-	private void renderObject(GLObject obj, GLSpriteData spriteData, Color c) {
-		int x = (int) obj.getPositionGLIndex().x;
-		int y = (int) obj.getPositionGLIndex().y;
-		int z = (int) obj.getPositionGLIndex().z;
-		if (spriteData != null) {
-			GL11.glColor3f((float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255);
-
-			int posX = (int) (position.x + ((x - z) * 32) + spriteData.offset.x);
-			int posY = position.y + ((y - 1) * 32);
-			int posZ = (int) (((z + x) * 16) + posY + spriteData.offset.y);
-
-			GL11.glTexCoord2f(spriteData.textureData.x, spriteData.textureData.y);
-			GL11.glVertex2f(posX, posZ);
-			GL11.glTexCoord2f(spriteData.textureData.x + spriteData.textureData.z, spriteData.textureData.y);
-			GL11.glVertex2f(posX + spriteData.size.getWidth(), posZ);
-			GL11.glTexCoord2f(spriteData.textureData.x + spriteData.textureData.z,
-					spriteData.textureData.y + spriteData.textureData.w);
-			GL11.glVertex2f(posX + spriteData.size.getWidth(), posZ + spriteData.size.getHeight());
-			GL11.glTexCoord2f(spriteData.textureData.x, spriteData.textureData.y + spriteData.textureData.w);
-			GL11.glVertex2f(posX, posZ + spriteData.size.getHeight());
-		}
-	}
-
 	public void update() {
 		Point mousePoint = new Point(Mouse.getX() + (int) Main.view.getPosition().x,
 				Display.getHeight() - Mouse.getY() + (int) Main.view.getPosition().y);
 		if (renderedObjects.size() > 0) {
-			GLChunkManager.mouseGLIndex.clear();
 			for (GLObject obj : renderedObjects) {
 				if (obj.bounds.contains(mousePoint)) {
 					GLChunkManager.mouseGLIndex.add(obj.getPositionGLIndex());
 				}
+				/*
+				 * if (obj.getType().isResource()) { GLResource res = (GLResource) obj;
+				 * res.update(); }
+				 */
 			}
 		}
 
@@ -331,24 +340,47 @@ public class GLChunk {
 	}
 
 	public void render() {
+
 		if (this.dlId == -1) {
 			this.updateDisplayList();
 		} else {
 			GL11.glCallList(this.dlId);
 
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			if (showBounds) {
+				
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-			GL11.glBegin(GL11.GL_LINE_LOOP);
-			GL11.glColor3f(1, 0, 0);
-			for (int i = 0; i < bounds.xpoints.length - 1; i++) {
-				float posX = bounds.xpoints[i];
-				float posZ = bounds.ypoints[i];
-				GL11.glVertex2f(posX, posZ);
+				GL11.glBegin(GL11.GL_LINE_LOOP);
+				GL11.glColor3f(1, 0, 0);
+				for (int i = 0; i < bounds.xpoints.length - 1; i++) {
+					float posX = bounds.xpoints[i];
+					float posZ = bounds.ypoints[i];
+					GL11.glVertex2f(posX, posZ);
+				}
+				GL11.glEnd();
+
+				GL11.glColor3f(1, 0, 0);
+				for (GLObject obj : renderedObjects) {
+					if (obj.getType().isObject()) {
+						GL11.glBegin(GL11.GL_LINE_LOOP);
+
+						for (int i = 0; i < obj.bounds.xpoints.length - 1; i++) {
+							float posX = obj.bounds.xpoints[i];
+							float posZ = obj.bounds.ypoints[i];
+							GL11.glVertex2f(posX, posZ);
+						}
+
+						float posX = obj.bounds.xpoints[0];
+						float posZ = obj.bounds.ypoints[0];
+						GL11.glVertex2f(posX, posZ);
+
+						GL11.glEnd();
+					}
+				}
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			}
-			GL11.glEnd();
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-		}
 
+		}
 	}
 
 	public void setLevel(int newCurrentLevel) {

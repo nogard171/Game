@@ -7,6 +7,9 @@ import java.util.UUID;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import core.GLChunk;
+import core.GLChunkManager;
+
 public class GLObject {
 	private String hash = "";
 	private GLType type = GLType.AIR;
@@ -25,6 +28,11 @@ public class GLObject {
 	}
 
 	public void setType(GLType newType) {
+		GLChunk chunk = GLChunkManager.chunks
+				.get(new GLIndex(positionGLIndex.chunkX, positionGLIndex.chunkY, positionGLIndex.chunkZ));
+		if (chunk != null) {
+			chunk.needsUpdating = true;
+		}
 		this.type = newType;
 	}
 
@@ -57,4 +65,5 @@ public class GLObject {
 	public String getHash() {
 		return this.hash;
 	}
+
 }

@@ -63,8 +63,8 @@ public class GLMenu {
 	public void render() {
 
 		if (visible) {
-			GLDebug.RenderBackground(bounds.getX() - Main.view.getPosition().x,
-					bounds.getY() - Main.view.getPosition().y, bounds.getWidth(), bounds.getHeight());
+			GLDebug.RenderBackground((int)bounds.getX() - (int)Main.view.getPosition().x,
+					(int)bounds.getY() - (int)Main.view.getPosition().y, bounds.getWidth(), bounds.getHeight());
 			
 			int i = 0;
 			for (GLMenuItem menuItem : menuItems.values()) {

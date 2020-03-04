@@ -7,13 +7,17 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import classes.GLCharacter;
 import classes.GLIndex;
 import classes.GLMenu;
 import classes.GLObject;
+import classes.GLTask;
+import classes.GLType;
 import game.GLWorldMenu;
 import game.Main;
 import utils.GLDebug;
 import utils.GLFPS;
+import utils.GLTicker;
 
 public class GLUIManager {
 	public static ArrayList<GLMessage> messages = new ArrayList<GLMessage>();
@@ -29,9 +33,10 @@ public class GLUIManager {
 		if (Mouse.isButtonDown(1)) {
 			if (GLChunkManager.mouseGLIndex.size() > 0) {
 				GLIndex hover = GLChunkManager.mouseGLIndex.get(GLChunkManager.mouseGLIndex.size() - 1);
-				GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(hover.chunkX, hover.chunkY, hover.chunkZ));
+				GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0,0,0,hover.chunkX, hover.chunkY, hover.chunkZ));
 				if (chunk != null) {
-					GLObject obj = chunk.objects.get(new GLIndex(hover.x, hover.y, hover.z));
+					
+					GLObject obj = chunk.objects.get(new GLIndex(hover.x, hover.y, hover.z,hover.chunkX,hover.chunkY,hover.chunkZ));
 					if (obj != null) {
 						if (obj.isKnown()) {
 							int posX = (int) (chunk.position.x
@@ -67,7 +72,7 @@ public class GLUIManager {
 		GLDebug.RenderString(0, 0, "FPS: " + GLFPS.fps, 12, Color.white);
 
 		GLDebug.RenderString(0, 12, "Render Count: " + GLChunkManager.totalRenderCount, 12, Color.white);
-		GLDebug.RenderString(0, 24, "Level: " + GLChunkManager.currentLevel, 12, Color.white);
+		GLDebug.RenderString(0, 24, "Tick Count: " + GLTicker.tickCount, 12, Color.white);
 		if (GLChunkManager.mouseGLIndex.size() > 0) {
 
 			GLIndex hover = GLChunkManager.mouseGLIndex.get(GLChunkManager.mouseGLIndex.size() - 1);
@@ -87,15 +92,57 @@ public class GLUIManager {
 				}
 			}
 		}
+		GLDebug.RenderBackground(Display.getWidth() - 200, 0, 200, (GLQueueManager.tasks.size() + 1) * 14);
+		GLDebug.RenderString(Display.getWidth() - 200, 0, "Task List: ", 12, Color.white);
+
+		if (GLQueueManager.tasks.size() > 0) {
+
+			int i = 0;
+			for (GLTask task : GLQueueManager.tasks) {
+				String taskContent = task.action + "";
+				if (task.endIndex != null) {
+					taskContent += " -> " + task.endIndex.x + "," + task.endIndex.y;
+				}
+
+				GLDebug.RenderString(Display.getWidth() - 200, 12 + (i * 12), taskContent, 12, Color.white);
+				i++;
+			}
+		}
+
+			GLDebug.RenderBackground(Display.getWidth() - 300, 0, 100,
+					(GLQueueManager.waitingCharacters.size() + 1) * 14);
+			int i = 0;
+			for (GLIndex characterIndex : GLQueueManager.waitingCharacters) {
+				String taskContent = "Character# " + i;
+				GLChunk chunk = GLChunkManager.chunks
+						.get(new GLIndex(0, 0, 0, characterIndex.chunkX, characterIndex.chunkY, characterIndex.chunkZ));
+				if (chunk != null) {
+					GLObject obj = chunk.objects.get(characterIndex);
+					if (obj.getType() == GLType.CHARACTER) {
+						GLCharacter chara = (GLCharacter) obj;
+						if (chara != null) {
+							taskContent += " = " + chara.getItemCount();
+						}
+					}
+				}
+
+				GLDebug.RenderString(Display.getWidth() - 300, 12 + (i * 12), taskContent, 12, Color.white);
+				i++;
+			}
 
 		for (GLMessage message : messages) {
 
-			GLDebug.RenderBackground(-Main.view.getPosition().getX() + message.getPosition().x,
-					-Main.view.getPosition().getY() + message.getPosition().y, message.getMessage().length() * 8, 16);
-			GLDebug.RenderString(-Main.view.getPosition().getX() + message.getPosition().x,
-					-Main.view.getPosition().getY() + message.getPosition().y, message.getMessage(), 12, Color.white);
+			GLDebug.RenderBackground((int) Math.ceil(-Main.view.getPosition().getX() + message.getPosition().x),
+					(int) Math.ceil(-Main.view.getPosition().getY() + message.getPosition().y),
+					message.getMessage().length() * 8, 16);
+			GLDebug.RenderString((int) Math.ceil(-Main.view.getPosition().getX() + message.getPosition().x),
+					(int) Math.ceil(-Main.view.getPosition().getY() + message.getPosition().y), message.getMessage(),
+					12, Color.white);
 
 		}
+		
+		
+		
 	}
 
 	public static void showMessage(Vector2f position, String string) {
