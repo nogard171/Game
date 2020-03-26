@@ -13,7 +13,6 @@ import classes.GLType;
 public class APathFinder {
 	HashMap<Point, Point> parentList = new HashMap<Point, Point>();
 	ArrayList<Point> indexes = new ArrayList<Point>();
-	
 
 	public APathFinder() {
 		indexes.add(new Point(-1, 0));
@@ -32,26 +31,29 @@ public class APathFinder {
 		return path;
 	}
 
-	public List find(GLChunk chunk, Point startIndex, Point endIndex) {
+	public List find(GLIndex startIndex, GLIndex endIndex) {
 		LinkedList openList = new LinkedList();
 		LinkedList closedList = new LinkedList();
-		openList.add(startIndex);
-		parentList.put(startIndex, null);
+		openList.add(new Point(startIndex.x, startIndex.z));
+		parentList.put(new Point(startIndex.x, startIndex.z), null);
 
 		while (!openList.isEmpty()) {
 			Point current = (Point) openList.removeFirst();
-			if (current.equals(endIndex)) {
-				return constructPath(endIndex);
+			Point endPoint = new Point(endIndex.x + (int)(endIndex.chunkX * GLChunkManager.chunkSize.x), endIndex.z + (int)(endIndex.chunkZ * GLChunkManager.chunkSize.y));
+			//System.out.println("end: " + endPoint);
+			if (current.equals(endPoint)) {
+				return constructPath(endPoint);
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > chunk.size.x && current.y > chunk.size.z) {
+			if (current.x > GLChunkManager.chunkSize.x && current.y >GLChunkManager.chunkSize.y) {
 				return null;
 			}
 			for (Point index : indexes) {
 				Point neighborIndex = new Point(current.x + index.x, current.y + index.y);
 
-				GLObject obj = chunk.objects.get(new GLIndex(neighborIndex.x, 0, neighborIndex.y, 0, 0, 0));
+				GLObject obj = GLChunkManager.getObjectForPathFinding(neighborIndex);
+
 				if (obj != null) {
 					if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)
 							&& obj.getType() == GLType.AIR) {

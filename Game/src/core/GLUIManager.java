@@ -33,10 +33,12 @@ public class GLUIManager {
 		if (Mouse.isButtonDown(1)) {
 			if (GLChunkManager.mouseGLIndex.size() > 0) {
 				GLIndex hover = GLChunkManager.mouseGLIndex.get(GLChunkManager.mouseGLIndex.size() - 1);
-				GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0,0,0,hover.chunkX, hover.chunkY, hover.chunkZ));
+				GLChunk chunk = GLChunkManager.chunks
+						.get(new GLIndex(0, 0, 0, hover.chunkX, hover.chunkY, hover.chunkZ));
 				if (chunk != null) {
-					
-					GLObject obj = chunk.objects.get(new GLIndex(hover.x, hover.y, hover.z,hover.chunkX,hover.chunkY,hover.chunkZ));
+
+					GLObject obj = chunk.objects
+							.get(new GLIndex(hover.x, hover.y, hover.z, hover.chunkX, hover.chunkY, hover.chunkZ));
 					if (obj != null) {
 						if (obj.isKnown()) {
 							int posX = (int) (chunk.position.x
@@ -80,9 +82,11 @@ public class GLUIManager {
 					"Hover Chunk GLIndex: " + hover.chunkX + "," + hover.chunkY + "," + hover.chunkZ, 12, Color.white);
 			GLDebug.RenderString(0, 48, "Hover GLIndex: " + hover.x + "," + hover.y + "," + hover.z, 12, Color.white);
 
-			GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(hover.chunkX, hover.chunkY, hover.chunkZ));
+			GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, hover.chunkX, hover.chunkY, hover.chunkZ));
 			if (chunk != null) {
-				GLObject obj = chunk.objects.get(new GLIndex(hover.x, hover.y, hover.z));
+				GLObject obj = chunk.objects
+						.get(new GLIndex(hover.x, hover.y, hover.z, hover.chunkX, hover.chunkY, hover.chunkZ));
+
 				if (obj != null) {
 					if (obj.isKnown()) {
 						GLDebug.RenderString(0, 60, "Hover Type: " + obj.getType().toString(), 12, Color.white);
@@ -97,6 +101,8 @@ public class GLUIManager {
 
 		if (GLQueueManager.tasks.size() > 0) {
 
+		
+
 			int i = 0;
 			for (GLTask task : GLQueueManager.tasks) {
 				String taskContent = task.action + "";
@@ -104,31 +110,32 @@ public class GLUIManager {
 					taskContent += " -> " + task.endIndex.x + "," + task.endIndex.y;
 				}
 
-				GLDebug.RenderString(Display.getWidth() - 200, 12 + (i * 12), taskContent, 12, Color.white);
+				GLDebug.RenderString(Display.getWidth() - 200, 12 + ((i) * 12), taskContent, 12, Color.white);
 				i++;
 			}
 		}
+		GLDebug.RenderBackground(Display.getWidth() - 300, 0, 100, (GLQueueManager.waitingCharacters.size() + 1) * 14);
 
-			GLDebug.RenderBackground(Display.getWidth() - 300, 0, 100,
-					(GLQueueManager.waitingCharacters.size() + 1) * 14);
-			int i = 0;
-			for (GLIndex characterIndex : GLQueueManager.waitingCharacters) {
-				String taskContent = "Character# " + i;
-				GLChunk chunk = GLChunkManager.chunks
-						.get(new GLIndex(0, 0, 0, characterIndex.chunkX, characterIndex.chunkY, characterIndex.chunkZ));
-				if (chunk != null) {
-					GLObject obj = chunk.objects.get(characterIndex);
-					if (obj.getType() == GLType.CHARACTER) {
-						GLCharacter chara = (GLCharacter) obj;
-						if (chara != null) {
-							taskContent += " = " + chara.getItemCount();
-						}
+		GLDebug.RenderString(Display.getWidth() - 300, 0, "Waiting: " + GLQueueManager.waitingCharacters.size(), 12,
+				Color.white);
+		int i = 0;
+		for (GLIndex characterIndex : GLQueueManager.waitingCharacters) {
+			String taskContent = "Character# " + i;
+			GLChunk chunk = GLChunkManager.chunks
+					.get(new GLIndex(0, 0, 0, characterIndex.chunkX, characterIndex.chunkY, characterIndex.chunkZ));
+			if (chunk != null) {
+				GLObject obj = chunk.objects.get(characterIndex);
+				if (obj.getType() == GLType.CHARACTER) {
+					GLCharacter chara = (GLCharacter) obj;
+					if (chara != null) {
+						taskContent += " = " + chara.getItemCount();
 					}
 				}
-
-				GLDebug.RenderString(Display.getWidth() - 300, 12 + (i * 12), taskContent, 12, Color.white);
-				i++;
 			}
+
+			GLDebug.RenderString(Display.getWidth() - 300, 12 + ((i+1) * 12), taskContent, 12, Color.white);
+			i++;
+		}
 
 		for (GLMessage message : messages) {
 
@@ -140,9 +147,7 @@ public class GLUIManager {
 					12, Color.white);
 
 		}
-		
-		
-		
+
 	}
 
 	public static void showMessage(Vector2f position, String string) {

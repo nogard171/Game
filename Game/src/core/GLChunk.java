@@ -17,6 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 import classes.GLObject;
 import classes.GLResource;
 import classes.GLResourceData;
+import classes.GLSize;
 import classes.GLSpriteData;
 import classes.GLType;
 import classes.GLView;
@@ -36,7 +37,7 @@ public class GLChunk {
 	// the chunks index
 	public GLIndex index;
 	// the chunks sizing for the object data
-	public Vector3f size = new Vector3f(16, 2, 16);
+	public Vector3f size = new Vector3f(32, 2, 32);
 	// the objects for the map
 	public HashMap<GLIndex, GLObject> objects = new HashMap<GLIndex, GLObject>();
 	// the list of the rendered objects
@@ -59,17 +60,16 @@ public class GLChunk {
 	public static Boolean showBounds = true;
 
 	public GLChunk(int x, int y, int z) {
-		
+
 		index = new GLIndex(0, 0, 0, x, y, z);
-		
+
 		position = new Point((int) ((x - z) * (size.x * 32)), (int) (((z + x) * (size.x * 16)) + (y * (size.y * 32))));
-		
+
 	}
 
 	public void setupChunk() {
-		
 
-		index = new GLIndex(0, 0, 0, index.chunkX,index.chunkY,index.chunkZ);
+		index = new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ);
 
 		this.updateBounds();
 
@@ -85,6 +85,12 @@ public class GLChunk {
 					if (y == 0) {
 						obj = new GLObject(GLType.AIR);
 					}
+
+					if (x == 7 && z == 7 && y == 0) {
+
+						obj = new GLObject(GLType.TREE);
+					}
+/*
 					int r = (int) (Math.random() * 100);
 					if (r <= 10 && y == 0) {
 
@@ -99,7 +105,7 @@ public class GLChunk {
 					}
 					if (r == 4 && y == 0) {
 						obj = new GLObject(GLType.TIN_ORE);
-					}
+					}*/
 
 					GLResourceData resource = Data.resources.get(obj.getType().toString().toUpperCase());
 
@@ -195,9 +201,7 @@ public class GLChunk {
 							checkObjectVisibility(obj);
 							GLSpriteData sprite = sprites.get("UNKNOWN");
 
-							
 							if (obj.isVisible() || y == this.currentLevel) {
-
 								if (obj.isKnown()) {
 									sprite = sprites.get(obj.getType().toString());
 								} else {
@@ -206,10 +210,8 @@ public class GLChunk {
 							}
 
 							if (sprite != null) {
+								
 								GLRenderer.renderObject(position, obj, sprite, c);
-								if (x == 0 &&z == 1) {
-									System.out.println("tesThello123: " + position.x+","+position.y);
-								}
 								renderedObjects.add(obj);
 								renderCount++;
 								if (lowestRender > y && obj.isKnown()) {
@@ -347,7 +349,7 @@ public class GLChunk {
 			GL11.glCallList(this.dlId);
 
 			if (showBounds) {
-				
+
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 				GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -396,10 +398,6 @@ public class GLChunk {
 		return inView;
 	}
 
-	public void moveObject(GLIndex index, GLIndex newIndex) {
-
-	}
-
 	public void setObject(GLIndex index, GLObject newObj) {
 		GLObject obj = this.objects.get(index);
 		if (obj != null) {
@@ -424,12 +422,17 @@ public class GLChunk {
 			newObj.bounds = poly;
 
 			newObj.setPositionGLIndex(index.x, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ);
+			
 			this.objects.put(index, newObj);
-			updateDisplayList();
+			this.needsUpdating = true;
 
 		} else {
 			GLLogger.writeLog("Index(Chunk / Object): " + index.chunkX + "," + index.chunkY + "," + index.chunkZ + " / "
 					+ index.x + "," + index.y + "," + index.z + " - Cannot place object");
 		}
+	}
+
+	public void setSize(Vector3f newSize) {
+		size = newSize;
 	}
 }

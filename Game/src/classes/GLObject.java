@@ -29,7 +29,7 @@ public class GLObject {
 
 	public void setType(GLType newType) {
 		GLChunk chunk = GLChunkManager.chunks
-				.get(new GLIndex(positionGLIndex.chunkX, positionGLIndex.chunkY, positionGLIndex.chunkZ));
+				.get(new GLIndex(0,0,0,positionGLIndex.chunkX, positionGLIndex.chunkY, positionGLIndex.chunkZ));
 		if (chunk != null) {
 			chunk.needsUpdating = true;
 		}

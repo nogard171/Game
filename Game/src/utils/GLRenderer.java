@@ -11,9 +11,11 @@ import classes.GLSpriteData;
 public class GLRenderer {
 
 	public static void renderObject(Point position, GLObject obj, GLSpriteData spriteData, Color c) {
+		
 		int x = (int) obj.getPositionGLIndex().x;
 		int y = (int) obj.getPositionGLIndex().y;
 		int z = (int) obj.getPositionGLIndex().z;
+		
 		if (spriteData != null) {
 			GL11.glColor3f((float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255);
 

@@ -36,6 +36,7 @@ public class GLWorldMenu extends GLMenu {
 						GLObject northObj = chunk.objects.get(
 								new GLIndex(index.x + 1, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
 						if (northObj.getType() == GLType.AIR) {
+
 							moveTask.endIndex = northObj.getPositionGLIndex();
 							objectBesideEmpty = true;
 						}
@@ -154,13 +155,17 @@ public class GLWorldMenu extends GLMenu {
 		 * menuItems.put(digItem.getValue().toLowerCase(), digItem);
 		 */
 
-		/*
-		 * GLMenuItem moveItem = new GLMenuItem("Move"); moveItem.click(new
-		 * GLActionHandler() { public void onClick(GLMenuItem obj) { GLTask task = new
-		 * GLTask(); task.endIndex = index; task.action = GLAction.MOVE;
-		 * GLQueueManager.addTask(task); visible = false; } });
-		 * menuItems.put(moveItem.getValue().toUpperCase(), moveItem);
-		 */
+		GLMenuItem moveItem = new GLMenuItem("Move");
+		moveItem.click(new GLActionHandler() {
+			public void onClick(GLMenuItem obj) {
+				GLTask task = new GLTask();
+				task.endIndex = index;
+				task.action = GLAction.MOVE;
+				GLQueueManager.addTask(task);
+				visible = false;
+			}
+		});
+		menuItems.put(moveItem.getValue().toUpperCase(), moveItem);
 
 		GLMenuItem chopItem = new GLMenuItem("Chop");
 		chopItem.click(new GLActionHandler() {
@@ -228,10 +233,12 @@ public class GLWorldMenu extends GLMenu {
 		menuItem4.click(new GLActionHandler() {
 			public void onClick(GLMenuItem obj) {
 				if (index != null) {
-					GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0,0,0,index.chunkX, index.chunkY, index.chunkZ));
+					GLChunk chunk = GLChunkManager.chunks
+							.get(new GLIndex(0, 0, 0, index.chunkX, index.chunkY, index.chunkZ));
 					if (chunk != null) {
 						System.out.println("tesT");
-						GLObject object = chunk.objects.get(new GLIndex(index.x, index.y, index.z,index.chunkX, index.chunkY, index.chunkZ));
+						GLObject object = chunk.objects
+								.get(new GLIndex(index.x, index.y, index.z, index.chunkX, index.chunkY, index.chunkZ));
 						if (object != null) {
 							Point position = new Point((int) ((index.chunkX - index.chunkZ) * (chunk.size.x * 32)),
 									(int) (((index.chunkZ + index.chunkX) * (chunk.size.x * 16))

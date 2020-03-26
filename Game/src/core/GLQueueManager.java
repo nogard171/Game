@@ -35,7 +35,7 @@ public class GLQueueManager {
 	APathFinder pathFinder;
 
 	public void setup() {
-		
+
 		pathFinder = new APathFinder();
 
 		GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, 0, 0, 0));
@@ -57,15 +57,17 @@ public class GLQueueManager {
 		if (!endExists(newTask)) {
 			tasks.add(newTask);
 		} else {
-			GLIndex waitingCharacterIndex = waitingCharacters.removeFirst();
+			if (waitingCharacters.size() > 0) {
+				GLIndex waitingCharacterIndex = waitingCharacters.removeFirst();
 
-			int posX = (waitingCharacterIndex.x - waitingCharacterIndex.z) * 32;
-			int posY = (waitingCharacterIndex.y - 1) * 32;
-			int posZ = ((waitingCharacterIndex.z + waitingCharacterIndex.x) * 16) + posY;
+				int posX = (waitingCharacterIndex.x - waitingCharacterIndex.z) * 32;
+				int posY = (waitingCharacterIndex.y - 1) * 32;
+				int posZ = ((waitingCharacterIndex.z + waitingCharacterIndex.x) * 16) + posY;
 
-			GLUIManager.showMessage(new Vector2f(posX, posZ), "Position being serviced.");
+				GLUIManager.showMessage(new Vector2f(posX, posZ), "Position being serviced.");
 
-			waitingCharacters.add(waitingCharacterIndex);
+				waitingCharacters.add(waitingCharacterIndex);
+			}
 		}
 	}
 
@@ -116,11 +118,12 @@ public class GLQueueManager {
 				if (waitingCharacters.size() > 0) {
 					GLIndex waitingCharacterIndex = waitingCharacters.removeFirst();
 					if (waitingCharacterIndex != null) {
-						GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(waitingCharacterIndex.chunkX,
+						GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, waitingCharacterIndex.chunkX,
 								waitingCharacterIndex.chunkY, waitingCharacterIndex.chunkZ));
 						if (chunk != null) {
 							GLIndex objIndex = new GLIndex(waitingCharacterIndex.x, waitingCharacterIndex.y,
-									waitingCharacterIndex.z);
+									waitingCharacterIndex.z, waitingCharacterIndex.chunkX, waitingCharacterIndex.chunkY,
+									waitingCharacterIndex.chunkZ);
 							GLObject obj = chunk.objects.get(objIndex);
 							if (obj != null) {
 								task.startIndex = objIndex;
@@ -132,7 +135,7 @@ public class GLQueueManager {
 								if (charaObj.getType() == GLType.CHARACTER) {
 									task.character = (GLCharacter) chunk.objects.get(index);
 								}
-
+								
 								ready = true;
 								startedTasks.put(task.endIndex, task);
 							}
@@ -155,59 +158,86 @@ public class GLQueueManager {
 
 	private void process(GLTask task) {
 		if (task.action == GLAction.MOVE) {
-			if (task.startIndex != null && task.endIndex != null) {
-				GLChunk chunk = GLChunkManager.chunks
-						.get(new GLIndex(task.startIndex.chunkX, task.startIndex.chunkY, task.startIndex.chunkZ));
-				if (chunk != null) {
+			if (task.startIndex != null && task.endIndex != null && task.character != null) {
 
-					if (task.path == null) {
-						task.path = pathFinder.find(chunk, new Point(task.startIndex.x, task.startIndex.z),
-								new Point(task.endIndex.x, task.endIndex.z));
-						task.step = 0;
-						task.started = true;
+				if (task.path == null) {
+					task.path = pathFinder.find(task.startIndex, task.endIndex);
+
+					task.step = 0;
+					task.started = true;
+				}
+				if (task.path != null) {
+					if (task.step > 0) {
+						Point previousP = (Point) task.path.get(task.step - 1);
+
+						GLObject obj = new GLObject(GLType.AIR);
+
+						int cx = (int) Math.floor(previousP.x / (int) GLChunkManager.chunkSize.x);
+						int cy = (int) Math.floor(previousP.y / (int) GLChunkManager.chunkSize.z);
+
+						int nx = (int) (previousP.x % GLChunkManager.chunkSize.x);
+						int ny = (int) (previousP.y % GLChunkManager.chunkSize.z);
+
+						GLIndex index = new GLIndex(nx, 0, ny, cx, 0, cy);
+
+						GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, cx, 0, cy));
+
+						if (chunk != null) {
+
+							chunk.setObject(index, obj);
+						}
 					}
-					if (task.path != null) {
-						if (task.step > 0) {
-							Point previousP = (Point) task.path.get(task.step - 1);
-							GLObject obj = new GLObject(GLType.AIR);
-							GLIndex index = new GLIndex(previousP.x, 0, previousP.y, 0, 0, 0);
+					if (task.step == 0) {
+
+						GLObject obj = new GLObject(GLType.AIR);
+
+						int cx = (int) Math.floor(task.startIndex.x / (int) GLChunkManager.chunkSize.x);
+						int cy = (int) Math.floor(task.startIndex.y / (int) GLChunkManager.chunkSize.z);
+
+						int nx = (int) (task.startIndex.x % GLChunkManager.chunkSize.x);
+						int ny = (int) (task.startIndex.y % GLChunkManager.chunkSize.z);
+
+						GLIndex index = new GLIndex(nx, 0, ny, cx, 0, cy);
+
+						GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, cx, 0, cy));
+						if (chunk != null) {
 
 							chunk.setObject(index, obj);
 						}
-						if (task.step == 0) {
-							GLObject obj = new GLObject(GLType.AIR);
-							GLIndex index = new GLIndex(task.startIndex.x, 0, task.startIndex.z, 0, 0, 0);
-							chunk.setObject(index, obj);
-						}
-						if (task.path.size() > task.step) {
-							Point p = (Point) task.path.get(task.step);
+					}
+					if (task.path.size() > task.step) {
+						Point p = (Point) task.path.get(task.step);
 
-							if (task.character != null) {
-								GLCharacter obj = task.character;
-								GLIndex index = new GLIndex(p.x, 0, p.y, 0, 0, 0);
+						int cx = (int) Math.floor(p.x / (int) GLChunkManager.chunkSize.x);
+						int cy = (int) Math.floor(p.y / (int) GLChunkManager.chunkSize.z);
+
+						int nx = (int) (p.x % GLChunkManager.chunkSize.x);
+						int ny = (int) (p.y % GLChunkManager.chunkSize.z);
+						
+						System.out.println("test123: " + cx + "," + cy);
+
+						if (task.character != null) {
+							GLCharacter obj = task.character;
+							GLIndex index = new GLIndex(nx, 0, ny, cx, 0, cy);
+							GLChunk chunk = GLChunkManager.chunks.get(new GLIndex(0, 0, 0, cx, 0, cy));
+
+							if (chunk != null) {
+
 								chunk.setObject(index, obj);
 							}
-							task.step++;
 						}
+						task.step++;
 					}
 				}
 			}
-			if (task.path != null) {
-				if (task.step >= task.path.size()) {
-
-					if (!task.isLead) {
-						waitingCharacters.add(task.endIndex);
-					}
-
-					task.complete = true;
-					task.started = false;
-				}
-			} else {
-
+		}
+		if (task.path != null) {
+			if (task.step >= task.path.size()) {
+				System.out.println("test: " + task.isLead);
 				if (!task.isLead) {
+					startedTasks.remove(task.endIndex);
 					waitingCharacters.add(task.endIndex);
 				}
-
 				task.complete = true;
 				task.started = false;
 			}
@@ -217,12 +247,11 @@ public class GLQueueManager {
 			GLTask leadTask = startedTasks.get(task.leadIndex);
 			if (leadTask != null) {
 				if (leadTask.complete) {
-					GLChunk chunk = GLChunkManager.chunks
-							.get(new GLIndex(task.endIndex.chunkX, task.endIndex.chunkY, task.endIndex.chunkZ));
+					GLChunk chunk = GLChunkManager.chunks.get(
+							new GLIndex(0, 0, 0, task.endIndex.chunkX, task.endIndex.chunkY, task.endIndex.chunkZ));
 					if (chunk != null) {
 						GLResource obj = (GLResource) chunk.objects.get(task.endIndex);
 						if (obj != null) {
-							System.out.println("chop: " + task.step);
 							if (task.step >= 10) {
 								obj.setType(obj.getGrowType());
 
@@ -242,12 +271,13 @@ public class GLQueueManager {
 				}
 			}
 		}
+
 		if (task.action == GLAction.MINE) {
 			GLTask leadTask = startedTasks.get(task.leadIndex);
 			if (leadTask != null) {
 				if (leadTask.complete) {
-					GLChunk chunk = GLChunkManager.chunks
-							.get(new GLIndex(task.endIndex.chunkX, task.endIndex.chunkY, task.endIndex.chunkZ));
+					GLChunk chunk = GLChunkManager.chunks.get(
+							new GLIndex(0, 0, 0, task.endIndex.chunkX, task.endIndex.chunkY, task.endIndex.chunkZ));
 					if (chunk != null) {
 						GLResource obj = (GLResource) chunk.objects.get(task.endIndex);
 						if (obj != null) {
@@ -262,7 +292,6 @@ public class GLQueueManager {
 								startedTasks.remove(task.leadIndex);
 
 								waitingCharacters.add(task.leadIndex);
-
 								task.complete = true;
 							}
 							task.step++;
@@ -271,7 +300,7 @@ public class GLQueueManager {
 					}
 				}
 			}
-
 		}
+
 	}
 }
