@@ -7,9 +7,12 @@ import org.lwjgl.opengl.GL11;
 
 public class Window {
 
+	public static int width = 800;
+	public static int height = 600;
+
 	public static void start() {
 		try {
-			Display.setDisplayMode(new DisplayMode(800, 600));
+			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setResizable(true);
 			Display.create();
 		} catch (LWJGLException e) {
@@ -22,7 +25,19 @@ public class Window {
 	}
 
 	public static void setup() {
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D); 
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+		
+		GL11.glViewport(0, 0, width, height);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, 1, -1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
 	public static void update() {
