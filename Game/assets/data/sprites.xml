@@ -1,0 +1,25 @@
+<sprites file="assets/sprites/spritesheet.png">
+	<sprite name="grass">
+		<shape>
+			<vector x="0" y="0"/>
+			<vector x="32" y="0"/>
+			<vector x="32" y="32"/>
+			<vector x="0" y="32"/>
+		</shape>
+		<texture>
+			<vector x="32" y="0"/>
+			<vector x="64" y="0"/>
+			<vector x="64" y="32"/>
+			<vector x="32" y="32"/>		
+		</texture>
+	</sprite>
+	<sprite name="dirt">
+		<shape inherit="grass"/>
+		<texture>
+			<vector x="64" y="0"/>
+			<vector x="96" y="0"/>
+			<vector x="96" y="32"/>
+			<vector x="64" y="32"/>		
+		</texture>
+	</sprite>
+</sprites>
