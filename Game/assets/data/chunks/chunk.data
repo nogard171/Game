@@ -1,0 +1,8 @@
+<chunk>
+	<object name="grass" layer="ground" index="0,0"/>
+	<object name="grass" layer="ground" index="1,0"/>
+	<object name="grass" layer="ground" index="2,0"/>
+	<object name="grass" layer="ground" index="3,0"/>
+	<object name="grass" layer="ground" index="4,0"/>
+	<object name="grass" layer="ground" index="5,0"/>
+</chunk>

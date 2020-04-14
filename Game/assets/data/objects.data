@@ -1,0 +1,8 @@
+<objects>
+	<object name="grass">
+		<sprite name="grass"/>
+	</object>
+	<object name="dirt">
+		<sprite name="dirt"/>
+	</object>
+</objects>
