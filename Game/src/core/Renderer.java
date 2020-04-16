@@ -60,7 +60,7 @@ public class Renderer {
 			for (int i = 0; i < sprite.shape.npoints; i++) {
 				GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float) texture.getImageWidth(),
 						(float) sprite.texture.ypoints[i] / (float) texture.getImageHeight());
-				GL11.glVertex2i(sprite.shape.xpoints[i], sprite.shape.ypoints[i]);
+				GL11.glVertex2i(x + sprite.shape.xpoints[i], y + sprite.shape.ypoints[i]);
 			}
 		}
 	}
