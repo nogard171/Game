@@ -8,6 +8,9 @@ import org.lwjgl.opengl.GL11;
 import game.Base;
 
 public class Window {
+
+	private static int maxSync = 999;
+
 	public static void setup() {
 		try {
 			Display.setDisplayMode(new DisplayMode(Integer.parseInt(Base.settings.getProperty("window.width")),
@@ -49,19 +52,29 @@ public class Window {
 
 		}
 		Display.update();
+		boolean reachedMaxSync = false;
 		if (Base.settings.containsKey("window.vsync")) {
 			if (Boolean.parseBoolean(Base.settings.getProperty("window.vsync"))) {
 				if (Base.settings.containsKey("window.fps")) {
 					int fps = Integer.parseInt(Base.settings.getProperty("window.fps"));
-					if (fps > 999) {
-						Display.sync(999);
+					if (fps > maxSync) {
+						// Display.sync(999);
+						reachedMaxSync = true;
 					} else {
 						Display.sync(fps);
 					}
 				} else {
-					Display.sync(999);
+					reachedMaxSync = true;
 				}
+			} else {
+				reachedMaxSync = true;
 			}
+		} else {
+			reachedMaxSync = true;
+		}
+
+		if (reachedMaxSync) {
+			Display.sync(maxSync);
 		}
 	}
 
