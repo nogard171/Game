@@ -52,7 +52,7 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		Display.sync(100);
+		Display.sync(999);
 	}
 
 	public static void render() {

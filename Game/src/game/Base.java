@@ -1,12 +1,18 @@
 package game;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.Color;
 
 import core.Chunk;
 import core.Renderer;
 import core.Window;
+import utils.FPS;
 
 public class Base {
 
@@ -31,6 +37,8 @@ public class Base {
 
 		chunk = new Chunk();
 		chunk.load();
+		
+		FPS.setup();
 	}
 
 	public void update() {
@@ -39,6 +47,30 @@ public class Base {
 		if (Window.close()) {
 			this.isRunning = false;
 		}
+		
+		FPS.updateFPS();
+
+		float speed = FPS.getDelta();
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			view.x += speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			view.x -= speed;
+
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			view.y += speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			view.y -= speed;
+
+		}
+		
+		int mouseX = Mouse.getX();
+		int mouseY = Mouse.getY();
+		
+		
 	}
 
 	Chunk chunk;
@@ -53,6 +85,9 @@ public class Base {
 		chunk.render();
 
 		GL11.glPopMatrix();
+		
+		Renderer.renderQuad(new Rectangle(0, 0, 200, 32), new Color(0, 0, 0, 0.5f));
+		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
 	}
 
 	public void destroy() {
