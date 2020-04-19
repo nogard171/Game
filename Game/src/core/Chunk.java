@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Point;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,21 +13,61 @@ import game.Base;
 public class Chunk {
 	private int id = -1;
 	public boolean updateID = false;
+	public Polygon chunkBounds;
 
 	public HashMap<String, Object> objects = new HashMap<String, Object>();
 	private Vector3f size = new Vector3f(16, 16, 16);
 
 	public static ArrayList<Object> rendererObjects = new ArrayList<Object>();
 
+	private Point position = new Point(0, 0);
+	private Vector3f index;
+
+	public Chunk(Vector3f newIndex) {
+		index = newIndex;
+		int posX = (int) (((index.x - index.z) * 32) * size.x);
+		int posY = (int) (((0 - index.y) * 32) * size.y);
+		int posZ = (int) ((((index.z + index.x) * 16) - posY) * size.z);
+
+		position = new Point(posX, posZ);
+
+	}
+
+	public Vector3f getIndex() {
+		return index;
+	}
+
 	public void load() {
+
+		chunkBounds = new Polygon();
+
+		chunkBounds.addPoint(position.x + 32, position.y);
+		chunkBounds.addPoint(((int) (size.x + 1) * 32) + position.x, ((int) (size.y) * 16) + position.y);
+
+		chunkBounds.addPoint((((int) (size.x + 1) * 32)) + position.x, (((int) (size.y) * 48) + 32) + position.y);
+
+		chunkBounds.addPoint(32 + position.x, (((int) (size.y) * 64) + 32) + position.y);
+
+		chunkBounds.addPoint((32 - ((int) (size.x) * 32)) + position.x, (((int) (size.y) * 48) + 32) + position.y);
+
+		chunkBounds.addPoint((32 - ((int) (size.x) * 32)) + position.x, ((int) (size.y) * 16) + position.y);
+
+		chunkBounds.addPoint(position.x + 32, position.y);
+
+		Object charc = new Object(new Vector3f(0, 0, 0));
+		charc.setSprite("character");
+
+		objects.put("0,0,0", charc);
+
 		for (int y = (int) (size.y); y >= 0; y--) {
 			for (int x = 0; x < size.x; x++) {
 				for (int z = 0; z < size.x; z++) {
-					Object obj = new Object();
+					Object obj = new Object(
+							new Vector3f(x + (index.x * size.x), y + (index.y * size.y), z + (index.z * size.z)));
 
-					int posX = (x - z) * 33;
-					int posY = (1 - y) * 33;
-					int posZ = ((z + x) * 17) - posY;
+					int posX = position.x + ((x - z) * 32);
+					int posY = ((0 - y) * 32);
+					int posZ = position.y + (((z + x) * 16) - posY);
 
 					Polygon newBounds = new Polygon();
 					newBounds.addPoint(posX + 32, posZ);
@@ -67,9 +108,9 @@ public class Chunk {
 						if (obj != null) {
 							String sprite = obj.getSprite();
 							if (sprite != null) {
-								int posX = (x - z) * 33;
-								int posY = (1 - y) * 33;
-								int posZ = ((z + x) * 17) - posY;
+								int posX = position.x + ((x - z) * 32);
+								int posY = ((0 - y) * 32);
+								int posZ = position.y + (((z + x) * 16) - posY);
 								Renderer.renderSprite(sprite, posX, posZ);
 								rendererObjects.add(obj);
 							}
@@ -113,10 +154,13 @@ public class Chunk {
 	}
 
 	public void update() {
+	}
 
-		if (Base.mousePosition != null) {
-			for (Object obj : rendererObjects) {
-				if (obj.bounds.contains(Base.mousePosition)) {
+	public void handleHover() {
+		for (Object obj : rendererObjects) {
+			if (obj.bounds != null) {
+				System.out.println("Chunk: " + getIndex());
+				if (obj.bounds.contains(Base.mousePosition) && !Base.hoveredObjects.contains(obj)) {
 					Base.hoveredObjects.add(obj);
 				}
 			}
@@ -128,8 +172,24 @@ public class Chunk {
 			build();
 			updateID = false;
 		} else {
+			GL11.glColor3f(1, 1, 1);
+			// GL11.glPushMatrix();
+			// GL11.glTranslatef(position.x, position.y, 0);
 			GL11.glCallList(id);
+			// GL11.glPopMatrix();
+
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glColor3f(1, 0, 0);
+			GL11.glBegin(GL11.GL_POLYGON);
+			for (int i = 0; i < chunkBounds.xpoints.length - 1; i++) {
+				GL11.glVertex2i(chunkBounds.xpoints[i], chunkBounds.ypoints[i]);
+			}
+			GL11.glEnd();
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
+
 	}
 
 	int layer = 0;

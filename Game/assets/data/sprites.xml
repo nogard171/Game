@@ -22,4 +22,19 @@
 			<vector x="64" y="32"/>		
 		</texture>
 	</sprite>
+	<sprite name="character">
+		<offset x="0" y="0"/>
+		<shape>
+			<vector x="0" y="0"/>
+			<vector x="45" y="0"/>
+			<vector x="45" y="22"/>
+			<vector x="0" y="22"/>
+		</shape>
+		<texture>
+			<vector x="0" y="169"/>
+			<vector x="45" y="169"/>
+			<vector x="45" y="191"/>
+			<vector x="0" y="191"/>		
+		</texture>
+	</sprite>
 </sprites>

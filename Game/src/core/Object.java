@@ -2,10 +2,17 @@ package core;
 
 import java.awt.Polygon;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class Object {
 	private String sprite;
 	public Polygon bounds;
 	public boolean updated = false;
+	private Vector3f index;
+
+	public Object(Vector3f newIndex) {
+		index = newIndex;
+	}
 
 	public void setSprite(String newSprite) {
 		if (newSprite != sprite) {
@@ -27,5 +34,9 @@ public class Object {
 
 	public Polygon getBounds() {
 		return bounds;
+	}
+
+	public Vector3f getIndex() {
+		return index;
 	}
 }

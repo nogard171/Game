@@ -8,12 +8,15 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import core.Chunk;
+import core.ChunkManager;
 import core.Renderer;
 import core.Window;
 import utils.FPS;
+import core.Object;
 
 public class Base {
 
@@ -36,16 +39,14 @@ public class Base {
 		Window.start();
 		Window.setup();
 		Renderer.load();
-
-		chunk = new Chunk();
-		chunk.load();
+		chunkManager.setup();
 
 		FPS.setup();
 	}
 
 	public void update() {
 		Window.update();
-		hoveredObjects.clear();
+		//hoveredObjects.clear();
 
 		mousePosition = new Point(Mouse.getX() - view.x, (Window.height - Mouse.getY()) - view.y);
 
@@ -71,26 +72,14 @@ public class Base {
 			view.y -= speed;
 
 		}
-		int mouseWheel = Mouse.getDWheel();
-		if (mouseWheel > 0) {
-			if (layer >= 0) {
-				layer--;
-			}
-		} else if (mouseWheel < 0) {
-			if (layer <= 15) {
-				layer++;
-			}
-		}
-		chunk.setLayer(layer);
-		chunk.update();
+		chunkManager.update();
 
 	}
 
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
 
-	Chunk chunk;
-	public static Point view = new Point(100, 100);
-	int layer = 0;
+	public static Point view = new Point(0, 0);
+	ChunkManager chunkManager = new ChunkManager();
 
 	public void render() {
 		Window.render();
@@ -98,16 +87,22 @@ public class Base {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(view.x, view.y, 0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, Renderer.texture.getTextureID());
-		GL11.glColor3f(1, 1, 1);
-		chunk.render();
 
+		chunkManager.render();
 		GL11.glPopMatrix();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 32), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
 
-
 		Renderer.renderText(new Vector2f(0, 16), "Hover Count: " + hoveredObjects.size(), 12, Color.white);
+
+		Renderer.renderQuad(new Rectangle(100, 0, 200, 32), new Color(0, 0, 0, 0.5f));
+		int i = 0;
+		for (Object obj : hoveredObjects) {
+			Renderer.renderText(new Vector2f(100, i * 16), "index: " + obj.getIndex(), 12, Color.white);
+			i++;
+		}
+
 	}
 
 	public void destroy() {

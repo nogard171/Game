@@ -31,6 +31,23 @@ public class Renderer {
 			e.printStackTrace();
 		}
 
+		Sprite character = new Sprite();
+		Polygon characterShape = new Polygon();
+		characterShape.addPoint(0, 0);
+		characterShape.addPoint(45, 0);
+		characterShape.addPoint(45, 22);
+		characterShape.addPoint(0, 22);
+		character.shape = characterShape;
+
+		Polygon characterTexture = new Polygon();
+		characterTexture.addPoint(0, 169);
+		characterTexture.addPoint(45, 169);
+		characterTexture.addPoint(45, 191);
+		characterTexture.addPoint(0, 191);
+		character.texture = characterTexture;
+
+		sprites.put("character", character);
+
 		Sprite grass = new Sprite();
 		Polygon newShape = new Polygon();
 		newShape.addPoint(0, 0);
