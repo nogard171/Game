@@ -22,13 +22,197 @@
 			<vector x="0" y="64"/>		
 		</texture>
 	</sprite>
-	<sprite name="test">
-		<shape inherit="grass"/>
+	<sprite name="character_down_idle">
+		<shape>
+			<vector x="0" y="0"/>
+			<vector x="32" y="0"/>
+			<vector x="32" y="64"/>
+			<vector x="0" y="64"/>
+		</shape>
 		<texture>
-			<vector x="32" y="32"/>
-			<vector x="64" y="32"/>
-			<vector x="64" y="64"/>
-			<vector x="32" y="64"/>		
+			<vector x="0" y="65"/>
+			<vector x="32" y="65"/>
+			<vector x="32" y="128"/>
+			<vector x="0" y="128"/>		
+		</texture>
+	</sprite>
+	
+	<sprite name="character_up_idle">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="128"/>
+			<vector x="32" y="128"/>
+			<vector x="32" y="192"/>
+			<vector x="0" y="192"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_left_idle">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="256"/>
+			<vector x="32" y="256"/>
+			<vector x="32" y="320"/>
+			<vector x="0" y="320"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_right_idle">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="192"/>
+			<vector x="32" y="192"/>
+			<vector x="32" y="256"/>
+			<vector x="0" y="256"/>		
+		</texture>
+	</sprite>
+	
+	
+	<sprite name="character_down_walk_0">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="32" y="65"/>
+			<vector x="64" y="65"/>
+			<vector x="64" y="128"/>
+			<vector x="32" y="128"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_down_walk_1">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="65"/>
+			<vector x="32" y="65"/>
+			<vector x="32" y="128"/>
+			<vector x="0" y="128"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_down_walk_2">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="64" y="65"/>
+			<vector x="96" y="65"/>
+			<vector x="96" y="128"/>
+			<vector x="64" y="128"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_down_walk_3">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="65"/>
+			<vector x="32" y="65"/>
+			<vector x="32" y="128"/>
+			<vector x="0" y="128"/>		
+		</texture>
+	</sprite>
+	
+	<sprite name="character_up_walk_0">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="32" y="128"/>
+			<vector x="64" y="128"/>
+			<vector x="64" y="192"/>
+			<vector x="32" y="192"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_up_walk_1">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="128"/>
+			<vector x="32" y="128"/>
+			<vector x="32" y="192"/>
+			<vector x="0" y="192"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_up_walk_2">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="64" y="128"/>
+			<vector x="96" y="128"/>
+			<vector x="96" y="192"/>
+			<vector x="64" y="192"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_up_walk_3">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="128"/>
+			<vector x="32" y="128"/>
+			<vector x="32" y="192"/>
+			<vector x="0" y="192"/>		
+		</texture>
+	</sprite>
+	
+	
+	<sprite name="character_right_walk_0">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="32" y="192"/>
+			<vector x="64" y="192"/>
+			<vector x="64" y="256"/>
+			<vector x="32" y="256"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_right_walk_1">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="192"/>
+			<vector x="32" y="192"/>
+			<vector x="32" y="256"/>
+			<vector x="0" y="256"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_right_walk_2">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="64" y="192"/>
+			<vector x="96" y="192"/>
+			<vector x="96" y="256"/>
+			<vector x="64" y="256"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_right_walk_3">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="192"/>
+			<vector x="32" y="192"/>
+			<vector x="32" y="256"/>
+			<vector x="0" y="256"/>		
+		</texture>
+	</sprite>
+	
+	
+	<sprite name="character_left_walk_0">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="32" y="256"/>
+			<vector x="64" y="256"/>
+			<vector x="64" y="320"/>
+			<vector x="32" y="320"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_left_walk_1">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="256"/>
+			<vector x="32" y="256"/>
+			<vector x="32" y="320"/>
+			<vector x="0" y="320"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_left_walk_2">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="64" y="256"/>
+			<vector x="96" y="256"/>
+			<vector x="96" y="320"/>
+			<vector x="64" y="320"/>		
+		</texture>
+	</sprite>
+	<sprite name="character_left_walk_3">
+		<shape inherit="character_down_idle"/>
+		<texture>
+			<vector x="0" y="256"/>
+			<vector x="32" y="256"/>
+			<vector x="32" y="320"/>
+			<vector x="0" y="320"/>		
 		</texture>
 	</sprite>
 </sprites>

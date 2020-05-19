@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import core.RawSprite;
+import core.Sprite;
 import game.Base;
 import game.Main;
 
@@ -37,10 +37,10 @@ public class Loader {
 		Base.settings = newSettings;
 	}
 
-	public static HashMap<String, RawSprite> loadSprites() {
+	public static HashMap<String, Sprite> loadSprites() {
 		if (Base.settings != null) {
 			String tilesetFile = Base.settings.getProperty("assets.sprites");
-			HashMap<String, RawSprite> rawSprites = new HashMap<String, RawSprite>();
+			HashMap<String, Sprite> rawSprites = new HashMap<String, Sprite>();
 
 			try {
 				File inputFile = new File(tilesetFile);
@@ -59,14 +59,12 @@ public class Loader {
 					for (int tileTemp = 0; tileTemp < tileList.getLength(); tileTemp++) {
 						Node tileNode = tileList.item(tileTemp);
 
-						RawSprite raw = new RawSprite();
+						Sprite raw = new Sprite();
 
 						if (tileNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element tileElement = (Element) tileNode;
 							String name = tileElement.getAttribute("name");
 							raw.name = name;
-
-							System.out.println("Name: " + name);
 
 							NodeList shapeList = tileElement.getElementsByTagName("shape");
 							Node shapeNode = shapeList.item(0);
@@ -76,7 +74,6 @@ public class Loader {
 								String inherit = shapeElement.getAttribute("inherit");
 
 								if (inherit == "") {
-									System.out.println("No Inherit");
 									NodeList vectorList = shapeElement.getElementsByTagName("vector");
 									for (int vectorTemp = 0; vectorTemp < vectorList.getLength(); vectorTemp++) {
 										Node vectorNode = vectorList.item(vectorTemp);
@@ -88,11 +85,9 @@ public class Loader {
 											int y = Integer.parseInt(vectorElement.getAttribute("y"));
 
 											raw.shape.add(new Vector2f(x, y));
-											System.out.println("Shape: " + x + "," + y);
 										}
 									}
 								} else {
-									System.out.println("Inherit: " + inherit);
 									raw.inheritShape = inherit;
 								}
 
@@ -114,12 +109,12 @@ public class Loader {
 										int y = Integer.parseInt(vectorElement.getAttribute("y"));
 
 										raw.texture.add(new Vector2f(x, y));
-										System.out.println("Texture: " + x + "," + y);
 									}
 								}
 
 							}
 						}
+						
 						rawSprites.put(raw.name, raw);
 					}
 				}

@@ -1,0 +1,21 @@
+<animatedSprites>
+	<animatedSprite name="character" width="32" height="64">
+		<frames name="down_idle">
+			<frame sprite="character_down_idle"/>
+		</frames>
+		<frames name="up_idle">
+			<frame sprite="character_up_idle"/>
+		</frames>
+		<frames name="left_idle">
+			<frame sprite="character_left_idle"/>
+		</frames>
+		<frames name="right_idle">
+			<frame sprite="character_right_idle"/>
+		</frames>		
+		<frames name="down_walk">
+			<frame sprite="character_down_walk_0"/>
+			<frame sprite="character_down_walk_1"/>
+			<frame sprite="character_down_walk_2"/>
+		</frames>
+	</animatedSprite>
+</animatedSprites>

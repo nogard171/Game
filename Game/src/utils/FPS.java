@@ -12,6 +12,8 @@ public class FPS {
 	private static int currentFPS;
 	/** last fps time */
 	private static long lastFPS = 0;
+	
+	public static float delta = 0;
 
 	public static void setup() {
 		getDelta(); // call once before loop to initialise lastFrame
@@ -23,11 +25,10 @@ public class FPS {
 	 * 
 	 * @return milliseconds passed since last frame
 	 */
-	public static int getDelta() {
+	public static float getDelta() {
 		long time = getTime();
-		int delta = (int) (time - lastFrame);
+		float delta = (float) (time - lastFrame);
 		lastFrame = time;
-
 		return delta;
 	}
 
@@ -50,6 +51,8 @@ public class FPS {
 			lastFPS += 1000;
 		}
 		currentFPS++;
+		
+		delta = getDelta();
 	}
 
 	public static int getFPS() {

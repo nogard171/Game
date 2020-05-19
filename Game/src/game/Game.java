@@ -3,36 +3,31 @@ package game;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
-import core.Chunk;
-import utils.FPS;
+import core.WorldManager;
 import utils.Renderer;
 
 public class Game {
-	Chunk chunk;
+	WorldManager worldMgr;
 
 	public void setup() {
-		chunk = new Chunk();
-		chunk.setup();
-		chunk.build();
+		worldMgr = new WorldManager();
+		worldMgr.setup();
 	}
 
 	public void update() {
-
+		worldMgr.update();
 	}
 
 	public void render() {
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, Renderer.texture.getTextureID());
+		Renderer.bindTexture(0);
 		GL11.glColor3f(1, 1, 1);
 
-		chunk.render();
+		worldMgr.render();
 
-		chunk.renderFringe();
-
-		
 	}
 
 	public void destroy() {
-
+		worldMgr.destroy();
 	}
 }

@@ -1,6 +1,7 @@
 package core;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,6 +19,8 @@ public class Chunk {
 
 	private Point size = new Point(16, 16);
 
+	private boolean needsUpdating = false;
+
 	public void setup() {
 		for (int x = 0; x < size.x; x++) {
 			for (int y = 0; y < size.y; y++) {
@@ -27,14 +30,6 @@ public class Chunk {
 				obj.sprite = "grass";
 
 				groundObjects.put(index, obj);
-
-				Object maskObj = new Object();
-
-				maskObj.sprite = "test";
-
-				if (x == 5 && y == 6) {
-					maskObjects.put(index, maskObj);
-				}
 
 			}
 		}
@@ -61,6 +56,7 @@ public class Chunk {
 
 			}
 		}
+		GL11.glEnd();
 		GL11.glEndList();
 	}
 
@@ -79,7 +75,21 @@ public class Chunk {
 				}
 			}
 		}
+		GL11.glEnd();
 		GL11.glEndList();
+	}
+
+	public void setGround(Point index, Object newObject) {
+		groundObjects.put(index, newObject);
+		needsUpdating = true;
+	}
+
+	public void update() {
+		if (needsUpdating) {
+			build();
+			buildFringe();
+			needsUpdating = false;
+		}
 	}
 
 	public void render() {
