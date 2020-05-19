@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Point;
 import java.awt.Polygon;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -7,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class Object {
 	private String sprite;
 	public Polygon bounds;
+	public Point offset = new Point(0,0);
 	public boolean updated = false;
 	private Vector3f index;
 

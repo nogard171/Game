@@ -99,7 +99,7 @@ public class Base {
 		Renderer.renderQuad(new Rectangle(100, 0, 200, 32), new Color(0, 0, 0, 0.5f));
 		int i = 0;
 		for (Object obj : hoveredObjects) {
-			Renderer.renderText(new Vector2f(100, i * 16), "index: " + obj.getIndex(), 12, Color.white);
+			Renderer.renderText(new Vector2f(100, i * 16), "index: " + obj.getIndex() +"("+obj.getSprite()+")", 12, Color.white);
 			i++;
 		}
 

@@ -44,7 +44,7 @@ public class ChunkManager {
 
 		// chunk2.setLayer(layer);
 		// chunk2.update();
-
+		Base.hoveredObjects.clear();
 		for (Chunk chunk : chunks.values()) {
 
 			chunk.setLayer(layer);
