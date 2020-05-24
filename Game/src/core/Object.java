@@ -11,6 +11,8 @@ public class Object {
 	public Point offset = new Point(0,0);
 	public boolean updated = false;
 	private Vector3f index;
+	
+	public boolean known = false;
 
 	public Object(Vector3f newIndex) {
 		index = newIndex;

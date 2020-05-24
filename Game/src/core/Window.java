@@ -26,9 +26,12 @@ public class Window {
 		return Display.isCloseRequested();
 	}
 
+	public static boolean wasResized = false;
+
 	public static void resize() {
 		if (Display.wasResized()) {
 			setupViewport();
+			wasResized = true;
 		}
 	}
 
@@ -53,7 +56,7 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		Display.sync(999);
+		// Display.sync(999);
 	}
 
 	public static void render() {

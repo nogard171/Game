@@ -48,12 +48,24 @@ public class Renderer {
 
 		sprites.put("character", character);
 
-		Sprite grass = new Sprite();
+		Sprite unknown = new Sprite();
 		Polygon newShape = new Polygon();
 		newShape.addPoint(0, 0);
 		newShape.addPoint(64, 0);
 		newShape.addPoint(64, 64);
 		newShape.addPoint(0, 64);
+		unknown.shape = newShape;
+
+		Polygon unknownTexture = new Polygon();
+		unknownTexture.addPoint(0, 0);
+		unknownTexture.addPoint(64, 0);
+		unknownTexture.addPoint(64, 64);
+		unknownTexture.addPoint(0, 64);
+		unknown.texture = unknownTexture;
+
+		sprites.put("unknown", unknown);
+
+		Sprite grass = new Sprite();
 		grass.shape = newShape;
 
 		Polygon grassTexture = new Polygon();

@@ -39,6 +39,9 @@ public class Base {
 		Window.start();
 		Window.setup();
 		Renderer.load();
+
+		view = new Rectangle(0, 0, Window.width, Window.height);
+
 		chunkManager.setup();
 
 		FPS.setup();
@@ -46,12 +49,18 @@ public class Base {
 
 	public void update() {
 		Window.update();
-		//hoveredObjects.clear();
+		// hoveredObjects.clear();
 
-		mousePosition = new Point(Mouse.getX() - view.x, (Window.height - Mouse.getY()) - view.y);
+		mousePosition = new Point(Mouse.getX() + view.x, (Window.height - Mouse.getY()) + view.y);
 
 		if (Window.close()) {
 			this.isRunning = false;
+		}
+
+		if (Window.wasResized) {
+			view.width = Window.width;
+			view.height = Window.height;
+			Window.wasResized = false;
 		}
 
 		FPS.updateFPS();
@@ -59,17 +68,17 @@ public class Base {
 		float speed = FPS.getDelta();
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			view.x += speed;
+			view.x -= speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			view.x -= speed;
+			view.x += speed;
 
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			view.y += speed;
+			view.y -= speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			view.y -= speed;
+			view.y += speed;
 
 		}
 		chunkManager.update();
@@ -78,28 +87,37 @@ public class Base {
 
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
 
-	public static Point view = new Point(0, 0);
+	public static Rectangle view = new Rectangle(0, 0, 0, 0);
 	ChunkManager chunkManager = new ChunkManager();
 
 	public void render() {
 		Window.render();
 
 		GL11.glPushMatrix();
-		GL11.glTranslatef(view.x, view.y, 0);
+		GL11.glTranslatef(-view.x, -view.y, 0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, Renderer.texture.getTextureID());
 
 		chunkManager.render();
 		GL11.glPopMatrix();
 
-		Renderer.renderQuad(new Rectangle(0, 0, 200, 32), new Color(0, 0, 0, 0.5f));
+		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
 
 		Renderer.renderText(new Vector2f(0, 16), "Hover Count: " + hoveredObjects.size(), 12, Color.white);
 
-		Renderer.renderQuad(new Rectangle(100, 0, 200, 32), new Color(0, 0, 0, 0.5f));
+		Renderer.renderText(new Vector2f(0, 32), "Render Count: " + ChunkManager.getRenderCount(), 12, Color.white);
+
+		Renderer.renderText(new Vector2f(0, 48), "Chunk Count: " + ChunkManager.chunksInView.size(), 12, Color.white);
+
+		Renderer.renderQuad(new Rectangle(200, 0, 300, hoveredObjects.size() * 16), new Color(0, 0, 0, 0.5f));
 		int i = 0;
 		for (Object obj : hoveredObjects) {
-			Renderer.renderText(new Vector2f(100, i * 16), "index: " + obj.getIndex() +"("+obj.getSprite()+")", 12, Color.white);
+			String sprite = obj.getSprite();
+			if (!obj.known) {
+				sprite = "unknown";
+			}
+			Renderer.renderText(new Vector2f(200, i * 16), "index: " + obj.getIndex() + "(" + sprite + ")", 12,
+					Color.white);
 			i++;
 		}
 

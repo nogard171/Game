@@ -1,7 +1,10 @@
 package core;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -10,23 +13,27 @@ import game.Base;
 
 public class ChunkManager {
 
-	// Chunk chunk;
-	// Chunk chunk2;
-	LinkedHashMap<Vector3f, Chunk> chunks = new LinkedHashMap<Vector3f, Chunk>();
+	public static Vector3f size = new Vector3f(16, 16, 16);
+	public static LinkedHashMap<String, Chunk> chunks = new LinkedHashMap<String, Chunk>();
+
+	public static ArrayList<Chunk> chunksInView = new ArrayList<Chunk>();
 
 	int layer = 0;
+	APathFinder pathFinder;
 
 	public void setup() {
-		Chunk chunk = new Chunk(new Vector3f(0, 0, 0));
-		chunk.load();
-		chunks.put(chunk.getIndex(), chunk);
+		pathFinder = new APathFinder();
 
-		Chunk chunk2 = new Chunk(new Vector3f(1, 0, 0));
-		chunk2.load();
-		chunks.put(chunk2.getIndex(), chunk2);
-
-		System.out.println("test:" + chunks.size());
+		for (int x = 0; x < 1; x++) {
+			for (int z = 0; z < 1; z++) {
+				Chunk chunk = new Chunk(new Vector3f(x, 0, z));
+				chunk.load();
+				chunks.put(chunk.getIndex(), chunk);
+			}
+		}
 	}
+
+	int leftCount = 0;
 
 	public void update() {
 		int mouseWheel = Mouse.getDWheel();
@@ -35,16 +42,12 @@ public class ChunkManager {
 				layer--;
 			}
 		} else if (mouseWheel < 0) {
-			if (layer <= 15) {
+			if (layer <= size.y - 2) {
 				layer++;
 			}
 		}
-		// chunk.setLayer(layer);
-		// chunk.update();
-
-		// chunk2.setLayer(layer);
-		// chunk2.update();
 		Base.hoveredObjects.clear();
+		chunksInView.clear();
 		for (Chunk chunk : chunks.values()) {
 
 			chunk.setLayer(layer);
@@ -53,19 +56,44 @@ public class ChunkManager {
 			if (chunk.chunkBounds.contains(Base.mousePosition)) {
 				chunk.handleHover();
 			}
+			if (chunk.chunkBounds.intersects(Base.view)) {
+				chunksInView.add(chunk);
+			}
+		}
+		if (Base.hoveredObjects.size() > 0 && Mouse.isButtonDown(0) && leftCount == 0) {
+			System.out.println("end: " + (int) Base.hoveredObjects.get(0).getIndex().x + ","
+					+ (int) Base.hoveredObjects.get(0).getIndex().y + ","
+					+ (int) Base.hoveredObjects.get(0).getIndex().z);
+
+			List test = pathFinder.find(new Vector3f(0, 0, 0),
+					new Vector3f((int) Base.hoveredObjects.get(0).getIndex().x,
+							(int) Base.hoveredObjects.get(0).getIndex().y,
+							(int) Base.hoveredObjects.get(0).getIndex().z));
+			System.out.println("LIST: " + test);
+			if (test != null) {
+				System.out.println("Count: " + test.size());
+			}
+			leftCount++;
+		} else if (!Mouse.isButtonDown(0)) {
+			leftCount = 0;
 		}
 	}
 
 	public void render() {
-		// chunk.render();
-
-		// chunk2.render();
-		for (Chunk chunk : chunks.values()) {
+		for (Chunk chunk : chunksInView) {
 			chunk.render();
 		}
 	}
 
 	public void destroy() {
 
+	}
+
+	public static int getRenderCount() {
+		int count = 0;
+		for (Chunk chunk : chunksInView) {
+			count += chunk.renderedObjects.size();
+		}
+		return count;
 	}
 }

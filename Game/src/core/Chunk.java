@@ -16,7 +16,6 @@ public class Chunk {
 	public Polygon chunkBounds;
 
 	public HashMap<String, Object> objects = new HashMap<String, Object>();
-	private Vector3f size = new Vector3f(4, 4, 4);
 
 	public ArrayList<Object> renderedObjects = new ArrayList<Object>();
 
@@ -25,15 +24,15 @@ public class Chunk {
 
 	public Chunk(Vector3f newIndex) {
 		index = newIndex;
-		int posX = (int) (((index.x - index.z) * 32) * size.x);
-		int posY = (int) (((0 - index.y) * 32) * size.y);
-		int posZ = (int) ((((index.z + index.x) * 16) - posY) * size.z);
+		int posX = (int) (((index.x - index.z) * 32) * ChunkManager.size.x);
+		int posY = (int) (((0 - index.y) * 32) * ChunkManager.size.y);
+		int posZ = (int) ((((index.z + index.x) * 16) - posY) * ChunkManager.size.z);
 
 		position = new Point(posX, posZ);
 	}
 
-	public Vector3f getIndex() {
-		return index;
+	public String getIndex() {
+		return (int) index.x + "," + (int) index.y + "," + (int) index.z;
 	}
 
 	public void load() {
@@ -41,15 +40,21 @@ public class Chunk {
 		chunkBounds = new Polygon();
 
 		chunkBounds.addPoint(position.x + 32, position.y);
-		chunkBounds.addPoint(((int) (size.x + 1) * 32) + position.x, ((int) (size.y) * 16) + position.y);
 
-		chunkBounds.addPoint((((int) (size.x + 1) * 32)) + position.x, (((int) (size.y) * 48) + 32) + position.y - 32);
+		chunkBounds.addPoint(((int) (ChunkManager.size.x + 1) * 32) + position.x,
+				position.y + ((int) (ChunkManager.size.z) * 16));
 
-		chunkBounds.addPoint(32 + position.x, (((int) (size.y) * 64) + 32) + position.y - 32);
+		chunkBounds.addPoint((((int) (ChunkManager.size.x + 1) * 32)) + position.x,
+				(((int) (ChunkManager.size.y) * 32)) + position.y + ((int) (ChunkManager.size.z) * 16));
 
-		chunkBounds.addPoint((32 - ((int) (size.x) * 32)) + position.x, (((int) (size.y) * 48) + 32) + position.y - 32);
+		chunkBounds.addPoint(32 + position.x,
+				(((int) (ChunkManager.size.y) * 32)) + position.y + ((int) (ChunkManager.size.z) * 32));
 
-		chunkBounds.addPoint((32 - ((int) (size.x) * 32)) + position.x, ((int) (size.y) * 16) + position.y);
+		chunkBounds.addPoint((32 - ((int) (ChunkManager.size.x) * 32)) + position.x,
+				(((int) (ChunkManager.size.y) * 32)) + position.y + ((int) (ChunkManager.size.z) * 16));
+
+		chunkBounds.addPoint((32 - ((int) (ChunkManager.size.x) * 32)) + position.x,
+				position.y + ((int) (ChunkManager.size.z) * 16));
 
 		chunkBounds.addPoint(position.x + 32, position.y);
 
@@ -57,11 +62,11 @@ public class Chunk {
 		if (index.x != 0 || index.y != 0 || index.z != 0) {
 			offset = 1;
 		}
-		for (int y = (int) (size.y) - 1; y >= 0; y--) {
-			for (int x = 0; x < size.x; x++) {
-				for (int z = 0; z < size.x; z++) {
-					Object obj = new Object(
-							new Vector3f(x + (index.x * size.x), y + (index.y * size.y), z + (index.z * size.z)));
+		for (int y = (int) (ChunkManager.size.y) - 1; y >= 0; y--) {
+			for (int x = 0; x < ChunkManager.size.x; x++) {
+				for (int z = 0; z < ChunkManager.size.x; z++) {
+					Object obj = new Object(new Vector3f(x + (index.x * ChunkManager.size.x),
+							y + (index.y * ChunkManager.size.y), z + (index.z * ChunkManager.size.z)));
 
 					int posX = position.x + ((x - z) * 32);
 					int posY = ((0 - y) * 32);
@@ -83,10 +88,12 @@ public class Chunk {
 					obj.setBounds(newBounds);
 
 					obj.setSprite("grass");
+
 					if (index.x == 0 && index.y == 0 && index.z == 0 && x == 0 && y == 0 && z == 0) {
 
 						obj.setSprite("character");
 						obj.offset = new Point(10, 32);
+						obj.known = true;
 						objects.put(x + "," + y + "," + z, obj);
 					}
 
@@ -99,23 +106,44 @@ public class Chunk {
 
 	}
 
+	public boolean isKnown(int x, int y, int z) {
+		boolean known = false;
+		if (y - 1 > 0) {
+			Object testObj = objects.get(x + "," + (y - 1) + "," + z);
+			if (testObj == null) {
+				known = true;
+			}
+		} else {
+
+			known = true;
+		}
+		return known;
+	}
+
 	public void build() {
 		renderedObjects.clear();
 		id = GL11.glGenLists(1);
 		GL11.glNewList(id, GL11.GL_COMPILE_AND_EXECUTE);
 		GL11.glBegin(GL11.GL_QUADS);
-		for (int y = (int) size.y - 1; y >= layer; y--) {
-			for (int x = 0; x < size.x; x++) {
-				for (int z = 0; z < size.x; z++) {
-					boolean visible = isVisible(x, y, z);
-					if (visible) {
-						Object obj = objects.get(x + "," + y + "," + z);
-						if (obj != null) {
+		for (int y = (int) ChunkManager.size.y - 1; y >= layer; y--) {
+			for (int x = 0; x < ChunkManager.size.x; x++) {
+				for (int z = 0; z < ChunkManager.size.x; z++) {
+					Object obj = objects.get(x + "," + y + "," + z);
+					if (obj != null) {
+
+						boolean visible = isVisible(x, y, z);
+						if (visible) {
+
+							obj.known = isKnown(x, y, z);
+
 							String sprite = obj.getSprite();
-							if (sprite != null && sprite != "AIR") {
+							if (sprite != null) {
 								int posX = position.x + ((x - z) * 32);
 								int posY = ((0 - y) * 32);
 								int posZ = position.y + (((z + x) * 16) - posY);
+								if (!obj.known) {
+									sprite = "unknown";
+								}
 								Renderer.renderSprite(sprite, posX + obj.offset.x, posZ + obj.offset.y);
 								renderedObjects.add(obj);
 							}
@@ -146,7 +174,6 @@ public class Chunk {
 		int visibleCount = 0;
 		for (Vector3f vec : directions) {
 			Object testObj = objects.get((int) (x + vec.x) + "," + (int) (y + vec.y) + "," + (int) (z + vec.z));
-
 			if (testObj != null && testObj.getSprite() != "character") {
 				visibleCount++;
 			}
@@ -163,10 +190,8 @@ public class Chunk {
 
 	public void handleHover() {
 
-		System.out.println("chunk: " + getIndex() + "/" + this.renderedObjects.size());
 		for (Object obj : this.renderedObjects) {
 			if (obj.bounds != null) {
-				// System.out.println("Chunk: " + getIndex());
 				if (obj.bounds.contains(Base.mousePosition) && !Base.hoveredObjects.contains(obj)) {
 					Base.hoveredObjects.add(obj);
 				}
@@ -180,10 +205,7 @@ public class Chunk {
 			updateID = false;
 		} else {
 			GL11.glColor3f(1, 1, 1);
-			// GL11.glPushMatrix();
-			// GL11.glTranslatef(position.x, position.y, 0);
 			GL11.glCallList(id);
-			// GL11.glPopMatrix();
 
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -203,8 +225,26 @@ public class Chunk {
 
 	public void setLayer(int newLayer) {
 		if (layer != newLayer) {
-			build();
+			for (int x = 0; x < ChunkManager.size.x; x++) {
+				for (int z = 0; z < ChunkManager.size.x; z++) {
+					Object obj = objects.get(x + "," + newLayer + "," + z);
+					if (obj != null) {
+						System.out.println("Build");
+						updateID = true;
+					}
+					if (updateID) {
+						break;
+					}
+				}
+				if (updateID) {
+					break;
+				}
+			}
+			layer = newLayer;
 		}
-		layer = newLayer;
+	}
+
+	public Object getData(int x, int y, int z) {
+		return objects.get(x + "," + y + "," + z);
 	}
 }
