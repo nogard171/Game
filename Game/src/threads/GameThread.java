@@ -1,24 +1,32 @@
 package threads;
 
+import java.awt.Point;
+import java.util.List;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.Color;
 
 import classes.Chunk;
 import classes.Index;
 import classes.MouseIndex;
 import classes.TextureType;
 import classes.World;
+import classes.Object;
 import data.MaterialData;
 import data.ModelData;
 import data.WorldData;
+import utils.APathFinder;
 import utils.FPS;
 import utils.Loader;
 import utils.Renderer;
 import utils.Ticker;
 import utils.View;
 import utils.Window;
+import utils.WorldGenerator;
 
 public class GameThread extends BaseThread {
 	World world;
@@ -36,6 +44,8 @@ public class GameThread extends BaseThread {
 
 		FPS.setup();
 
+		pathFinder = new APathFinder();
+
 	}
 
 	@Override
@@ -45,6 +55,7 @@ public class GameThread extends BaseThread {
 		FPS.updateFPS();
 		pollHover();
 		world.update();
+		View.update();
 
 		float speed = 1 * FPS.getDelta();
 
@@ -64,28 +75,40 @@ public class GameThread extends BaseThread {
 		}
 
 		if (Mouse.isButtonDown(0) && hover != null) {
-			Chunk chunk = WorldData.chunks.get(hover.getChunkX() + "," + hover.getChunkY());
-			if (chunk != null) {
-				int indexX = Math.round(hover.getX() % 16);
-				int indexY = Math.round(hover.getY() % 16);
-				String height = chunk.objects[indexX][indexY].getMaterial();
-				System.out.println("X: " + indexX + "," + indexY + "=" + height);
-				chunk.objects[indexX][indexY].setMaterial("DIRT");
-				chunk.refresh();
-			}
+			// start = new Point(hover.getX(), hover.getY());
+			end = new Point(hover.getX(), hover.getY());
 		}
 		if (Mouse.isButtonDown(1) && hover != null) {
-			Chunk chunk = WorldData.chunks.get(hover.getChunkX() + "," + hover.getChunkY());
-			if (chunk != null) {
-				int indexX = Math.round(hover.getX() % 16);
-				int indexY = Math.round(hover.getY() % 16);
-				String height = chunk.objects[indexX][indexY].getMaterial();
-				System.out.println("X: " + indexX + "," + indexY + "=" + height);
-				chunk.objects[indexX][indexY].setMaterial("GRASS");
-				chunk.refresh();
+			//end = new Point(hover.getX(), hover.getY());
+		}
+		if (start != null && end != null) {
+			List path = pathFinder.find(start, end);
+			if (path != null) {
+				for (int i = 0; i < path.size(); i++) {
+					Point point = (Point) path.get(i);
+					if (point != null) {
+						int chunkX = point.x / 16;
+						int chunkY = point.y / 16;
+						Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+						if (chunk != null) {
+							int objX = point.x % 16;
+							int objY = point.y % 16;
+							chunk.setObjectColor(objX, objY, new Color(1, 0.5f, 0.5f, 1));
+							chunk.needsUpdating();
+						}
+					}
+				}
+
 			}
+			start = end;
+			end = null;
 		}
 	}
+
+	Point start = new Point(0, 0);
+	Point end;
+
+	APathFinder pathFinder;
 
 	MouseIndex hover;
 
@@ -112,6 +135,7 @@ public class GameThread extends BaseThread {
 	@Override
 	public void render() {
 		super.render();
+		Window.render();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, MaterialData.texture.getTextureID());
 
 		GL11.glPushMatrix();
@@ -119,23 +143,25 @@ public class GameThread extends BaseThread {
 
 		world.render();
 		if (hover != null) {
-			/*
-			 * int chunkX = (int) Math.floor(hover.getX() / 16); int chunkY = (int)
-			 * Math.floor(hover.getY() / 16); if (hover.getX() < 0) { chunkX--; } if
-			 * (hover.getY() < 0) { chunkY--; }
-			 * 
-			 * Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY); if (chunk != null)
-			 * { int indexX = Math.round(hover.getX() % 16); int indexY =
-			 * Math.round(hover.getY() % 16); int height = chunk.data[indexX][indexY];
-			 * System.out.println("X: " + indexX + "," + indexY + "=" + height); }
-			 */
 			GL11.glColor4f(1f, 0, 0, 0.5f);
 			GL11.glBegin(GL11.GL_QUADS);
 			Renderer.renderGrid(hover.getX(), hover.getY());
 			GL11.glEnd();
 		}
 		GL11.glPopMatrix();
-		Window.render();
+		Renderer.renderRectangle(0, 0, 100, 30, new Color(0, 0, 0, 0.5f));
+		if (hover != null) {
+			Renderer.renderText(new Vector2f(0, 0), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
+		}
+		if (WorldGenerator.centerIndex != null) {
+			Renderer.renderText(new Vector2f(0, 12),
+					"Center Index:" + WorldGenerator.chunkIndex.getX() + "," + WorldGenerator.chunkIndex.getY(), 12,
+					Color.white);
+		}
+		Renderer.renderText(new Vector2f(0, 24), "Start/End:" + start + "/" + end, 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 36), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
+
+		Window.finalizeRender();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package classes;
 
+import org.newdawn.slick.Color;
+
 public class Object {
 	private int x = 0;
 	private int y = 0;
@@ -8,6 +10,7 @@ public class Object {
 	private int indexZ = 0;
 	private String model = "TILE";
 	private String material = "GRASS";
+	private Color color = Color.white;
 
 	public String getMaterial() {
 		return material;
@@ -65,5 +68,12 @@ public class Object {
 		this.model = model;
 	}
 
-}
+	public Color getColor() {
+		return color;
+	}
 
+	public void setColor(Color newColor) {
+		this.color = newColor;
+	}
+
+}

@@ -1,7 +1,12 @@
 package utils;
 
+import java.awt.Font;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.opengl.TextureImpl;
 
 import classes.Chunk;
 import classes.Index;
@@ -15,29 +20,31 @@ import data.ModelData;
 import data.WorldData;
 
 public class Renderer {
-	public static void renderModel(Chunk self, int x, int z) {
+	public static void renderModel(Chunk self, int x, int z, Object obj) {
 
 		if (self != null) {
-			int carX = (self.index.getX() * 32) * 16;
-			int carY = (self.index.getY() * 32) * 16;
-			int isoX = carX - carY;
-			int isoY = (carY + carX) / 2;
-
-			int selfX = isoX;
-			int selfY = isoY;
-			Object obj = self.objects[x][z];
 			if (obj != null) {
+				int carX = (self.index.getX() * 32) * 16;
+				int carY = (self.index.getY() * 32) * 16;
+				int isoX = carX - carY;
+				int isoY = (carY + carX) / 2;
+
+				int selfX = isoX;
+				int selfY = isoY;
 				RawModel raw = ModelData.modelData.get(obj.getModel());
 				if (raw != null) {
 
 					RawMaterial mat = MaterialData.materialData.get(obj.getMaterial());
 					if (mat != null) {
+						GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
 						for (byte i : raw.indices) {
 							Vector2f textureVec = mat.vectors[i];
 							GL11.glTexCoord2f(textureVec.x / MaterialData.texture.getImageWidth(),
 									textureVec.y / MaterialData.texture.getImageHeight());
 							Vector2f vec = raw.vectors[i];
-							GL11.glVertex2f(vec.x + selfX + obj.getX(), vec.y + selfY + obj.getY());
+							int objX = (x * 32) - (z * 32);
+							int objY = ((z * 32) + (x * 32)) / 2;
+							GL11.glVertex2f(vec.x + selfX + objX, vec.y + selfY + objY);
 						}
 					}
 				}
@@ -64,5 +71,31 @@ public class Renderer {
 		isoX = (cartX) - (cartZ + 32);
 		isoZ = ((cartX) + (cartZ + 32)) / 2;
 		GL11.glVertex2i(isoX, isoZ);
+	}
+
+	public static void renderRectangle(int x, int y, int width, int height, Color c) {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glColor4f(c.r, c.g, c.b, c.a);
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glVertex2i(x, y);
+		GL11.glVertex2i(x + width, y);
+		GL11.glVertex2i(x + width, y + height);
+		GL11.glVertex2i(x, y + height);
+		GL11.glEnd();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+
+	public static void renderText(Vector2f position, String text, int fontSize, Color color) {
+
+		TrueTypeFont font = WorldData.fonts.get(fontSize);
+
+		if (font == null) {
+			Font awtFont = new Font("Courier", Font.PLAIN, fontSize);
+			WorldData.fonts.put(fontSize, new TrueTypeFont(awtFont, false));
+		}
+		if (font != null) {
+			TextureImpl.bindNone();
+			font.drawString(position.x, position.y, text, color);
+		}
 	}
 }

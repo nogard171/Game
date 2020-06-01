@@ -5,4 +5,7 @@
 	<material name='DIRT'>
 		<data file="data/materials/dirt.mat" />
 	</material>
+	<material name='PLAYER'>
+		<data file="data/materials/player.mat" />
+	</material>
 </materials>

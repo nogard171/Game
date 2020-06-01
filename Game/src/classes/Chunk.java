@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import org.newdawn.slick.Color;
 
 import data.WorldData;
 import utils.Renderer;
@@ -14,7 +15,8 @@ public class Chunk {
 	private boolean needsUpdating = true;
 	public Size size = new Size(16, 16, 16);
 	public int[][] data;
-	public Object[][] objects;
+	public Object[][] groundObjects;
+	public Object[][] maskObjects;
 
 	public Chunk(int i, int j) {
 		index = new Index(i, j);
@@ -26,7 +28,9 @@ public class Chunk {
 
 	public void setup() {
 		data = new int[size.getWidth()][size.getDepth()];
-		objects = new Object[size.getWidth()][size.getDepth()];
+		groundObjects = new Object[size.getWidth()][size.getDepth()];
+		maskObjects = new Object[size.getWidth()][size.getDepth()];
+
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int z = 0; z < size.getDepth(); z++) {
 				int carX = x * 32;
@@ -38,8 +42,14 @@ public class Chunk {
 				obj.setY(isoY);
 				if (x == 1 && z == 1) {
 					obj.setMaterial("DIRT");
+					Object newObj = new Object();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("PLAYER");
+
+					maskObjects[x][z] = newObj;
 				}
-				objects[x][z] = obj;
+				groundObjects[x][z] = obj;
 
 			}
 		}
@@ -53,7 +63,16 @@ public class Chunk {
 		GL11.glBegin(GL11.GL_TRIANGLES);
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int z = 0; z < size.getDepth(); z++) {
-				Renderer.renderModel(this, x, z);
+				Object obj = groundObjects[x][z];
+				if (obj != null) {
+					Renderer.renderModel(this, x, z, obj);
+				}
+
+				Object maskObj = maskObjects[x][z];
+				if (maskObj != null) {
+					Renderer.renderModel(this, x, z, maskObj);
+				}
+
 			}
 		}
 		GL11.glEnd();
@@ -79,5 +98,27 @@ public class Chunk {
 
 	public void refresh() {
 		this.needsUpdating = true;
+	}
+
+	public Object getData(int x, int y) {
+		Object obj = null;
+		if (x >= 0 && y >= 0 && x < size.getWidth() && y < size.getHeight()) {
+			obj = groundObjects[x][y];
+		}
+		return obj;
+	}
+
+	public void setObject(int x, int y, Object obj) {
+		groundObjects[x][y] = obj;
+		needsUpdating();
+	}
+
+	public void needsUpdating() {
+		this.needsUpdating = true;
+	}
+
+	public void setObjectColor(int x, int y, Color newColor) {
+		groundObjects[x][y].setColor(newColor);
+		needsUpdating();
 	}
 }

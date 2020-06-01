@@ -11,6 +11,11 @@ public class Size {
 		this.setDepth(k);
 	}
 
+	public Size(int i, int j) {
+		this.setWidth(i);
+		this.setHeight(j);
+	}
+
 	public int getWidth() {
 		return width;
 	}
