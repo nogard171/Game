@@ -8,4 +8,8 @@
 	<material name='PLAYER'>
 		<data file="data/materials/player.mat" />
 	</material>
+	<material name='TREE'>
+		<data file="data/materials/tree.mat"/>
+		<offset x="0" y="-208"/>
+	</material>
 </materials>

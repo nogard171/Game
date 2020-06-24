@@ -21,7 +21,7 @@ public class WorldGenerator {
 				+ chunkRenderSize.getWidth(); x++) {
 			for (int z = chunkIndex.getY() - chunkRenderSize.getHeight() + 1; z < chunkIndex.getY()
 					+ chunkRenderSize.getHeight(); z++) {
-				if (!WorldData.chunks.containsKey(x + "," + z)) {
+				if (!WorldData.chunks.containsKey(x + "," + z) && x >= 0 && z >= 0) {
 					generateChunk(x, z);
 				}
 			}

@@ -9,7 +9,7 @@ public class Object {
 	private int indexY = 0;
 	private int indexZ = 0;
 	private String model = "TILE";
-	private String material = "GRASS";
+	private String material = "AIR";
 	private Color color = Color.white;
 
 	public String getMaterial() {

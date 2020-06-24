@@ -2,4 +2,7 @@
 	<model name='TILE'>
 		<data file="data/models/tile.obj" />
 	</model>
+	<model name='TREE'>
+		<data file="data/models/tree.obj"/>
+	</model>
 </models>

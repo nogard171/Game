@@ -16,6 +16,7 @@ public class Chunk {
 	public Size size = new Size(16, 16, 16);
 	public int[][] data;
 	public Object[][] groundObjects;
+	public Object[][] entityObjects;
 	public Object[][] maskObjects;
 
 	public Chunk(int i, int j) {
@@ -30,6 +31,7 @@ public class Chunk {
 		data = new int[size.getWidth()][size.getDepth()];
 		groundObjects = new Object[size.getWidth()][size.getDepth()];
 		maskObjects = new Object[size.getWidth()][size.getDepth()];
+		entityObjects = new Object[size.getWidth()][size.getDepth()];
 
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int z = 0; z < size.getDepth(); z++) {
@@ -40,15 +42,32 @@ public class Chunk {
 				Object obj = new Object();
 				obj.setX(isoX);
 				obj.setY(isoY);
-				if (x == 1 && z == 1) {
+				if (x == 1 && z == 1 && index.getX() == 0 && index.getY() == 0) {
 					obj.setMaterial("DIRT");
 					Object newObj = new Object();
 					newObj.setX(isoX);
 					newObj.setY(isoY);
 					newObj.setMaterial("PLAYER");
 
-					maskObjects[x][z] = newObj;
+					entityObjects[x][z] = newObj;
+				} else {
+					entityObjects[x][z] = new Object();
 				}
+
+				if (x == 7 && z == 7) {
+
+					Object newObj = new Object();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("TREE");
+					newObj.setModel("TREE");
+
+					maskObjects[x][z] = newObj;
+				} else {
+
+					maskObjects[x][z] = new Object();
+				}
+				obj.setMaterial("GRASS");
 				groundObjects[x][z] = obj;
 
 			}
@@ -66,6 +85,11 @@ public class Chunk {
 				Object obj = groundObjects[x][z];
 				if (obj != null) {
 					Renderer.renderModel(this, x, z, obj);
+				}
+
+				Object entityObj = entityObjects[x][z];
+				if (entityObj != null) {
+					Renderer.renderModel(this, x, z, entityObj);
 				}
 
 				Object maskObj = maskObjects[x][z];

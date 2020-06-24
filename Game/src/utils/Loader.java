@@ -54,7 +54,7 @@ public class Loader {
 				Node textureNode = textureNodes.item(temp);
 
 				if (textureNode.getNodeType() == Node.ELEMENT_NODE) {
-
+					RawMaterial mat = null;
 					Element textureElement = (Element) textureNode;
 					String name = textureElement.getAttribute("name");
 
@@ -67,8 +67,22 @@ public class Loader {
 						String materialName = dataNode.getAttribute("file");
 
 						System.out.println("Name: " + name);
-						RawMaterial mat = loadMaterial(materialName);
+						mat = loadMaterial(materialName);
 
+					}
+					Node offsetNodes = textureElement.getElementsByTagName("offset").item(0);
+					if (offsetNodes != null) {
+						if (offsetNodes.getNodeType() == Node.ELEMENT_NODE) {
+
+							Element offsetNode = (Element) offsetNodes;
+
+							int offset_X = Integer.parseInt(offsetNode.getAttribute("x"));
+							int offset_Y = Integer.parseInt(offsetNode.getAttribute("y"));
+
+							mat.offset = new Vector2f(offset_X, offset_Y);
+						}
+					}
+					if (mat != null) {
 						MaterialData.materialData.put(name, mat);
 					}
 				}
@@ -83,6 +97,7 @@ public class Loader {
 		RawMaterial mat = new RawMaterial();
 
 		ArrayList<Vector2f> vecs = new ArrayList<Vector2f>();
+		ArrayList<Byte> inds = new ArrayList<Byte>();
 
 		BufferedReader reader;
 		try {
@@ -93,7 +108,11 @@ public class Loader {
 				if (data[0].contains("tv")) {
 					vecs.add(new Vector2f(Float.parseFloat(data[1]), Float.parseFloat(data[2])));
 
-					System.out.println(vecs.get(vecs.size() - 1));
+				}
+				if (data[0].contains("ti")) {
+					inds.add(Byte.parseByte(data[1]));
+					inds.add(Byte.parseByte(data[2]));
+					inds.add(Byte.parseByte(data[3]));
 				}
 				line = reader.readLine();
 			}
@@ -104,6 +123,11 @@ public class Loader {
 		mat.vectors = new Vector2f[vecs.size()];
 		for (int i = 0; i < vecs.size(); i++) {
 			mat.vectors[i] = vecs.get(i);
+		}
+		System.out.println("test: " + inds.size());
+		mat.indices = new byte[inds.size()];
+		for (int i = 0; i < inds.size(); i++) {
+			mat.indices[i] = inds.get(i);
 		}
 
 		return mat;

@@ -24,27 +24,36 @@ public class Renderer {
 
 		if (self != null) {
 			if (obj != null) {
-				int carX = (self.index.getX() * 32) * 16;
-				int carY = (self.index.getY() * 32) * 16;
-				int isoX = carX - carY;
-				int isoY = (carY + carX) / 2;
+				if (obj.getMaterial() != "AIR") {
+					int carX = (self.index.getX() * 32) * 16;
+					int carY = (self.index.getY() * 32) * 16;
+					int isoX = carX - carY;
+					int isoY = (carY + carX) / 2;
 
-				int selfX = isoX;
-				int selfY = isoY;
-				RawModel raw = ModelData.modelData.get(obj.getModel());
-				if (raw != null) {
+					int selfX = isoX;
+					int selfY = isoY;
+					RawModel raw = ModelData.modelData.get(obj.getModel());
+					if (raw != null) {
 
-					RawMaterial mat = MaterialData.materialData.get(obj.getMaterial());
-					if (mat != null) {
-						GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
-						for (byte i : raw.indices) {
-							Vector2f textureVec = mat.vectors[i];
-							GL11.glTexCoord2f(textureVec.x / MaterialData.texture.getImageWidth(),
-									textureVec.y / MaterialData.texture.getImageHeight());
-							Vector2f vec = raw.vectors[i];
-							int objX = (x * 32) - (z * 32);
-							int objY = ((z * 32) + (x * 32)) / 2;
-							GL11.glVertex2f(vec.x + selfX + objX, vec.y + selfY + objY);
+						RawMaterial mat = MaterialData.materialData.get(obj.getMaterial());
+						if (mat != null) {
+							GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
+							for (int b = 0; b < raw.indices.length; b++) {
+								byte i = raw.indices[b];
+								byte ti = i;
+								if (mat.indices.length > 0) {
+									ti = mat.indices[b];
+								}
+								Vector2f textureVec = mat.vectors[ti];
+
+								GL11.glTexCoord2f(textureVec.x / MaterialData.texture.getImageWidth(),
+										textureVec.y / MaterialData.texture.getImageHeight());
+								Vector2f vec = raw.vectors[i];
+								int objX = (x * 32) - (z * 32);
+								int objY = ((z * 32) + (x * 32)) / 2;
+								GL11.glVertex2f(vec.x + selfX + objX + mat.offset.x,
+										vec.y + selfY + objY + mat.offset.y);
+							}
 						}
 					}
 				}

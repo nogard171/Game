@@ -18,6 +18,11 @@ public class APathFinder {
 		indexes.add(new Point(1, 0));
 		indexes.add(new Point(0, -1));
 		indexes.add(new Point(0, 1));
+
+		indexes.add(new Point(-1, -1));
+		indexes.add(new Point(-1, 1));
+		indexes.add(new Point(1, 1));
+		indexes.add(new Point(1, -1));
 	}
 
 	protected List constructPath(Point index) {
@@ -52,8 +57,6 @@ public class APathFinder {
 			if (maxIndexY == 0) {
 				maxIndexY++;
 			}
-			System.out.println("test: " + ((maxIndexX * 16) + (16 * WorldGenerator.chunkRenderSize.getWidth())) + ","
-					+ ((maxIndexY * 16) + (16 * 5)));
 			if ((current.x > (maxIndexX * 16) + (16 * WorldGenerator.chunkRenderSize.getWidth())
 					&& current.y > (maxIndexY * 16) + (16 * WorldGenerator.chunkRenderSize.getHeight()))
 					|| (current.x < (maxIndexX * 16) + (-16 * WorldGenerator.chunkRenderSize.getWidth())
@@ -64,21 +67,20 @@ public class APathFinder {
 				Point neighborIndex = new Point(current.x + index.x, current.y + index.y);
 				int chunkX = neighborIndex.x / 16;
 				int chunkY = neighborIndex.y / 16;
-				System.out.println("Chunk: " + chunkX + "," + chunkY);
 				Chunk chunk = WorldData.getChunk(chunkX, chunkY);
 				if (chunk != null) {
 					int objX = neighborIndex.x % 16;
 					int objY = neighborIndex.y % 16;
-					System.out.println("Object: " + objX + "," + objY + "/" + neighborIndex.x + "," + neighborIndex.y);
-					if (objX < 0) {
-						objX = 16 + objX;
-						neighborIndex.x = objX;
+					if (current.x != 0 && current.y != 0) {
+						if (objX < 0) {
+							objX = 16 + objX;
+							neighborIndex.x = objX;
+						}
+						if (objY < 0) {
+							objY = 16 + objY;
+							neighborIndex.y = objY;
+						}
 					}
-					if (objY < 0) {
-						objY = 16 + objY;
-						neighborIndex.y = objY;
-					}
-					System.out.println("Object: " + objX + "," + objY + "/" + neighborIndex.x + "," + neighborIndex.y);
 
 					Object data = chunk.getData(objX, objY);
 					if (data != null) {
