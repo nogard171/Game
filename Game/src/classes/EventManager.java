@@ -30,15 +30,15 @@ public class EventManager {
 	public static void addEvent(Event newEvent) {
 		events.add(newEvent);
 	}
-	
-	
+
+	boolean playerWaiting = true;
 
 	public void update() {
 		for (Event event : events) {
-			if (!event.setup) {
+			if (!event.setup && playerWaiting) {
 				setupEvent(event);
 			}
-			if (!event.processed) {
+			if (!event.processed && event.setup) {
 				processEvent(event);
 			}
 			if (event.followUpEvent != null) {
@@ -48,7 +48,8 @@ public class EventManager {
 					event.processed = true;
 				}
 			}
-
+		}
+		for (Event event : events) {
 			if (event.processed) {
 				events.remove(event);
 			}
@@ -59,6 +60,7 @@ public class EventManager {
 		if (event.eventName == "MOVE") {
 			event.path = pathFinder.find(start, event.end);
 			event.setup = true;
+			playerWaiting = false;
 
 			if (event.setup) {
 				Event child = event.followUpEvent;
@@ -75,6 +77,7 @@ public class EventManager {
 			event.step = 10;
 			event.stepTime = 2000;
 			event.setup = true;
+			playerWaiting = false;
 		}
 	}
 
@@ -90,6 +93,7 @@ public class EventManager {
 					if (event.step <= 0) {
 						System.out.println("complete chop");
 						event.processed = true;
+						playerWaiting = true;
 					}
 				}
 			}
@@ -149,6 +153,7 @@ public class EventManager {
 							event.childNeedsProcessed = true;
 						} else {
 							event.processed = true;
+							playerWaiting = true;
 						}
 					}
 				}
