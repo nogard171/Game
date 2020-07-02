@@ -8,12 +8,14 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import data.WorldData;
 import threads.GameThread;
 import utils.Renderer;
 import utils.View;
 import utils.Window;
 
 public class ObjectMenu {
+	Object obj;
 	public boolean showObjectMenu = false;
 	MouseIndex objectIndex;
 	Rectangle menuBounds;
@@ -24,16 +26,7 @@ public class ObjectMenu {
 		MenuItem mine = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("Mine");
-				Event move = new Event();
-				move.eventName = "MOVE";
-				move.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
-				EventManager.addEvent(move);
-				
 
-				Event mine = new Event();
-				mine.eventName = "MINE";
-				mine.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
-				EventManager.addEvent(mine);
 			}
 		});
 
@@ -51,6 +44,15 @@ public class ObjectMenu {
 		MenuItem chop = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("chop");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
+
+				Event chop = new Event();
+				chop.eventName = "CHOP";
+				chop.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
+				move.followUpEvent = chop;
+				EventManager.addEvent(move);
 			}
 		});
 		chop.text = "Chop";
@@ -80,6 +82,29 @@ public class ObjectMenu {
 		if (Mouse.isButtonDown(1) && GameThread.getHover() != null && !showObjectMenu) {
 			showObjectMenu = true;
 			objectIndex = GameThread.getHover();
+
+			int hoverX = objectIndex.getX();
+			int hoverY = objectIndex.getY();
+			int chunkX = hoverX / 16;
+			int chunkY = hoverY / 16;
+
+			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+			if (chunk != null) {
+				int objX = objectIndex.getX() % 16;
+				int objY = objectIndex.getY() % 16;
+
+				Object ground = chunk.groundObjects[objX][objY];
+				Object mask = chunk.maskObjects[objX][objY];
+				if (ground != null) {
+					if (mask != null && mask.getMaterial() != "AIR") {
+						obj = mask;
+					} else {
+						obj = ground;
+					}
+				}
+			}
+
+			System.out.println("Object: " + obj.getMaterial());
 		}
 		if (showObjectMenu) {
 			int menuCartX = objectIndex.getX() * 32;

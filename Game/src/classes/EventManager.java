@@ -30,15 +30,23 @@ public class EventManager {
 	public static void addEvent(Event newEvent) {
 		events.add(newEvent);
 	}
+	
+	
 
 	public void update() {
-
 		for (Event event : events) {
 			if (!event.setup) {
 				setupEvent(event);
 			}
 			if (!event.processed) {
 				processEvent(event);
+			}
+			if (event.followUpEvent != null) {
+				if (!event.followUpEvent.processed) {
+					processEvent(event);
+				} else {
+					event.processed = true;
+				}
 			}
 
 			if (event.processed) {
@@ -51,10 +59,41 @@ public class EventManager {
 		if (event.eventName == "MOVE") {
 			event.path = pathFinder.find(start, event.end);
 			event.setup = true;
+
+			if (event.setup) {
+				Event child = event.followUpEvent;
+				if (child != null) {
+
+					if (!child.setup) {
+						System.out.println("setup Child");
+						setupEvent(child);
+					}
+				}
+			}
+		}
+		if (event.eventName == "CHOP") {
+			event.step = 10;
+			event.stepTime = 2000;
+			event.setup = true;
 		}
 	}
 
 	public void processEvent(Event event) {
+		if (event.eventName == "CHOP") {
+			if (getTime() >= event.startTime) {
+				if (event.step > 0) {
+
+					System.out.println("Processing Child: " + event.step);
+					event.startTime = getTime() + event.stepTime;
+					event.step--;
+
+					if (event.step <= 0) {
+						System.out.println("complete chop");
+						event.processed = true;
+					}
+				}
+			}
+		}
 		if (event.eventName == "MOVE") {
 			if (event.path != null && getTime() >= event.startTime) {
 				if (event.path.size() > 0) {
@@ -95,17 +134,34 @@ public class EventManager {
 						event.startTime = getTime() + event.stepTime;
 						event.step++;
 					}
-
-					if (event.step > event.path.size() - 1) {
+					int max = event.path.size() - 1;
+					Event child = event.followUpEvent;
+					if (child != null) {
+						max = event.path.size() - 2;
+					}
+					if (event.step > max) {
 						event.path.clear();
 						event.step = 0;
 						event.startTime = getTime() + event.stepTime;
 						start = event.end;
 						System.out.println("complete");
-						event.processed = true;
+						if (child != null) {
+							event.childNeedsProcessed = true;
+						} else {
+							event.processed = true;
+						}
+					}
+				}
+			}
+			if (event.childNeedsProcessed) {
+				Event child = event.followUpEvent;
+				if (child != null) {
+					if (!child.processed) {
+						processEvent(child);
 					}
 				}
 			}
 		}
+
 	}
 }
