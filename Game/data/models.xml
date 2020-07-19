@@ -5,4 +5,13 @@
 	<model name='TREE'>
 		<data file="data/models/tree.obj"/>
 	</model>
+	<model name='TREE_TRUNK'>
+		<data file="data/models/tree_trunk.obj"/>
+	</model>
+	<model name='CUBE'>
+		<data file="data/models/cube.obj"/>
+	</model>
+	<model name='SQUARE'>
+		<data file="data/models/square.obj"/>
+	</model>
 </models>
