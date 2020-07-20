@@ -42,7 +42,7 @@ public class Chunk {
 				Object obj = new Object();
 				obj.setX(isoX);
 				obj.setY(isoY);
-				if (x == 1 && z == 1 && index.getX() == 0 && index.getY() == 0) {
+				if (x == 0 && z == 0 && index.getX() == 0 && index.getY() == 0) {
 					obj.setMaterial("DIRT");
 					Object newObj = new Object();
 					newObj.setX(isoX);
@@ -54,7 +54,25 @@ public class Chunk {
 					entityObjects[x][z] = new Object();
 				}
 
-				if (x == 7 && z == 7) {
+				if (x == 12 && z == 7) {
+
+					Object newObj = new Object();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("WHEAT");
+					newObj.setModel("SQUARE");
+
+					maskObjects[x][z] = newObj;
+				}else if (x == 7 && z == 12) {
+
+					Object newObj = new Object();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("ORE");
+					newObj.setModel("CUBE");
+
+					maskObjects[x][z] = newObj;
+				} else if (x == 7 && z == 7) {
 
 					Object newObj = new Object();
 					newObj.setX(isoX);

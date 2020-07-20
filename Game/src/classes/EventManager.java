@@ -60,6 +60,7 @@ public class EventManager {
 	public void setupEvent(Event event) {
 		if (event.eventName == "MOVE") {
 			event.path = pathFinder.find(start, event.end);
+
 			event.setup = true;
 			playerWaiting = false;
 
@@ -74,7 +75,7 @@ public class EventManager {
 				}
 			}
 		}
-		if (event.eventName == "CHOP") {
+		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			event.step = 10;
 			event.stepTime = 1000;
 			event.setup = true;
@@ -83,7 +84,7 @@ public class EventManager {
 	}
 
 	public void processEvent(Event event) {
-		if (event.eventName == "CHOP") {
+		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {
 
@@ -93,6 +94,24 @@ public class EventManager {
 
 					if (event.step <= 0) {
 						System.out.println("complete chop");
+
+						int chunkX = event.end.x / 16;
+						int chunkY = event.end.y / 16;
+						Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+						if (chunk != null) {
+
+							int objX = event.end.x % 16;
+							int objY = event.end.y % 16;
+
+							Object obj = chunk.maskObjects[objX][objY];
+
+							System.out.println("tesT: " + objX + "," + objY);
+							if (obj != null) {
+								obj.setMaterial("AIR");
+								chunk.needsUpdating();
+							}
+						}
+
 						event.processed = true;
 						playerWaiting = true;
 					}

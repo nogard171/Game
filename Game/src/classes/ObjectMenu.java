@@ -28,7 +28,15 @@ public class ObjectMenu {
 		MenuItem mine = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("Mine");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
 
+				Event mine = new Event();
+				mine.eventName = "MINE";
+				mine.end = new Point(objectIndex.getX(), objectIndex.getY());
+				move.followUpEvent = mine;
+				EventManager.addEvent(move);
 			}
 		});
 
@@ -46,6 +54,15 @@ public class ObjectMenu {
 		MenuItem harvest = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("harvest");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
+
+				Event harvest = new Event();
+				harvest.eventName = "HARVEST";
+				harvest.end = new Point(objectIndex.getX(), objectIndex.getY());
+				move.followUpEvent = harvest;
+				EventManager.addEvent(move);
 			}
 		});
 		harvest.text = "Harvest";
@@ -56,11 +73,11 @@ public class ObjectMenu {
 				System.out.println("chop");
 				Event move = new Event();
 				move.eventName = "MOVE";
-				move.end = new Point(UserInterface.hover.getX(), UserInterface.hover.getY());
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
 
 				Event chop = new Event();
 				chop.eventName = "CHOP";
-				chop.end = new Point(UserInterface.hover.getX(), UserInterface.hover.getY());
+				chop.end = new Point(objectIndex.getX(), objectIndex.getY());
 				move.followUpEvent = chop;
 				EventManager.addEvent(move);
 			}
@@ -104,6 +121,12 @@ public class ObjectMenu {
 			if (chunk != null) {
 				int objX = objectIndex.getX() % 16;
 				int objY = objectIndex.getY() % 16;
+				if (objX < 0) {
+					objX = (chunk.size.getWidth() + objX);
+				}
+				if (objY < 0) {
+					objY = (chunk.size.getDepth() + objY);
+				}
 
 				Object ground = chunk.groundObjects[objX][objY];
 				Object mask = chunk.maskObjects[objX][objY];
@@ -198,6 +221,12 @@ public class ObjectMenu {
 			MenuItem menuItem;
 			if (obj.getMaterial() == "TREE") {
 				menuItem = menuItems.get("CHOP");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			} else if (obj.getMaterial() == "WHEAT") {
+				menuItem = menuItems.get("HARVEST");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;

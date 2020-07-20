@@ -44,6 +44,7 @@ public class APathFinder {
 		while (!openList.isEmpty()) {
 			Point current = (Point) openList.removeFirst();
 			if (current.equals(endIndex)) {
+
 				return constructPath(endIndex);
 			} else {
 				closedList.add(current);
@@ -61,6 +62,7 @@ public class APathFinder {
 					&& current.y > (maxIndexY * 16) + (16 * WorldGenerator.chunkRenderSize.getHeight()))
 					|| (current.x < (maxIndexX * 16) + (-16 * WorldGenerator.chunkRenderSize.getWidth())
 							&& current.y < (maxIndexY * 16) + (-16 * WorldGenerator.chunkRenderSize.getHeight()))) {
+
 				return null;
 			}
 			for (Point index : indexes) {
@@ -69,6 +71,7 @@ public class APathFinder {
 				int chunkY = neighborIndex.y / 16;
 				Chunk chunk = WorldData.getChunk(chunkX, chunkY);
 				if (chunk != null) {
+
 					int objX = neighborIndex.x % 16;
 					int objY = neighborIndex.y % 16;
 					if (current.x != 0 && current.y != 0) {
