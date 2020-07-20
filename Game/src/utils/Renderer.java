@@ -21,7 +21,6 @@ import data.WorldData;
 
 public class Renderer {
 	public static void renderModel(Chunk self, int x, int z, Object obj) {
-
 		if (self != null) {
 			if (obj != null) {
 				if (obj.getMaterial() != "AIR") {

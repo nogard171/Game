@@ -8,6 +8,8 @@ public class MenuItem {
 	public boolean hovered = false;
 	public AFunction func;
 	private int clicked = 0;
+	public boolean visible = false;
+	public boolean anlwaysVisible = false;
 
 	public MenuItem(AFunction newFunc) {
 		func = newFunc;

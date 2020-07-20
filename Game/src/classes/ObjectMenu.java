@@ -3,6 +3,8 @@ package classes;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
@@ -20,7 +22,7 @@ public class ObjectMenu {
 	MouseIndex objectIndex;
 	Rectangle menuBounds;
 
-	ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+	LinkedHashMap<String, MenuItem> menuItems = new LinkedHashMap<String, MenuItem>();
 
 	public void setup() {
 		MenuItem mine = new MenuItem(new AFunction() {
@@ -31,7 +33,7 @@ public class ObjectMenu {
 		});
 
 		mine.text = "Mine";
-		menuItems.add(mine);
+		menuItems.put(mine.text.toUpperCase(), mine);
 
 		MenuItem till = new MenuItem(new AFunction() {
 			public void click() {
@@ -39,24 +41,32 @@ public class ObjectMenu {
 			}
 		});
 		till.text = "Till";
-		menuItems.add(till);
+		menuItems.put(till.text.toUpperCase(), till);
+
+		MenuItem harvest = new MenuItem(new AFunction() {
+			public void click() {
+				System.out.println("harvest");
+			}
+		});
+		harvest.text = "Harvest";
+		menuItems.put(harvest.text.toUpperCase(), harvest);
 
 		MenuItem chop = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("chop");
 				Event move = new Event();
 				move.eventName = "MOVE";
-				move.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
+				move.end = new Point(UserInterface.hover.getX(), UserInterface.hover.getY());
 
 				Event chop = new Event();
 				chop.eventName = "CHOP";
-				chop.end = new Point(GameThread.hover.getX(), GameThread.hover.getY());
+				chop.end = new Point(UserInterface.hover.getX(), UserInterface.hover.getY());
 				move.followUpEvent = chop;
 				EventManager.addEvent(move);
 			}
 		});
 		chop.text = "Chop";
-		menuItems.add(chop);
+		menuItems.put(chop.text.toUpperCase(), chop);
 
 		MenuItem info = new MenuItem(new AFunction() {
 			public void click() {
@@ -64,7 +74,8 @@ public class ObjectMenu {
 			}
 		});
 		info.text = "Info";
-		menuItems.add(info);
+		info.anlwaysVisible = true;
+		menuItems.put(info.text.toUpperCase(), info);
 
 		MenuItem cancel = new MenuItem(new AFunction() {
 			public void click() {
@@ -72,16 +83,17 @@ public class ObjectMenu {
 			}
 		});
 		cancel.text = "Cancel";
-		menuItems.add(cancel);
+		cancel.anlwaysVisible = true;
+		menuItems.put(cancel.text.toUpperCase(), cancel);
 		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
 	}
 
 	int menuIn = 0;
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && GameThread.getHover() != null && !showObjectMenu) {
+		if (Mouse.isButtonDown(1) && UserInterface.getHover() != null && !showObjectMenu) {
 			showObjectMenu = true;
-			objectIndex = GameThread.getHover();
+			objectIndex = UserInterface.getHover();
 
 			int hoverX = objectIndex.getX();
 			int hoverY = objectIndex.getY();
@@ -115,7 +127,7 @@ public class ObjectMenu {
 			menuBounds.x = isoX;
 			menuBounds.y = isoZ;
 
-			for (MenuItem item : menuItems) {
+			for (MenuItem item : menuItems.values()) {
 				int cartX = Window.getMouseX() - View.x;
 				int cartY = Window.getMouseY() - View.y;
 				if (item.bounds.contains(new Point(cartX, cartY))) {
@@ -141,12 +153,13 @@ public class ObjectMenu {
 				menuIn = 0;
 			}
 		}
+		fixMenu();
 	}
 
 	public void render() {
 		if (showObjectMenu) {
-			int cartX = objectIndex.getX() * 32;
-			int cartZ = objectIndex.getY() * 32;
+			int cartX = (objectIndex.getX() * 32);
+			int cartZ = (objectIndex.getY() * 32);
 
 			int isoX = cartX - cartZ;
 			int isoZ = (cartX + cartZ) / 2;
@@ -155,17 +168,48 @@ public class ObjectMenu {
 			Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
-			for (MenuItem item : menuItems) {
-				item.bounds = new Rectangle(isoX, (isoZ) + (y * 12) + 2, 100, 12);
-				if (item.hovered) {
-					Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
-							new Color(1, 0, 0, 0.5f));
-				}
-				Renderer.renderText(new Vector2f(isoX + 3, isoZ + (y * 12)), item.text, 12, Color.white);
+			for (MenuItem item : menuItems.values()) {
+				if (item.visible || item.anlwaysVisible) {
+					item.bounds = new Rectangle(isoX, (isoZ) + (y * 12) + 2, 100, 12);
+					if (item.hovered) {
+						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
+								new Color(1, 0, 0, 0.5f));
+					}
+					Renderer.renderText(new Vector2f(isoX + 3, isoZ + (y * 12)), item.text, 12, Color.white);
 
-				y += 1;
+					y++;
+				}
 			}
 		}
+	}
 
+	int menuCount = 0;
+
+	public void fixMenu() {
+		menuCount = 0;
+		for (MenuItem item : menuItems.values()) {
+			if (!item.anlwaysVisible) {
+				item.visible = false;
+			} else if (item.anlwaysVisible) {
+				menuCount++;
+			}
+		}
+		if (obj != null) {
+			MenuItem menuItem;
+			if (obj.getMaterial() == "TREE") {
+				menuItem = menuItems.get("CHOP");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			} else if (obj.getMaterial() == "ORE") {
+				menuItem = menuItems.get("MINE");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			}
+		}
+		menuBounds = new Rectangle(0, 0, 100, menuCount * 13);
 	}
 }

@@ -12,6 +12,7 @@ import utils.APathFinder;
 public class EventManager {
 
 	public static LinkedList<Event> events = new LinkedList<Event>();
+	public static LinkedList<Event> eventsToRemove = new LinkedList<Event>();
 
 	public Point start = new Point(0, 0);
 
@@ -48,12 +49,12 @@ public class EventManager {
 					event.processed = true;
 				}
 			}
-		}
-		for (Event event : events) {
 			if (event.processed) {
-				events.remove(event);
+				eventsToRemove.add(event);
 			}
+
 		}
+		events.removeAll(eventsToRemove);
 	}
 
 	public void setupEvent(Event event) {
@@ -75,7 +76,7 @@ public class EventManager {
 		}
 		if (event.eventName == "CHOP") {
 			event.step = 10;
-			event.stepTime = 2000;
+			event.stepTime = 1000;
 			event.setup = true;
 			playerWaiting = false;
 		}
