@@ -12,6 +12,8 @@ public class Object {
 	private String material = "AIR";
 	private Color color = Color.white;
 
+	public boolean isResource = false;
+
 	public String getMaterial() {
 		return material;
 	}

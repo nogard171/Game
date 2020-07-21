@@ -18,13 +18,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import classes.ItemDrop;
 import classes.RawMaterial;
 import classes.RawModel;
+import classes.RawResource;
 import classes.TextureData;
 import classes.TextureType;
-import data.MaterialData;
-import data.ModelData;
 import data.Settings;
+import data.WorldData;
 
 public class Loader {
 	public static void loadMaterials() {
@@ -43,7 +44,7 @@ public class Loader {
 				Element texturesElement = (Element) texturesNode;
 				String textureFile = texturesElement.getAttribute("texture_file");
 				if (textureFile != null && textureFile != "") {
-					MaterialData.texture = TextureLoader.getTexture("PNG",
+					WorldData.texture = TextureLoader.getTexture("PNG",
 							ResourceLoader.getResourceAsStream(textureFile));
 				}
 			}
@@ -66,7 +67,6 @@ public class Loader {
 
 						String materialName = dataNode.getAttribute("file");
 
-						System.out.println("Name: " + name);
 						mat = loadMaterial(materialName);
 
 					}
@@ -83,7 +83,7 @@ public class Loader {
 						}
 					}
 					if (mat != null) {
-						MaterialData.materialData.put(name, mat);
+						WorldData.materialData.put(name, mat);
 					}
 				}
 			}
@@ -124,7 +124,6 @@ public class Loader {
 		for (int i = 0; i < vecs.size(); i++) {
 			mat.vectors[i] = vecs.get(i);
 		}
-		System.out.println("test: " + inds.size());
 		mat.indices = new byte[inds.size()];
 		for (int i = 0; i < inds.size(); i++) {
 			mat.indices[i] = inds.get(i);
@@ -163,7 +162,7 @@ public class Loader {
 						String modelFile = dataNode.getAttribute("file");
 						RawModel raw = loadModel(modelFile);
 
-						ModelData.modelData.put(name, raw);
+						WorldData.modelData.put(name, raw);
 					}
 				}
 			}
@@ -188,7 +187,6 @@ public class Loader {
 				if (data[0].contains("v")) {
 					vecs.add(new Vector2f(Float.parseFloat(data[1]), Float.parseFloat(data[2])));
 
-					System.out.println(vecs.get(vecs.size() - 1));
 				}
 				if (data[0].contains("i")) {
 					ind.add(Byte.parseByte(data[1]));
@@ -213,4 +211,79 @@ public class Loader {
 		return raw;
 	}
 
+	public static void loadResources() {
+		try {
+			File fXmlFile = new File(Settings.resourceFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			Node resourcesNode = doc.getElementsByTagName("resources").item(0);
+			NodeList resourceNodes = doc.getElementsByTagName("resource");
+
+			for (int temp = 0; temp < resourceNodes.getLength(); temp++) {
+
+				Node resourceNode = resourceNodes.item(temp);
+
+				if (resourceNode.getNodeType() == Node.ELEMENT_NODE) {
+					RawResource raw = new RawResource();
+					Element resourceElement = (Element) resourceNode;
+					String name = resourceElement.getAttribute("name");
+					String model = resourceElement.getAttribute("model");
+					raw.model = model;
+
+					Node dataNodes = resourceElement.getElementsByTagName("data").item(0);
+
+					if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
+
+						Element dataNode = (Element) dataNodes;
+
+						if (dataNode.hasAttribute("regenerate")) {
+							boolean regrow = Boolean.parseBoolean(dataNode.getAttribute("regenerate"));
+							raw.regrow = regrow;
+						}
+
+						String harvestedMaterial = dataNode.getAttribute("harvestedMaterial");
+						String harvestedModel = dataNode.getAttribute("harvestedModel");
+
+						raw.harvestedMaterial = harvestedMaterial;
+						raw.harvestedModel = harvestedModel;
+
+						NodeList itemNodes = dataNode.getElementsByTagName("item");
+
+						for (int tempI = 0; tempI < itemNodes.getLength(); tempI++) {
+							ItemDrop drop = new ItemDrop();
+							Node itemNode = itemNodes.item(tempI);
+
+							if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+
+								Element itemDataNode = (Element) itemNode;
+								String itemName = itemDataNode.getAttribute("name");
+								String itemCount = itemDataNode.getAttribute("count");
+								if (itemCount != "") {
+									if (itemCount.contains("-")) {
+										String[] itemCounts = itemCount.split("-");
+										drop.minDropCount = Integer.parseInt(itemCounts[0]);
+										drop.maxDropCount = Integer.parseInt(itemCounts[1]);
+									} else {
+										drop.minDropCount = Integer.parseInt(itemCount);
+									}
+								}
+								drop.name = itemName;
+
+							}
+							raw.itemDrops.add(drop);
+						}
+					}
+					WorldData.resourceData.put(name, raw);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

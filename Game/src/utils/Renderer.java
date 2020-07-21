@@ -15,8 +15,6 @@ import classes.TextureType;
 import classes.Object;
 import classes.RawMaterial;
 import classes.RawModel;
-import data.MaterialData;
-import data.ModelData;
 import data.WorldData;
 
 public class Renderer {
@@ -31,10 +29,10 @@ public class Renderer {
 
 					int selfX = isoX;
 					int selfY = isoY;
-					RawModel raw = ModelData.modelData.get(obj.getModel());
+					RawModel raw = WorldData.modelData.get(obj.getModel());
 					if (raw != null) {
 
-						RawMaterial mat = MaterialData.materialData.get(obj.getMaterial());
+						RawMaterial mat = WorldData.materialData.get(obj.getMaterial());
 						if (mat != null) {
 							GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
 							for (int b = 0; b < raw.indices.length; b++) {
@@ -45,8 +43,8 @@ public class Renderer {
 								}
 								Vector2f textureVec = mat.vectors[ti];
 
-								GL11.glTexCoord2f(textureVec.x / MaterialData.texture.getImageWidth(),
-										textureVec.y / MaterialData.texture.getImageHeight());
+								GL11.glTexCoord2f(textureVec.x / WorldData.texture.getImageWidth(),
+										textureVec.y / WorldData.texture.getImageHeight());
 								Vector2f vec = raw.vectors[i];
 								int objX = (x * 32) - (z * 32);
 								int objY = ((z * 32) + (x * 32)) / 2;

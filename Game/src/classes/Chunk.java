@@ -56,7 +56,8 @@ public class Chunk {
 
 				if (x == 12 && z == 7) {
 
-					Object newObj = new Object();
+					Resource newObj = new Resource();
+					newObj.name = "WHEAT";
 					newObj.setX(isoX);
 					newObj.setY(isoY);
 					newObj.setMaterial("WHEAT");
@@ -65,7 +66,8 @@ public class Chunk {
 					maskObjects[x][z] = newObj;
 				}else if (x == 7 && z == 12) {
 
-					Object newObj = new Object();
+					Resource newObj = new Resource();
+					newObj.name = "ORE";
 					newObj.setX(isoX);
 					newObj.setY(isoY);
 					newObj.setMaterial("ORE");
@@ -74,7 +76,8 @@ public class Chunk {
 					maskObjects[x][z] = newObj;
 				} else if (x == 7 && z == 7) {
 
-					Object newObj = new Object();
+					Resource newObj = new Resource();
+					newObj.name = "TREE";
 					newObj.setX(isoX);
 					newObj.setY(isoY);
 					newObj.setMaterial("TREE");

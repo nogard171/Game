@@ -21,8 +21,6 @@ import classes.UserInterface;
 import classes.World;
 import classes.Object;
 import classes.ObjectMenu;
-import data.MaterialData;
-import data.ModelData;
 import data.WorldData;
 import utils.APathFinder;
 import utils.FPS;
@@ -44,6 +42,12 @@ public class GameThread extends BaseThread {
 		Window.create();
 		Loader.loadMaterials();
 		Loader.loadTextures();
+		Loader.loadResources();
+		
+		for(String raw : WorldData.resourceData.keySet())
+		{
+			System.out.println("Keys: " + raw);
+		}
 
 		world = new World();
 		world.setup();
@@ -86,7 +90,7 @@ public class GameThread extends BaseThread {
 	public void render() {
 		super.render();
 		Window.render();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, MaterialData.texture.getTextureID());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, WorldData.texture.getTextureID());
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef(View.x, View.y, 0);

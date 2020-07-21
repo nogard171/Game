@@ -77,7 +77,7 @@ public class EventManager {
 		}
 		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			event.step = 10;
-			event.stepTime = 1000;
+			event.stepTime = 500;
 			event.setup = true;
 			playerWaiting = false;
 		}
@@ -107,8 +107,25 @@ public class EventManager {
 
 							System.out.println("tesT: " + objX + "," + objY);
 							if (obj != null) {
-								obj.setMaterial("AIR");
-								chunk.needsUpdating();
+
+								if (obj.isResource) {
+									Resource res = (Resource) obj;
+									if (res != null) {
+										RawResource rawRes = WorldData.resourceData.get(res.name);
+
+										System.out.println("test: " + rawRes + "/" + res.name);
+										if (rawRes != null) {
+											if (rawRes.harvestedMaterial == "" || rawRes.harvestedModel == "") {
+												rawRes.harvestedMaterial = "AIR";
+											}
+											obj.setMaterial(rawRes.harvestedMaterial);
+											obj.setModel(rawRes.harvestedModel);
+
+											chunk.needsUpdating();
+
+										}
+									}
+								}
 							}
 						}
 
