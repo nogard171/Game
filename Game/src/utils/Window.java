@@ -34,6 +34,10 @@ public class Window {
 			System.exit(0);
 		}
 	}
+	public static boolean wasResized()
+	{
+		return Display.wasResized();
+	}
 
 	private static void setup() {
 		width = Display.getWidth();

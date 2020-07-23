@@ -36,6 +36,10 @@ public class InventorySystem {
 	}
 
 	public void update() {
+
+		if (Window.wasResized()) {
+			inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
+		}
 		if (showInventory) {
 			if (inventoryBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				UserInterface.inventoryHovered = true;
@@ -119,9 +123,7 @@ public class InventorySystem {
 										 */
 									}
 
-								}
-								else
-								{
+								} else {
 									break;
 								}
 							}

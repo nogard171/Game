@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
@@ -93,6 +94,10 @@ public class UserInterface {
 			if (!Mouse.isButtonDown(0) && mouseDownCount > 0) {
 				mouseDownCount = 0;
 			}
+		}
+		if(Window.wasResized())
+		{
+			menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 		}
 		eventManager.update();
 		inventory.update();
