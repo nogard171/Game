@@ -1,4 +1,6 @@
-package classes;
+package ui;
+
+import classes.Index;
 
 public class MouseIndex extends Index {
 	private int chunkX;

@@ -1,6 +1,8 @@
-package classes;
+package ui;
 
 import java.awt.Rectangle;
+
+import classes.AFunction;
 
 public class MenuItem {
 	public String text = "";
@@ -10,6 +12,7 @@ public class MenuItem {
 	private int clicked = 0;
 	public boolean visible = false;
 	public boolean anlwaysVisible = false;
+	public String material = "";
 
 	public MenuItem(AFunction newFunc) {
 		func = newFunc;

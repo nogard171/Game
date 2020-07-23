@@ -1,4 +1,4 @@
-package classes;
+package ui;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -10,6 +10,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import classes.AFunction;
+import classes.Chunk;
+import classes.Object;
 import data.WorldData;
 import threads.GameThread;
 import utils.Renderer;

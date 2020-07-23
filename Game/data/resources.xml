@@ -6,7 +6,7 @@
 	</resource>
 	<resource name="ORE" model="CUBE">
 		<data regenerate="true" harvestedMaterial="STONE">
-			<item name="ORE" count="1-3" />
+			<item name="ITEM_ORE" count="1-3" />
 		</data>
 	</resource>
 	<resource name="WHEAT">

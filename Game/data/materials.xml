@@ -34,4 +34,7 @@
 	<material name="BAG">
 		<data file="data/materials/bag.mat" />
 	</material>
+	<material name="WOOD_LOG">
+		<data file="data/materials/wood_log.mat" />
+	</material>
 </materials>

@@ -58,6 +58,31 @@ public class Renderer {
 		}
 	}
 
+	public static void renderModel(int objX, int objY, String model, String material, Color c) {
+		RawModel raw = WorldData.modelData.get(model);
+		if (raw != null) {
+			RawMaterial mat = WorldData.materialData.get(material);
+			if (mat != null) {
+				GL11.glColor4f(c.r, c.g, c.b, c.a);
+				for (int b = 0; b < raw.indices.length; b++) {
+					
+					byte i = raw.indices[b];
+					byte ti = i;
+					if (mat.indices.length > 0) {
+						ti = mat.indices[b];
+					}
+					Vector2f textureVec = mat.vectors[ti];
+
+					GL11.glTexCoord2f(textureVec.x / WorldData.texture.getImageWidth(),
+							textureVec.y / WorldData.texture.getImageHeight());
+					Vector2f vec = raw.vectors[i];
+					GL11.glVertex2f(vec.x + objX + mat.offset.x, vec.y + objY + mat.offset.y);
+				}
+			}
+		}
+
+	}
+
 	public static void renderGrid(int indexX, int indexY) {
 		int cartX = indexX * 32;
 		int cartZ = indexY * 32;
@@ -103,5 +128,7 @@ public class Renderer {
 			TextureImpl.bindNone();
 			font.drawString(position.x, position.y, text, color);
 		}
+		WorldData.texture.bind();
 	}
+
 }

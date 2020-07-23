@@ -1,11 +1,18 @@
-package classes;
+package ui;
 
 import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.lwjgl.input.Mouse;
 
+import classes.Chunk;
+import classes.Item;
+import classes.ItemDrop;
+import classes.Object;
+import classes.RawResource;
+import classes.Resource;
 import data.WorldData;
 import utils.APathFinder;
 
@@ -83,6 +90,8 @@ public class EventManager {
 		}
 	}
 
+	Random r = new Random();
+
 	public void processEvent(Event event) {
 		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			if (getTime() >= event.startTime) {
@@ -113,11 +122,27 @@ public class EventManager {
 									if (res != null) {
 										RawResource rawRes = WorldData.resourceData.get(res.name);
 
-										System.out.println("test: " + rawRes + "/" + res.name);
 										if (rawRes != null) {
-											if (rawRes.harvestedMaterial == "" || rawRes.harvestedModel == "") {
+											if (rawRes.harvestedMaterial == "" && rawRes.harvestedModel == "") {
 												rawRes.harvestedMaterial = "AIR";
 											}
+											if (rawRes.harvestedModel == "") {
+												rawRes.harvestedModel = res.getModel();
+											}
+
+											for (ItemDrop drop : rawRes.itemDrops) {
+												Item item = new Item();
+												item.name = drop.name;
+												if (drop.maxDropCount > 0) {
+													item.count = r.nextInt(drop.maxDropCount - drop.minDropCount)
+															+ drop.minDropCount;
+
+												} else {
+													item.count = drop.minDropCount;
+												}
+												InventorySystem.addItem(item);
+											}
+
 											obj.setMaterial(rawRes.harvestedMaterial);
 											obj.setModel(rawRes.harvestedModel);
 

@@ -2,9 +2,9 @@ package utils;
 
 import classes.Chunk;
 import classes.Index;
-import classes.MouseIndex;
 import classes.Size;
 import data.WorldData;
+import ui.MouseIndex;
 
 public class WorldGenerator {
 	public static Index centerIndex;

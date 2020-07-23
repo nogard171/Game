@@ -1,4 +1,4 @@
-package classes;
+package ui;
 
 import java.awt.Point;
 import java.util.List;
