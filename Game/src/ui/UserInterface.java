@@ -80,16 +80,16 @@ public class UserInterface {
 		if (!inventoryHovered && !menuHovered) {
 			pollHover();
 			objectMenu.update();
-
-			if (Mouse.isButtonDown(0) && hover != null && !objectMenu.showObjectMenu && mouseDownCount == 0
-					&& eventManager.start.x != hover.getX() && eventManager.start.y != hover.getY()) {
-				Event move = new Event();
-				move.eventName = "MOVE";
-				move.end = new Point(hover.getX(), hover.getY());
-				EventManager.addEvent(move);
-				mouseDownCount++;
+			if (Mouse.isButtonDown(0) && hover != null) {
+				if (!objectMenu.showObjectMenu && mouseDownCount == 0 && eventManager.start.x != hover.getX()
+						&& eventManager.start.y != hover.getY()) {
+					Event move = new Event();
+					move.eventName = "MOVE";
+					move.end = new Point(hover.getX(), hover.getY());
+					EventManager.addEvent(move);
+					mouseDownCount++;
+				}
 			}
-
 			if (!Mouse.isButtonDown(0) && mouseDownCount > 0) {
 				mouseDownCount = 0;
 			}

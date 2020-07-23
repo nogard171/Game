@@ -30,8 +30,9 @@ public class InventorySystem {
 	}
 
 	public void setup() {
-		size = new Size(10, 10);
-		inventoryBounds = new Rectangle(100, 100, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
+		size = new Size(7, 10);
+		inventoryBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
+		inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
 	}
 
 	public void update() {
@@ -62,36 +63,67 @@ public class InventorySystem {
 
 	String hint = "";
 	Point hintPosition = new Point(0, 0);
+	public int inventoryBackID = -1;
 
 	public void render() {
 		if (showInventory) {
+
 			Renderer.renderRectangle(inventoryBounds.x, inventoryBounds.y, inventoryBounds.width,
 					inventoryBounds.height, new Color(0, 0, 0, 0.5f));
+			if (inventoryBackID <= -1) {
 
-			for (int x = 0; x < size.getWidth(); x++) {
-				for (int y = 0; y < size.getHeight(); y++) {
-					if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
-					} else {
-						Renderer.renderRectangle(inventoryBounds.x + 1 + (x * 33), inventoryBounds.y + 1 + (y * 33), 32,
-								32, new Color(1, 1, 1, 0.5f));
-						if (items.size() > 0) {
-							int index = x + (y * size.getWidth());
-							if (items.size() > index) {
-								Item item = items.get(index);
-								if (item != null) {
-									GL11.glBegin(GL11.GL_TRIANGLES);
-									Renderer.renderModel(inventoryBounds.x + 1 + (x * 33),
-											inventoryBounds.y + 1 + (y * 33), "SQUARE", item.name,
-											new Color(1, 1, 1, 1f));
-									GL11.glEnd();
-									/*
-									 * if (item.count > 1) {
-									 * 
-									 * Renderer.renderText( new Vector2f(inventoryBounds.x + 24 + (x * 33),
-									 * inventoryBounds.y + 17 + (y * 33)), item.count + "", 12, Color.white); }
-									 */
+				inventoryBackID = GL11.glGenLists(1);
+
+				GL11.glNewList(inventoryBackID, GL11.GL_COMPILE);
+
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				GL11.glBegin(GL11.GL_QUADS);
+				for (int x = 0; x < size.getWidth(); x++) {
+					for (int y = 0; y < size.getHeight(); y++) {
+						if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
+						} else {
+							Renderer.renderRectangleWithoutBegin(inventoryBounds.x + 1 + (x * 33),
+									inventoryBounds.y + 1 + (y * 33), 32, 32, new Color(1, 1, 1, 0.5f));
+
+						}
+					}
+				}
+				GL11.glEnd();
+
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GL11.glEndList();
+			} else {
+				GL11.glCallList(inventoryBackID);
+			}
+			if (items.size() > 0) {
+				for (int x = 0; x < size.getWidth(); x++) {
+					for (int y = 0; y < size.getHeight(); y++) {
+						if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
+						} else {
+
+							if (items.size() > 0) {
+								int index = x + (y * size.getWidth());
+								if (items.size() > index) {
+									Item item = items.get(index);
+									if (item != null) {
+										GL11.glBegin(GL11.GL_TRIANGLES);
+										Renderer.renderModel(inventoryBounds.x + 1 + (x * 33),
+												inventoryBounds.y + 1 + (y * 33), "SQUARE", item.name,
+												new Color(1, 1, 1, 1f));
+										GL11.glEnd();
+										/*
+										 * if (item.count > 1) {
+										 * 
+										 * Renderer.renderText( new Vector2f(inventoryBounds.x + 24 + (x * 33),
+										 * inventoryBounds.y + 17 + (y * 33)), item.count + "", 12, Color.white); }
+										 */
+									}
+
 								}
-
+								else
+								{
+									break;
+								}
 							}
 						}
 					}
@@ -109,8 +141,10 @@ public class InventorySystem {
 			Renderer.renderText(new Vector2f(inventoryBounds.x + 13 + ((size.getWidth() - 1) * 33),
 					inventoryBounds.y + 8 + ((size.getHeight() - 1) * 33)), "/", 12, Color.white);
 
-			Renderer.renderText(new Vector2f(inventoryBounds.x + 19 + ((size.getWidth() - 1) * 33),
-					inventoryBounds.y + 17 + ((size.getHeight() - 1) * 33)), "99", 12, Color.white);
+			Renderer.renderText(
+					new Vector2f(inventoryBounds.x + 19 + ((size.getWidth() - 1) * 33),
+							inventoryBounds.y + 17 + ((size.getHeight() - 1) * 33)),
+					"" + ((size.getWidth() * size.getHeight()) - 1), 12, Color.white);
 		}
 	}
 

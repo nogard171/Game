@@ -116,6 +116,14 @@ public class Renderer {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
+	public static void renderRectangleWithoutBegin(int x, int y, int width, int height, Color c) {
+		GL11.glColor4f(c.r, c.g, c.b, c.a);
+		GL11.glVertex2i(x, y);
+		GL11.glVertex2i(x + width, y);
+		GL11.glVertex2i(x + width, y + height);
+		GL11.glVertex2i(x, y + height);
+	}
+
 	public static void renderText(Vector2f position, String text, int fontSize, Color color) {
 
 		TrueTypeFont font = WorldData.fonts.get(fontSize);
