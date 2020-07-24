@@ -76,7 +76,6 @@ public class EventManager {
 				if (child != null) {
 
 					if (!child.setup) {
-						System.out.println("setup Child");
 						setupEvent(child);
 					}
 				}
@@ -97,12 +96,10 @@ public class EventManager {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {
 
-					System.out.println("Processing Child: " + event.step);
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
 
 					if (event.step <= 0) {
-						System.out.println("complete chop");
 
 						int chunkX = event.end.x / 16;
 						int chunkY = event.end.y / 16;
@@ -114,7 +111,6 @@ public class EventManager {
 
 							Object obj = chunk.maskObjects[objX][objY];
 
-							System.out.println("tesT: " + objX + "," + objY);
 							if (obj != null) {
 
 								if (obj.isResource) {
@@ -174,8 +170,6 @@ public class EventManager {
 							int previousX = previous.x % 16;
 							int previousY = previous.y % 16;
 
-							System.out.println("Point: " + chunkX + "," + chunkY + "/" + previousX + "," + previousY);
-
 							chunk.entityObjects[previousX][previousY].setMaterial("AIR");
 							chunk.needsUpdating();
 						}
@@ -210,7 +204,6 @@ public class EventManager {
 						event.step = 0;
 						event.startTime = getTime() + event.stepTime;
 						start = event.end;
-						System.out.println("complete");
 						if (child != null) {
 							event.childNeedsProcessed = true;
 						} else {

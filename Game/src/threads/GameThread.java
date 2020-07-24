@@ -43,11 +43,6 @@ public class GameThread extends BaseThread {
 		Loader.loadMaterials();
 		Loader.loadTextures();
 		Loader.loadResources();
-		
-		for(String raw : WorldData.resourceData.keySet())
-		{
-			System.out.println("Keys: " + raw);
-		}
 
 		world = new World();
 		world.setup();

@@ -30,7 +30,6 @@ public class ObjectMenu {
 	public void setup() {
 		MenuItem mine = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("Mine");
 				Event move = new Event();
 				move.eventName = "MOVE";
 				move.end = new Point(objectIndex.getX(), objectIndex.getY());
@@ -56,7 +55,6 @@ public class ObjectMenu {
 
 		MenuItem harvest = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("harvest");
 				Event move = new Event();
 				move.eventName = "MOVE";
 				move.end = new Point(objectIndex.getX(), objectIndex.getY());
@@ -73,7 +71,6 @@ public class ObjectMenu {
 
 		MenuItem chop = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("chop");
 				Event move = new Event();
 				move.eventName = "MOVE";
 				move.end = new Point(objectIndex.getX(), objectIndex.getY());

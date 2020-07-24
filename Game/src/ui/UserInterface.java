@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +38,6 @@ public class UserInterface {
 
 		MenuItem bag = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("Inventory");
 				inventory.showInventory = !inventory.showInventory;
 			}
 		});
@@ -101,6 +101,11 @@ public class UserInterface {
 		}
 		eventManager.update();
 		inventory.update();
+		
+		if(Window.isKeyPressed(Keyboard.KEY_I))
+		{
+			inventory.showInventory = !inventory.showInventory;
+		}
 
 		if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 			menuHovered = true;
