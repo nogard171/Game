@@ -34,8 +34,8 @@ public class Window {
 			System.exit(0);
 		}
 	}
-	public static boolean wasResized()
-	{
+
+	public static boolean wasResized() {
 		return Display.wasResized();
 	}
 
@@ -98,6 +98,20 @@ public class Window {
 
 	public static int getMouseY() {
 		return height - Mouse.getY();
+	}
+
+	public static boolean isMousePressed(int button) {
+		boolean isPressed = false;
+
+		System.out.println("test: " + button);
+		//while (Mouse.next()) {
+			if (Mouse.getEventButtonState()) {
+				if (Mouse.isButtonDown(button)) {
+					isPressed = true;
+				}
+			}
+		//}
+		return isPressed;
 	}
 
 	public static boolean isKeyDown(int key) {

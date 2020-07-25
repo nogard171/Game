@@ -139,7 +139,6 @@ public class ObjectMenu {
 				}
 			}
 
-			System.out.println("Object: " + obj.getMaterial());
 		}
 		if (showObjectMenu) {
 			int menuCartX = objectIndex.getX() * 32;
