@@ -22,7 +22,7 @@ public class InventorySystem {
 	public static Rectangle inventoryBounds;
 	public static Size size;
 	public static Index hover;
-	
+
 	ItemMenu itemMenu;
 
 	public static void addItem(Item newItem) {
@@ -42,27 +42,26 @@ public class InventorySystem {
 	}
 
 	public void update() {
-		
 
 		if (Window.wasResized()) {
 			inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
 		}
 		if (showInventory) {
-			
+
 			itemMenu.update();
-			
+
 			if (inventoryBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				UserInterface.inventoryHovered = true;
 
 				int x = (Window.getMouseX() - inventoryBounds.x) / 33;
 				int y = (Window.getMouseY() - inventoryBounds.y) / 33;
-				
-				hover = new Index(x,y);
 
 				int index = x + (y * size.getWidth());
 				if (items.size() > index) {
 					Item item = items.get(index);
 					if (item != null) {
+						hover = new Index(x, y);
+
 						hint = item.name;
 						hintPosition = new Point((x * 33) + inventoryBounds.x, (y * 33) + inventoryBounds.y);
 					}
@@ -72,10 +71,14 @@ public class InventorySystem {
 
 			} else {
 				hint = "";
-				hintPosition =null;
-				hover=null;
+				hintPosition = null;
+				hover = null;
 				UserInterface.inventoryHovered = false;
 			}
+		}
+		else
+		{
+			
 		}
 	}
 
@@ -85,7 +88,7 @@ public class InventorySystem {
 
 	public void render() {
 		if (showInventory) {
-			
+
 			Renderer.renderRectangle(inventoryBounds.x, inventoryBounds.y, inventoryBounds.width,
 					inventoryBounds.height, new Color(0, 0, 0, 0.5f));
 

@@ -95,21 +95,18 @@ public class UserInterface {
 				mouseDownCount = 0;
 			}
 		}
-		if(Window.wasResized())
-		{
+		if (Window.wasResized()) {
 			menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 		}
 		eventManager.update();
 		inventory.update();
-		
-		if(Window.isKeyPressed(Keyboard.KEY_I))
-		{
+
+		if (Window.isKeyPressed(Keyboard.KEY_I)) {
 			inventory.showInventory = !inventory.showInventory;
 		}
 
 		if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 			menuHovered = true;
-
 		} else {
 			menuHovered = false;
 		}
@@ -207,7 +204,11 @@ public class UserInterface {
 		if (eventManager.events != null) {
 			size = eventManager.events.size();
 		}
-		Renderer.renderText(new Vector2f(0, 48), "Event Count:" + size, 12, Color.white);
+		for(Event ev : eventManager.events)
+		{
+			//System.out.println("event: " + ev.eventName);
+		}
+		Renderer.renderText(new Vector2f(0, 48), "Event Count:" + EventManager.playerWaiting, 12, Color.white);
 		Renderer.renderText(new Vector2f(0, 60), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
 
 	}

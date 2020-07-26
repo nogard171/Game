@@ -39,7 +39,7 @@ public class EventManager {
 		events.add(newEvent);
 	}
 
-	boolean playerWaiting = true;
+	public static boolean playerWaiting = true;
 
 	public void update() {
 		for (Event event : events) {
@@ -49,11 +49,12 @@ public class EventManager {
 			if (!event.processed && event.setup) {
 				processEvent(event);
 			}
-			if (event.followUpEvent != null) {
+			if (!event.processed && event.followUpEvent != null) {
 				if (!event.followUpEvent.processed) {
 					processEvent(event);
 				} else {
 					event.processed = true;
+					playerWaiting = true;
 				}
 			}
 			if (event.processed) {
@@ -66,17 +67,23 @@ public class EventManager {
 
 	public void setupEvent(Event event) {
 		if (event.eventName == "MOVE") {
-			event.path = pathFinder.find(start, event.end);
+			if (start.x == event.end.x && start.y == event.end.y) {
+				event.setup = true;
+				event.processed = true;
+				playerWaiting = true;
+			} else {
+				event.path = pathFinder.find(start, event.end);
 
-			event.setup = true;
-			playerWaiting = false;
+				event.setup = true;
+				playerWaiting = false;
 
-			if (event.setup) {
-				Event child = event.followUpEvent;
-				if (child != null) {
+				if (event.setup) {
+					Event child = event.followUpEvent;
+					if (child != null) {
 
-					if (!child.setup) {
-						setupEvent(child);
+						if (!child.setup) {
+							setupEvent(child);
+						}
 					}
 				}
 			}
@@ -143,6 +150,7 @@ public class EventManager {
 											obj.setModel(rawRes.harvestedModel);
 
 											chunk.needsUpdating();
+											System.out.println("task: " + event.eventName);
 
 										}
 									}

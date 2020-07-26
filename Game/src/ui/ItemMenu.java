@@ -1,5 +1,7 @@
 package ui;
 
+import java.awt.ItemSelectable;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.LinkedHashMap;
 
@@ -19,6 +21,7 @@ import utils.Window;
 public class ItemMenu {
 	Item item;
 	public boolean showMenu = false;
+	public boolean hovered = false;
 
 	Index itemIndex;
 	Rectangle menuBounds;
@@ -29,6 +32,7 @@ public class ItemMenu {
 
 		MenuItem drop = new MenuItem(new AFunction() {
 			public void click() {
+				System.out.println("drop");
 			}
 		});
 		drop.text = "Drop";
@@ -37,6 +41,7 @@ public class ItemMenu {
 
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
+				System.out.println("inspect");
 			}
 		});
 		inspect.text = "Inspect";
@@ -45,6 +50,8 @@ public class ItemMenu {
 
 		MenuItem cancel = new MenuItem(new AFunction() {
 			public void click() {
+				System.out.println("cancel");
+				showMenu = false;
 			}
 		});
 		cancel.text = "Cancel";
@@ -55,7 +62,8 @@ public class ItemMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && UserInterface.getHover() != null && !showMenu) {
+		if (Mouse.isButtonDown(1) && InventorySystem.getHover() != null && !showMenu) {
+
 			showMenu = true;
 			itemIndex = InventorySystem.getHover();
 			if (itemIndex != null) {
@@ -72,28 +80,54 @@ public class ItemMenu {
 				}
 			}
 		}
+		if (showMenu) {
+
+			if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+				for (MenuItem item : menuItems.values()) {
+					item.hovered = false;
+					if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+						item.hovered = true;
+						if (Mouse.isButtonDown(0)) {
+							item.click();
+						} else {
+							item.unclick();
+						}
+					}
+				}
+
+				menuIn++;
+			}
+			if (!menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY())) && menuIn > 0) {
+				showMenu = false;
+				menuIn = 0;
+			}
+		}
 	}
+
+	int menuIn = 0;
 
 	public void render() {
 		if (showMenu) {
-			int cartX = (int) ((itemIndex.getX() * 33) + InventorySystem.inventoryBounds.getX());
-			int cartZ = (int) ((itemIndex.getY() * 33) + InventorySystem.inventoryBounds.getY());
+			if (itemIndex != null) {
+				int cartX = (int) ((itemIndex.getX() * 33) + InventorySystem.inventoryBounds.getX());
+				int cartZ = (int) ((itemIndex.getY() * 33) + InventorySystem.inventoryBounds.getY());
 
-			menuBounds.x = cartX;
-			menuBounds.y = cartZ;
-			Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
-					new Color(0, 0, 0, 0.5f));
-			int y = 0;
-			for (MenuItem item : menuItems.values()) {
-				if (item.visible || item.anlwaysVisible) {
-					item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
-					if (item.hovered) {
-						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
-								new Color(1, 0, 0, 0.5f));
+				menuBounds.x = cartX;
+				menuBounds.y = cartZ;
+				Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
+						new Color(0, 0, 0, 0.5f));
+				int y = 0;
+				for (MenuItem item : menuItems.values()) {
+					if (item.visible || item.anlwaysVisible) {
+						item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
+						if (item.hovered) {
+							Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,
+									item.bounds.height, new Color(1, 0, 0, 0.5f));
+						}
+						Renderer.renderText(new Vector2f(cartX + 3, cartZ + (y * 12)), item.text, 12, Color.white);
+
+						y++;
 					}
-					Renderer.renderText(new Vector2f(cartX + 3, cartZ + (y * 12)), item.text, 12, Color.white);
-
-					y++;
 				}
 			}
 		}

@@ -39,6 +39,7 @@ public class ObjectMenu {
 				mine.end = new Point(objectIndex.getX(), objectIndex.getY());
 				move.followUpEvent = mine;
 				EventManager.addEvent(move);
+				showObjectMenu = false;
 			}
 		});
 
@@ -64,6 +65,7 @@ public class ObjectMenu {
 				harvest.end = new Point(objectIndex.getX(), objectIndex.getY());
 				move.followUpEvent = harvest;
 				EventManager.addEvent(move);
+				showObjectMenu = false;
 			}
 		});
 		harvest.text = "Harvest";
@@ -80,6 +82,7 @@ public class ObjectMenu {
 				chop.end = new Point(objectIndex.getX(), objectIndex.getY());
 				move.followUpEvent = chop;
 				EventManager.addEvent(move);
+				showObjectMenu = false;
 			}
 		});
 		chop.text = "Chop";
