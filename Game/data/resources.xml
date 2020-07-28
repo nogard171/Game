@@ -1,18 +1,18 @@
 <resources>
 	<resource name="TREE">
 		<data harvestedMaterial="TREE_TRUNK" harvestedModel="TREE_TRUNK">
-			<item name="WOOD_LOG" count="1-3" />
+			<item name="WOOD_LOG_ITEM" count="1-3" />
 		</data>
 	</resource>
 	<resource name="ORE" model="CUBE">
 		<data regenerate="true" harvestedMaterial="STONE">
-			<item name="ITEM_ORE" count="1-3" />
+			<item name="ORE_ITEM" count="1-3" />
 		</data>
 	</resource>
 	<resource name="WHEAT">
 		<data>
-			<item name="WHEAT" count="1" />
-			<item name="WHEAT_SEED" count="1-2" />
+			<item name="WHEAT_ITEM" count="1" />
+			<item name="WHEAT_SEED_ITEM" count="1-2" />
 		</data>
 	</resource>
 </resources>

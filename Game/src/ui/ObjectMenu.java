@@ -88,9 +88,27 @@ public class ObjectMenu {
 		chop.text = "Chop";
 		menuItems.put(chop.text.toUpperCase(), chop);
 
+		MenuItem pickup = new MenuItem(new AFunction() {
+			public void click() {
+				System.out.println("pickup");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
+
+				Event pickup = new Event();
+				pickup.eventName = "PICKUP";
+				pickup.end = new Point(objectIndex.getX(), objectIndex.getY());
+				move.followUpEvent = pickup;
+				EventManager.addEvent(move);
+			}
+		});
+		pickup.text = "Pickup";
+		menuItems.put(pickup.text.toUpperCase(), pickup);
+
 		MenuItem info = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("info");
+
 			}
 		});
 		info.text = "Info";
@@ -111,7 +129,7 @@ public class ObjectMenu {
 	int menuIn = 0;
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && UserInterface.getHover() != null && !showObjectMenu) {
+		if (Mouse.isButtonDown(1) && UserInterface.getHover() != null) {
 			showObjectMenu = true;
 			objectIndex = UserInterface.getHover();
 
@@ -133,12 +151,16 @@ public class ObjectMenu {
 
 				Object ground = chunk.groundObjects[objX][objY];
 				Object mask = chunk.maskObjects[objX][objY];
+				Object item = chunk.groundItems[objX][objY];
 				if (ground != null) {
-					if (mask != null && mask.getMaterial() != "AIR") {
-						obj = mask;
-					} else {
-						obj = ground;
-					}
+					obj = ground;
+
+				}
+				if (mask != null && mask.getMaterial() != "AIR") {
+					obj = mask;
+				}
+				if (item != null) {
+					obj = item;
 				}
 			}
 
@@ -235,6 +257,13 @@ public class ObjectMenu {
 				}
 			} else if (obj.getMaterial() == "ORE") {
 				menuItem = menuItems.get("MINE");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			}
+			if (obj.getMaterial().contains("ITEM")) {
+				menuItem = menuItems.get("PICKUP");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;

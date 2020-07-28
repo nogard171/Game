@@ -21,7 +21,7 @@ public class EventManager {
 	public static LinkedList<Event> events = new LinkedList<Event>();
 	public static LinkedList<Event> eventsToRemove = new LinkedList<Event>();
 
-	public Point start = new Point(0, 0);
+	public static Point start = new Point(0, 0);
 
 	APathFinder pathFinder;
 	public Point previous = null;
@@ -49,7 +49,7 @@ public class EventManager {
 			if (!event.processed && event.setup) {
 				processEvent(event);
 			}
-			if (!event.processed && event.followUpEvent != null) {
+			if ((!event.processed && !event.failed) && event.followUpEvent != null) {
 				if (!event.followUpEvent.processed) {
 					processEvent(event);
 				} else {
@@ -57,7 +57,7 @@ public class EventManager {
 					playerWaiting = true;
 				}
 			}
-			if (event.processed) {
+			if (event.processed || event.failed) {
 				eventsToRemove.add(event);
 			}
 
@@ -94,11 +94,62 @@ public class EventManager {
 			event.setup = true;
 			playerWaiting = false;
 		}
+		if (event.eventName == "DROP_ITEM") {
+			event.setup = true;
+			playerWaiting = false;
+		}
 	}
 
 	Random r = new Random();
 
 	public void processEvent(Event event) {
+
+		if (event.eventName == "DROP_ITEM") {
+			MouseIndex objectIndex = UserInterface.getHover();
+			if (objectIndex != null) {
+				int hoverX = objectIndex.getX();
+				int hoverY = objectIndex.getY();
+				int chunkX = hoverX / 16;
+				int chunkY = hoverY / 16;
+
+				Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+				if (chunk != null) {
+					int objX = EventManager.start.x % 16;
+					int objY = EventManager.start.y % 16;
+
+					Object obj = chunk.groundItems[objX][objY];
+
+					if (obj != null) {
+						if (obj.isItem) {
+							Item item = (Item) obj;
+							System.out.println("test/" + item.name);
+
+							if (item.name == "") {
+								int index = ((int) event.end.getX()
+										+ ((int) event.end.getY() * InventorySystem.size.getWidth()));
+
+								Item inventoryItem = InventorySystem.items.remove(index);
+								if (inventoryItem != null) {
+									System.out.println("test=" + inventoryItem.name);
+									inventoryItem.setMaterial(inventoryItem.name);
+									chunk.groundItems[objX][objY] = inventoryItem;
+									chunk.needsUpdating();
+
+									event.processed = true;
+									playerWaiting = true;
+								} else {
+
+									System.out.println("hello");
+								}
+							} else {
+								event.failed = true;
+								playerWaiting = true;
+							}
+						}
+					}
+				}
+			}
+		}
 		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {

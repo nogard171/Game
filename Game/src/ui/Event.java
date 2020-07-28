@@ -6,6 +6,7 @@ import java.util.List;
 public class Event {
 	public boolean processed = false;
 	public boolean setup = false;
+	public boolean failed = false;
 	public Point end;
 	public String eventName;
 	public List path;

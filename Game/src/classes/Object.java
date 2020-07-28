@@ -11,6 +11,7 @@ public class Object {
 	private String model = "TILE";
 	private String material = "AIR";
 	private Color color = Color.white;
+	public boolean isItem = false;
 
 	public boolean isResource = false;
 

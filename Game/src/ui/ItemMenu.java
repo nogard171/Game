@@ -22,6 +22,7 @@ public class ItemMenu {
 	Item item;
 	public boolean showMenu = false;
 	public boolean hovered = false;
+	MouseIndex objectIndex;
 
 	Index itemIndex;
 	Rectangle menuBounds;
@@ -32,7 +33,11 @@ public class ItemMenu {
 
 		MenuItem drop = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("drop");
+
+				Event drop = new Event();
+				drop.eventName = "DROP_ITEM";
+				drop.end = new Point(itemIndex.getX(), itemIndex.getY());
+				EventManager.addEvent(drop);
 			}
 		});
 		drop.text = "Drop";
@@ -42,6 +47,7 @@ public class ItemMenu {
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("inspect");
+
 			}
 		});
 		inspect.text = "Inspect";
@@ -66,19 +72,16 @@ public class ItemMenu {
 
 			showMenu = true;
 			itemIndex = InventorySystem.getHover();
-			if (itemIndex != null) {
-				int x = itemIndex.getX();
-				int y = itemIndex.getY();
+			/*
+			 * if (itemIndex != null) { int x = itemIndex.getX(); int y = itemIndex.getY();
+			 * 
+			 * int index = x + (y * InventorySystem.size.getWidth()); if
+			 * (InventorySystem.items.size() > index) {
+			 * 
+			 * Item item = InventorySystem.items.get(index); if (item != null) {
+			 * System.out.println("Item: " + item.name); } } }
+			 */
 
-				int index = x + (y * InventorySystem.size.getWidth());
-				if (InventorySystem.items.size() > index) {
-
-					Item item = InventorySystem.items.get(index);
-					if (item != null) {
-						System.out.println("Item: " + item.name);
-					}
-				}
-			}
 		}
 		if (showMenu) {
 

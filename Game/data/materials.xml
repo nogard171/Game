@@ -28,13 +28,13 @@
 		<data file="data/materials/wheat.mat" />
 		<offset x="-16" y="-4" />
 	</material>
-	<material name="ITEM_ORE">
-		<data file="data/materials/item_ore.mat" />
+	<material name="ORE_ITEM">
+		<data file="data/materials/ORE_ITEM.mat" />
 	</material>
 	<material name="BAG">
 		<data file="data/materials/bag.mat" />
 	</material>
-	<material name="WOOD_LOG">
-		<data file="data/materials/wood_log.mat" />
+	<material name="WOOD_LOG_ITEM">
+		<data file="data/materials/wood_log_ITEM.mat" />
 	</material>
 </materials>

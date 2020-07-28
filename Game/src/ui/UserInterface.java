@@ -82,12 +82,72 @@ public class UserInterface {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(0) && hover != null) {
-				if (!objectMenu.showObjectMenu && mouseDownCount == 0 && eventManager.start.x != hover.getX()
-						&& eventManager.start.y != hover.getY()) {
-					Event move = new Event();
-					move.eventName = "MOVE";
-					move.end = new Point(hover.getX(), hover.getY());
-					EventManager.addEvent(move);
+				if (!objectMenu.showObjectMenu && mouseDownCount == 0) {
+					int hoverX = hover.getX();
+					int hoverY = hover.getY();
+					int chunkX = hoverX / 16;
+					int chunkY = hoverY / 16;
+
+					Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+					if (chunk != null) {
+						boolean ifMove = true;
+						int objX = hover.getX() % 16;
+						int objY = hover.getY() % 16;
+						if (objX >= 0 && objY >= 0) {
+
+							Object ground = chunk.groundObjects[objX][objY];
+							Object mask = chunk.maskObjects[objX][objY];
+							if (ground != null) {
+								if (mask != null) {
+									if (mask.getMaterial() != "AIR") {
+										ifMove = false;
+										String action = objectToAction(mask);
+										if (action == "CHOP") {
+											Event move = new Event();
+											move.eventName = "MOVE";
+											move.end = new Point(hover.getX(), hover.getY());
+
+											Event chop = new Event();
+											chop.eventName = "CHOP";
+											chop.end = new Point(hover.getX(), hover.getY());
+											move.followUpEvent = chop;
+											EventManager.addEvent(move);
+										}
+										if (action == "MINE") {
+											Event move = new Event();
+											move.eventName = "MOVE";
+											move.end = new Point(hover.getX(), hover.getY());
+
+											Event mine = new Event();
+											mine.eventName = "MINE";
+											mine.end = new Point(hover.getX(), hover.getY());
+											move.followUpEvent = mine;
+											EventManager.addEvent(move);
+										}
+
+										if (action == "HARVEST") {
+											Event move = new Event();
+											move.eventName = "MOVE";
+											move.end = new Point(hover.getX(), hover.getY());
+
+											Event harvest = new Event();
+											harvest.eventName = "HARVEST";
+											harvest.end = new Point(hover.getX(), hover.getY());
+											move.followUpEvent = harvest;
+											EventManager.addEvent(move);
+										}
+									}
+								}
+							}
+						}
+
+						if (ifMove) {
+							Event move = new Event();
+							move.eventName = "MOVE";
+							move.end = new Point(hover.getX(), hover.getY());
+							EventManager.addEvent(move);
+						}
+					}
 					mouseDownCount++;
 				}
 			}
@@ -183,10 +243,15 @@ public class UserInterface {
 
 				Object ground = chunk.groundObjects[objX][objY];
 				Object mask = chunk.maskObjects[objX][objY];
+				Object item = chunk.groundItems[objX][objY];
 				if (ground != null) {
 					String maskString = "/";
 					if (mask != null) {
-						maskString += mask.getMaterial();
+						if (item != null) {
+							maskString += item.getMaterial();
+						} else {
+							maskString += mask.getMaterial();
+						}
 					}
 
 					Renderer.renderText(new Vector2f(0, 24), "Object:" + ground.getMaterial() + maskString, 12,
@@ -204,11 +269,10 @@ public class UserInterface {
 		if (eventManager.events != null) {
 			size = eventManager.events.size();
 		}
-		for(Event ev : eventManager.events)
-		{
-			//System.out.println("event: " + ev.eventName);
+		for (Event ev : eventManager.events) {
+			// System.out.println("event: " + ev.eventName);
 		}
-		Renderer.renderText(new Vector2f(0, 48), "Event Count:" + EventManager.playerWaiting, 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 48), "Event Count:" + size, 12, Color.white);
 		Renderer.renderText(new Vector2f(0, 60), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
 
 	}
@@ -219,5 +283,20 @@ public class UserInterface {
 
 	public void clean() {
 
+	}
+
+	public static String objectToAction(Object obj) {
+		String action = "MOVE";
+		if (obj != null) {
+			MenuItem menuItem;
+			if (obj.getMaterial() == "TREE") {
+				action = "CHOP";
+			} else if (obj.getMaterial() == "WHEAT") {
+				action = "HARVEST";
+			} else if (obj.getMaterial() == "ORE") {
+				action = "MINE";
+			}
+		}
+		return action;
 	}
 }

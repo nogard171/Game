@@ -18,6 +18,7 @@ public class Chunk {
 	public Object[][] groundObjects;
 	public Object[][] entityObjects;
 	public Object[][] maskObjects;
+	public Item[][] groundItems;
 
 	public Chunk(int i, int j) {
 		index = new Index(i, j);
@@ -32,6 +33,7 @@ public class Chunk {
 		groundObjects = new Object[size.getWidth()][size.getDepth()];
 		maskObjects = new Object[size.getWidth()][size.getDepth()];
 		entityObjects = new Object[size.getWidth()][size.getDepth()];
+		groundItems = new Item[size.getWidth()][size.getDepth()];
 
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int z = 0; z < size.getDepth(); z++) {
@@ -64,7 +66,7 @@ public class Chunk {
 					newObj.setModel("SQUARE");
 
 					maskObjects[x][z] = newObj;
-				}else if (x == 7 && z == 12) {
+				} else if (x == 7 && z == 12) {
 
 					Resource newObj = new Resource();
 					newObj.name = "ORE";
@@ -91,6 +93,8 @@ public class Chunk {
 				obj.setMaterial("GRASS");
 				groundObjects[x][z] = obj;
 
+				groundItems[x][z] = new Item();
+
 			}
 		}
 		this.build();
@@ -106,6 +110,15 @@ public class Chunk {
 				Object obj = groundObjects[x][z];
 				if (obj != null) {
 					Renderer.renderModel(this, x, z, obj);
+				}
+
+				Object itemObj = groundItems[x][z];
+				if (itemObj != null) {
+					if (itemObj.getMaterial() != "AIR") {
+						Renderer.renderModel(this, x, z, itemObj);
+
+						System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj.getModel());
+					}
 				}
 
 				Object entityObj = entityObjects[x][z];
