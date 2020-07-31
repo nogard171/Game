@@ -98,12 +98,52 @@ public class EventManager {
 			event.setup = true;
 			playerWaiting = false;
 		}
+
+		if (event.eventName == "PICKUP") {
+			event.setup = true;
+			playerWaiting = false;
+		}
 	}
 
 	Random r = new Random();
 
 	public void processEvent(Event event) {
+		if (event.eventName == "PICKUP") {
+			Point objectIndex = event.end;
+			if (objectIndex != null) {
+				int hoverX = objectIndex.x;
+				int hoverY = objectIndex.y;
+				int chunkX = hoverX / 16;
+				int chunkY = hoverY / 16;
 
+				Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+				if (chunk != null) {
+					int objX = EventManager.start.x % 16;
+					int objY = EventManager.start.y % 16;
+
+					Object obj = chunk.groundItems[objX][objY];
+
+					if (obj != null) {
+						if (obj.isItem) {
+							Item item = (Item) obj;
+
+							System.out.println("test");
+							if (item.name != "") {
+								chunk.groundItems[objX][objY] = new Item();
+								chunk.needsUpdating();
+								InventorySystem.addItem(item);
+								event.processed = true;
+								playerWaiting = true;
+								System.out.println("item Added: " + item.name);
+							} else {
+								event.failed = true;
+								playerWaiting = true;
+							}
+						}
+					}
+				}
+			}
+		}
 		if (event.eventName == "DROP_ITEM") {
 			MouseIndex objectIndex = UserInterface.getHover();
 			if (objectIndex != null) {
@@ -137,9 +177,6 @@ public class EventManager {
 
 									event.processed = true;
 									playerWaiting = true;
-								} else {
-
-									System.out.println("hello");
 								}
 							} else {
 								event.failed = true;
