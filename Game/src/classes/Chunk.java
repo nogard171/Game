@@ -93,7 +93,7 @@ public class Chunk {
 				obj.setMaterial("GRASS");
 				groundObjects[x][z] = obj;
 
-				groundItems[x][z] = new Item();
+				groundItems[x][z] = null;
 
 			}
 		}
@@ -111,13 +111,15 @@ public class Chunk {
 				if (obj != null) {
 					Renderer.renderModel(this, x, z, obj);
 				}
+				
+				
 
 				Object itemObj = groundItems[x][z];
 				if (itemObj != null) {
 					if (itemObj.getMaterial() != "AIR") {
 						Renderer.renderModel(this, x, z, itemObj);
 
-						System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj.getModel());
+						//System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj);
 					}
 				}
 
@@ -138,9 +140,10 @@ public class Chunk {
 	}
 
 	public void update() {
+
 		if (needsUpdating) {
 			this.build();
-			needsUpdating = false;
+			needsUpdating = true;
 		}
 	}
 

@@ -37,4 +37,10 @@
 	<material name="WOOD_LOG_ITEM">
 		<data file="data/materials/wood_log_ITEM.mat" />
 	</material>
+	<material name="WHEAT_ITEM">
+		<data file="data/materials/wheat_item.mat" />
+	</material>
+	<material name="WHEAT_SEED_ITEM">
+		<data file="data/materials/wheat_seed_item.mat" />
+	</material>
 </materials>

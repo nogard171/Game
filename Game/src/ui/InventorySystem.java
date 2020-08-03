@@ -39,6 +39,14 @@ public class InventorySystem {
 		size = new Size(7, 10);
 		inventoryBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
 		inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
+		
+		
+		Item test = new Item();
+		test.name = "WOOD_LOG_ITEM";
+		test.setMaterial(test.name);
+		test.count = 1;
+		items.add(test);
+		
 	}
 
 	public void update() {

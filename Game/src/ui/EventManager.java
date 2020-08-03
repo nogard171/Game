@@ -127,14 +127,12 @@ public class EventManager {
 						if (obj.isItem) {
 							Item item = (Item) obj;
 
-							System.out.println("test");
 							if (item.name != "") {
 								chunk.groundItems[objX][objY] = new Item();
 								chunk.needsUpdating();
 								InventorySystem.addItem(item);
 								event.processed = true;
 								playerWaiting = true;
-								System.out.println("item Added: " + item.name);
 							} else {
 								event.failed = true;
 								playerWaiting = true;
@@ -159,30 +157,25 @@ public class EventManager {
 
 					Object obj = chunk.groundItems[objX][objY];
 
-					if (obj != null) {
-						if (obj.isItem) {
-							Item item = (Item) obj;
-							System.out.println("test/" + item.name);
+					if (obj == null) {
+						System.out.println("test/" + objX + "," + objY + "=" + obj);
 
-							if (item.name == "") {
-								int index = ((int) event.end.getX()
-										+ ((int) event.end.getY() * InventorySystem.size.getWidth()));
+						int index = ((int) event.end.getX()
+								+ ((int) event.end.getY() * InventorySystem.size.getWidth()));
 
-								Item inventoryItem = InventorySystem.items.remove(index);
-								if (inventoryItem != null) {
-									System.out.println("test=" + inventoryItem.name);
-									inventoryItem.setMaterial(inventoryItem.name);
-									chunk.groundItems[objX][objY] = inventoryItem;
-									chunk.needsUpdating();
+						System.out.println("Obj: " + index);
+						Item inventoryItem = InventorySystem.items.remove(index);
+						if (inventoryItem != null) {
+							System.out.println("test=" + inventoryItem.name);
+							inventoryItem.setMaterial(inventoryItem.name);
+							chunk.groundItems[objX][objY] = inventoryItem;
 
-									event.processed = true;
-									playerWaiting = true;
-								}
-							} else {
-								event.failed = true;
-								playerWaiting = true;
-							}
+							chunk.needsUpdating();
+
+							event.processed = true;
+							playerWaiting = true;
 						}
+
 					}
 				}
 			}
