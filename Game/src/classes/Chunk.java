@@ -12,13 +12,13 @@ import utils.Renderer;
 public class Chunk {
 	public Index index;
 	public int displayListID = -1;
-	private boolean needsUpdating = true;
+	private boolean needsUpdating = false;
 	public Size size = new Size(16, 16, 16);
 	public int[][] data;
 	public Object[][] groundObjects;
 	public Object[][] entityObjects;
 	public Object[][] maskObjects;
-	public Item[][] groundItems;
+	public GroundItem[][] groundItems;
 
 	public Chunk(int i, int j) {
 		index = new Index(i, j);
@@ -33,7 +33,7 @@ public class Chunk {
 		groundObjects = new Object[size.getWidth()][size.getDepth()];
 		maskObjects = new Object[size.getWidth()][size.getDepth()];
 		entityObjects = new Object[size.getWidth()][size.getDepth()];
-		groundItems = new Item[size.getWidth()][size.getDepth()];
+		groundItems = new GroundItem[size.getWidth()][size.getDepth()];
 
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int z = 0; z < size.getDepth(); z++) {
@@ -111,15 +111,13 @@ public class Chunk {
 				if (obj != null) {
 					Renderer.renderModel(this, x, z, obj);
 				}
-				
-				
 
 				Object itemObj = groundItems[x][z];
 				if (itemObj != null) {
 					if (itemObj.getMaterial() != "AIR") {
 						Renderer.renderModel(this, x, z, itemObj);
 
-						//System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj);
+						// System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj);
 					}
 				}
 
@@ -143,7 +141,7 @@ public class Chunk {
 
 		if (needsUpdating) {
 			this.build();
-			needsUpdating = true;
+			needsUpdating = false;
 		}
 	}
 

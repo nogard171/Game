@@ -12,14 +12,14 @@ import org.newdawn.slick.Color;
 import classes.AFunction;
 import classes.Chunk;
 import classes.Index;
-import classes.Item;
+import classes.InventoryItem;
 import classes.Object;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
 
 public class ItemMenu {
-	Item item;
+	InventoryItem item;
 	public boolean showMenu = false;
 	public boolean hovered = false;
 	MouseIndex objectIndex;

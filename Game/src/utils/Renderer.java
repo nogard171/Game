@@ -13,8 +13,8 @@ import classes.Index;
 import classes.TextureData;
 import classes.TextureType;
 import classes.Object;
-import classes.RawMaterial;
-import classes.RawModel;
+import classes.MaterialData;
+import classes.ModelData;
 import data.WorldData;
 
 public class Renderer {
@@ -29,10 +29,10 @@ public class Renderer {
 
 					int selfX = isoX;
 					int selfY = isoY;
-					RawModel raw = WorldData.modelData.get(obj.getModel());
+					ModelData raw = WorldData.modelData.get(obj.getModel());
 					if (raw != null) {
 
-						RawMaterial mat = WorldData.materialData.get(obj.getMaterial());
+						MaterialData mat = WorldData.materialData.get(obj.getMaterial());
 						if (mat != null) {
 							
 							GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
@@ -63,9 +63,9 @@ public class Renderer {
 	}
 
 	public static void renderModel(int objX, int objY, String model, String material, Color c) {
-		RawModel raw = WorldData.modelData.get(model);
+		ModelData raw = WorldData.modelData.get(model);
 		if (raw != null) {
-			RawMaterial mat = WorldData.materialData.get(material);
+			MaterialData mat = WorldData.materialData.get(material);
 			if (mat != null) {
 				GL11.glColor4f(c.r, c.g, c.b, c.a);
 				for (int b = 0; b < raw.indices.length; b++) {

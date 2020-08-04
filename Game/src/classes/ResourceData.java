@@ -2,7 +2,7 @@ package classes;
 
 import java.util.ArrayList;
 
-public class RawResource {
+public class ResourceData {
 	public String model = "";
 	public boolean regrow = false;
 	public String harvestedMaterial = "";

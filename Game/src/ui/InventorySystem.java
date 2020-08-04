@@ -10,13 +10,13 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import classes.Index;
-import classes.Item;
+import classes.InventoryItem;
 import classes.Size;
 import utils.Renderer;
 import utils.Window;
 
 public class InventorySystem {
-	static ArrayList<Item> items = new ArrayList<Item>();
+	static ArrayList<InventoryItem> items = new ArrayList<InventoryItem>();
 
 	public boolean showInventory = false;
 	public static Rectangle inventoryBounds;
@@ -25,7 +25,7 @@ public class InventorySystem {
 
 	ItemMenu itemMenu;
 
-	public static void addItem(Item newItem) {
+	public static void addItem(InventoryItem newItem) {
 		int count = newItem.count;
 		for (int c = 0; c < count; c++) {
 			newItem.count = 1;
@@ -39,14 +39,12 @@ public class InventorySystem {
 		size = new Size(7, 10);
 		inventoryBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
 		inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
-		
-		
-		Item test = new Item();
+
+		InventoryItem test = new InventoryItem();
 		test.name = "WOOD_LOG_ITEM";
-		test.setMaterial(test.name);
 		test.count = 1;
 		items.add(test);
-		
+
 	}
 
 	public void update() {
@@ -66,7 +64,7 @@ public class InventorySystem {
 
 				int index = x + (y * size.getWidth());
 				if (items.size() > index) {
-					Item item = items.get(index);
+					InventoryItem item = items.get(index);
 					if (item != null) {
 						hover = new Index(x, y);
 
@@ -83,10 +81,8 @@ public class InventorySystem {
 				hover = null;
 				UserInterface.inventoryHovered = false;
 			}
-		}
-		else
-		{
-			
+		} else {
+
 		}
 	}
 
@@ -123,19 +119,22 @@ public class InventorySystem {
 							if (items.size() > 0) {
 								int index = x + (y * size.getWidth());
 								if (items.size() > index) {
-									Item item = items.get(index);
+									InventoryItem item = items.get(index);
 									if (item != null) {
 										GL11.glBegin(GL11.GL_TRIANGLES);
 										Renderer.renderModel(inventoryBounds.x + 1 + (x * 33),
 												inventoryBounds.y + 1 + (y * 33), "SQUARE", item.name,
 												new Color(1, 1, 1, 1f));
 										GL11.glEnd();
-										/*
-										 * if (item.count > 1) {
-										 * 
-										 * Renderer.renderText( new Vector2f(inventoryBounds.x + 24 + (x * 33),
-										 * inventoryBounds.y + 17 + (y * 33)), item.count + "", 12, Color.white); }
-										 */
+
+										if (item.count > 1) {
+
+											Renderer.renderText(
+													new Vector2f(inventoryBounds.x + 24 + (x * 33),
+															inventoryBounds.y + 17 + (y * 33)),
+													item.count + "", 12, Color.white);
+										}
+
 									}
 
 								} else {

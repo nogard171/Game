@@ -10,17 +10,18 @@ import org.newdawn.slick.opengl.Texture;
 
 import classes.Chunk;
 import classes.Index;
+import classes.ItemData;
 import classes.Object;
-import classes.RawMaterial;
-import classes.RawModel;
-import classes.RawResource;
+import classes.MaterialData;
+import classes.ModelData;
+import classes.ResourceData;
 
 public class WorldData {
 	public static Texture texture;
-	public static HashMap<String, RawMaterial> materialData = new HashMap<String, RawMaterial>();
-	public static HashMap<String, RawModel> modelData = new HashMap<String, RawModel>();
-	public static HashMap<String, RawResource> resourceData = new HashMap<String, RawResource>();
-	
+	public static HashMap<String, MaterialData> materialData = new HashMap<String, MaterialData>();
+	public static HashMap<String, ModelData> modelData = new HashMap<String, ModelData>();
+	public static HashMap<String, ResourceData> resourceData = new HashMap<String, ResourceData>();
+	public static HashMap<String, ItemData> itemData = new HashMap<String, ItemData>();
 
 	public static HashMap<String, Chunk> chunks = new HashMap<String, Chunk>();
 	public static HashMap<Integer, TrueTypeFont> fonts = new HashMap<Integer, TrueTypeFont>();

@@ -1,5 +1,8 @@
 <items>
-	<item name="ORE">
-		<data stacksize="10" value="10" material="ORE" />
+	<item name="ORE_ITEM">
+		<data stacksize="10" value="10" material="ORE_GROUND_ITEM" inventory_material="ORE_ITEM" />
+	</item>
+	<item name="WOOD_LOG_ITEM">
+		<data stacksize="10" value="10" material="WOOD_LOG_ITEM" inventory_material="WOOD_LOG_ITEM" />
 	</item>
 </items>

@@ -1,10 +1,10 @@
 package classes;
 
-public class Item extends Object {
+public class GroundItem extends Object {
 	public String name = "";
 	public int count = 0;
 
-	public Item() {
+	public GroundItem() {
 		isItem = true;
 		this.setModel("TILE");
 	}

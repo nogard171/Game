@@ -18,10 +18,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import classes.ItemData;
 import classes.ItemDrop;
-import classes.RawMaterial;
-import classes.RawModel;
-import classes.RawResource;
+import classes.MaterialData;
+import classes.ModelData;
+import classes.ResourceData;
 import classes.TextureData;
 import classes.TextureType;
 import data.Settings;
@@ -55,7 +56,7 @@ public class Loader {
 				Node textureNode = textureNodes.item(temp);
 
 				if (textureNode.getNodeType() == Node.ELEMENT_NODE) {
-					RawMaterial mat = null;
+					MaterialData mat = null;
 					Element textureElement = (Element) textureNode;
 					String name = textureElement.getAttribute("name");
 
@@ -93,8 +94,8 @@ public class Loader {
 		}
 	}
 
-	public static RawMaterial loadMaterial(String filename) {
-		RawMaterial mat = new RawMaterial();
+	public static MaterialData loadMaterial(String filename) {
+		MaterialData mat = new MaterialData();
 
 		ArrayList<Vector2f> vecs = new ArrayList<Vector2f>();
 		ArrayList<Byte> inds = new ArrayList<Byte>();
@@ -160,7 +161,7 @@ public class Loader {
 						Element dataNode = (Element) dataNodes;
 
 						String modelFile = dataNode.getAttribute("file");
-						RawModel raw = loadModel(modelFile);
+						ModelData raw = loadModel(modelFile);
 
 						WorldData.modelData.put(name, raw);
 					}
@@ -172,8 +173,8 @@ public class Loader {
 		}
 	}
 
-	public static RawModel loadModel(String filename) {
-		RawModel raw = new RawModel();
+	public static ModelData loadModel(String filename) {
+		ModelData raw = new ModelData();
 
 		ArrayList<Vector2f> vecs = new ArrayList<Vector2f>();
 		ArrayList<Byte> ind = new ArrayList<Byte>();
@@ -228,7 +229,7 @@ public class Loader {
 				Node resourceNode = resourceNodes.item(temp);
 
 				if (resourceNode.getNodeType() == Node.ELEMENT_NODE) {
-					RawResource raw = new RawResource();
+					ResourceData raw = new ResourceData();
 					Element resourceElement = (Element) resourceNode;
 					String name = resourceElement.getAttribute("name");
 					String model = resourceElement.getAttribute("model");
@@ -278,6 +279,55 @@ public class Loader {
 						}
 					}
 					WorldData.resourceData.put(name, raw);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadItems() {
+		try {
+			File fXmlFile = new File(Settings.itemFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			Node resourcesNode = doc.getElementsByTagName("items").item(0);
+			NodeList resourceNodes = doc.getElementsByTagName("item");
+
+			for (int temp = 0; temp < resourceNodes.getLength(); temp++) {
+
+				Node resourceNode = resourceNodes.item(temp);
+
+				if (resourceNode.getNodeType() == Node.ELEMENT_NODE) {
+					ItemData raw = new ItemData();
+					Element resourceElement = (Element) resourceNode;
+					String name = resourceElement.getAttribute("name");
+
+					Node dataNodes = resourceElement.getElementsByTagName("data").item(0);
+
+					if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
+
+						Element dataNode = (Element) dataNodes;
+
+						String material = dataNode.getAttribute("material");
+						String inventoryMaterial = dataNode.getAttribute("inventory_material");
+
+						int stackSize = Integer.parseInt(dataNode.getAttribute("stacksize"));
+						int value = Integer.parseInt(dataNode.getAttribute("value"));
+
+						raw.material = material;
+						raw.inventoryMaterial = inventoryMaterial;
+						raw.stackSize = stackSize;
+						raw.value = value;
+
+					}
+					WorldData.itemData.put(name, raw);
 				}
 
 			}

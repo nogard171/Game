@@ -8,11 +8,13 @@ import java.util.Random;
 import org.lwjgl.input.Mouse;
 
 import classes.Chunk;
-import classes.Item;
+import classes.GroundItem;
+import classes.InventoryItem;
+import classes.ItemData;
 import classes.ItemDrop;
 import classes.Object;
-import classes.RawResource;
 import classes.Resource;
+import classes.ResourceData;
 import data.WorldData;
 import utils.APathFinder;
 
@@ -125,12 +127,22 @@ public class EventManager {
 
 					if (obj != null) {
 						if (obj.isItem) {
-							Item item = (Item) obj;
+							GroundItem groundItem = (GroundItem) obj;
 
-							if (item.name != "") {
-								chunk.groundItems[objX][objY] = new Item();
+							if (groundItem.name != "") {
+								chunk.groundItems[objX][objY] = null;
 								chunk.needsUpdating();
-								InventorySystem.addItem(item);
+								ItemData itemData = WorldData.itemData.get(groundItem.name);
+
+								System.out.println("test" + "/" + itemData);
+								if (itemData != null) {
+									System.out.println("test" + "/" + itemData);
+									InventoryItem item = new InventoryItem();
+									item.setMaterial(itemData.inventoryMaterial);
+									item.name = groundItem.name;
+									InventorySystem.addItem(item);
+								}
+
 								event.processed = true;
 								playerWaiting = true;
 							} else {
@@ -158,19 +170,22 @@ public class EventManager {
 					Object obj = chunk.groundItems[objX][objY];
 
 					if (obj == null) {
-						System.out.println("test/" + objX + "," + objY + "=" + obj);
-
 						int index = ((int) event.end.getX()
 								+ ((int) event.end.getY() * InventorySystem.size.getWidth()));
 
-						System.out.println("Obj: " + index);
-						Item inventoryItem = InventorySystem.items.remove(index);
+						InventoryItem inventoryItem = InventorySystem.items.remove(index);
 						if (inventoryItem != null) {
-							System.out.println("test=" + inventoryItem.name);
-							inventoryItem.setMaterial(inventoryItem.name);
-							chunk.groundItems[objX][objY] = inventoryItem;
 
-							chunk.needsUpdating();
+							GroundItem groundItem = new GroundItem();
+
+							ItemData itemData = WorldData.itemData.get(inventoryItem.name);
+							if (itemData != null) {
+								groundItem.name = inventoryItem.name;
+								groundItem.setMaterial(itemData.material);
+								chunk.groundItems[objX][objY] = groundItem;
+
+								chunk.needsUpdating();
+							}
 
 							event.processed = true;
 							playerWaiting = true;
@@ -204,7 +219,7 @@ public class EventManager {
 								if (obj.isResource) {
 									Resource res = (Resource) obj;
 									if (res != null) {
-										RawResource rawRes = WorldData.resourceData.get(res.name);
+										ResourceData rawRes = WorldData.resourceData.get(res.name);
 
 										if (rawRes != null) {
 											if (rawRes.harvestedMaterial == "" && rawRes.harvestedModel == "") {
@@ -215,7 +230,7 @@ public class EventManager {
 											}
 
 											for (ItemDrop drop : rawRes.itemDrops) {
-												Item item = new Item();
+												InventoryItem item = new InventoryItem();
 												item.name = drop.name;
 												if (drop.maxDropCount > 0) {
 													item.count = r.nextInt(drop.maxDropCount - drop.minDropCount)
