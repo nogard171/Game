@@ -30,6 +30,28 @@ public class ItemMenu {
 	LinkedHashMap<String, MenuItem> menuItems = new LinkedHashMap<String, MenuItem>();
 
 	public void setup() {
+		MenuItem equip = new MenuItem(new AFunction() {
+			public void click() {
+				System.out.println("Equip");
+
+				int x = itemIndex.getX();
+				int y = itemIndex.getY();
+
+				int itemIndex = x + (y * UserInterface.inventory.size.getWidth());
+				if (UserInterface.inventory.items.size() > itemIndex) {
+					InventoryItem equipItem = InventorySystem.items.remove(itemIndex);
+
+					InventoryItem returnItem = CharacterSystem.equipItem(equipItem);
+
+					if (returnItem != null) {
+						InventorySystem.addItem(returnItem);
+					}
+
+				}
+			}
+		});
+		equip.text = "Equip";
+		menuItems.put(equip.text.toUpperCase(), equip);
 
 		MenuItem drop = new MenuItem(new AFunction() {
 			public void click() {
@@ -72,19 +94,25 @@ public class ItemMenu {
 
 			showMenu = true;
 			itemIndex = UserInterface.inventory.getHover();
-			/*
-			 * if (itemIndex != null) { int x = itemIndex.getX(); int y = itemIndex.getY();
-			 * 
-			 * int index = x + (y * UserInterface.inventory.size.getWidth()); if
-			 * (UserInterface.inventory.items.size() > index) {
-			 * 
-			 * Item item = UserInterface.inventory.items.get(index); if (item != null) {
-			 * System.out.println("Item: " + item.name); } } }
-			 */
+
+			if (itemIndex != null) {
+				int x = itemIndex.getX();
+				int y = itemIndex.getY();
+
+				int index = x + (y * UserInterface.inventory.size.getWidth());
+				if (UserInterface.inventory.items.size() > index) {
+
+					InventoryItem inventiryItem = UserInterface.inventory.items.get(index);
+					if (inventiryItem != null) {
+						item = inventiryItem;
+
+					}
+				}
+			}
 
 		}
 		if (showMenu) {
-
+			fixMenu();
 			if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				for (MenuItem item : menuItems.values()) {
 					item.hovered = false;
@@ -108,6 +136,33 @@ public class ItemMenu {
 	}
 
 	int menuIn = 0;
+	int menuCount = 0;
+	int previousCount = 0;
+
+	public void fixMenu() {
+		menuCount = 0;
+		for (MenuItem item : menuItems.values()) {
+			if (!item.anlwaysVisible) {
+				item.visible = false;
+			} else if (item.anlwaysVisible) {
+				menuCount++;
+			}
+		}
+		if (item != null) {
+			MenuItem menuItem;
+			if (item.name.toUpperCase().contains("SWORD")) {
+				menuItem = menuItems.get("EQUIP");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			}
+		}
+		if (menuCount != previousCount) {
+			menuBounds = new Rectangle(0, 0, 100, (menuCount) * 13);
+			previousCount = menuCount;
+		}
+	}
 
 	public void render() {
 		if (showMenu) {

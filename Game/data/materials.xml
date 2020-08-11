@@ -29,7 +29,10 @@
 		<offset x="-16" y="-4" />
 	</material>
 	<material name="ORE_ITEM">
-		<data file="data/materials/ORE_ITEM.mat" />
+		<data file="data/materials/ore_item.mat" />
+	</material>
+	<material name="ORE_GROUND_ITEM">
+		<data file="data/materials/ore_ground_item.mat" />
 	</material>
 	<material name="BAG">
 		<data file="data/materials/bag.mat" />
@@ -82,5 +85,9 @@
 
 	<material name="CHARACTER_ICON">
 		<data file="data/materials/character_icon.mat" />
+	</material>
+
+	<material name="IRON_SWORD_ITEM">
+		<data file="data/materials/iron_sword_item.mat" />
 	</material>
 </materials>

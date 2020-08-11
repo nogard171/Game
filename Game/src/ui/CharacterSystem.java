@@ -3,6 +3,7 @@ package ui;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -17,10 +18,27 @@ import utils.Renderer;
 import utils.Window;
 
 public class CharacterSystem extends BaseSystem {
-	public ArrayList<EquipmentItem> items = new ArrayList<EquipmentItem>();
+	public static HashMap<String, EquipmentItem> items = new HashMap<String, EquipmentItem>();
 
 	String hint = "";
 	Point hintPosition = new Point(0, 0);
+
+	public static InventoryItem equipItem(InventoryItem item) {
+		InventoryItem returnItem = item;
+		if (item != null) {
+			MenuItem menuItem;
+			if (item.name.toUpperCase().contains("SWORD")) {
+				EquipmentItem equip = items.get("WEAPON");
+				if (equip != null) {
+					if (equip.item == null) {
+						equip.item = item;
+						returnItem = null;
+					}
+				}
+			}
+		}
+		return returnItem;
+	}
 
 	@Override
 	public void setup() {
@@ -31,61 +49,61 @@ public class CharacterSystem extends BaseSystem {
 		helmItem.name = "Helmet";
 		helmItem.material = "HELM_ICON";
 		helmItem.bounds = new Rectangle(baseBounds.x + 64, baseBounds.y + 5, 35, 34);
-		items.add(helmItem);
+		items.put(helmItem.name.toUpperCase(), helmItem);
 
 		EquipmentItem capeItem = new EquipmentItem();
 		capeItem.name = "Cape";
 		capeItem.material = "CAPE_ICON";
 		capeItem.bounds = new Rectangle(baseBounds.x + 110, baseBounds.y + 5, 35, 34);
-		items.add(capeItem);
+		items.put(capeItem.name.toUpperCase(), capeItem);
 
 		EquipmentItem shoulderItem = new EquipmentItem();
 		shoulderItem.name = "Shoulder";
 		shoulderItem.material = "SHOULDER_ICON";
 		shoulderItem.bounds = new Rectangle(baseBounds.x + 18, baseBounds.y + 50, 35, 34);
-		items.add(shoulderItem);
+		items.put(shoulderItem.name.toUpperCase(), shoulderItem);
 
 		EquipmentItem chestItem = new EquipmentItem();
 		chestItem.name = "Chest";
 		chestItem.material = "CHEST_ICON";
 		chestItem.bounds = new Rectangle(baseBounds.x + 64, baseBounds.y + 50, 35, 34);
-		items.add(chestItem);
+		items.put(chestItem.name.toUpperCase(), chestItem);
 
 		EquipmentItem armsItem = new EquipmentItem();
 		armsItem.name = "Arms";
 		armsItem.material = "ARMS_ICON";
 		armsItem.bounds = new Rectangle(baseBounds.x + 110, baseBounds.y + 50, 35, 34);
-		items.add(armsItem);
+		items.put(armsItem.name.toUpperCase(), armsItem);
 
 		EquipmentItem weaponItem = new EquipmentItem();
 		weaponItem.name = "Weapon";
 		weaponItem.material = "WEAPON_ICON";
 		weaponItem.bounds = new Rectangle(baseBounds.x + 18, baseBounds.y + 96, 35, 34);
-		items.add(weaponItem);
+		items.put(weaponItem.name.toUpperCase(), weaponItem);
 
 		EquipmentItem legsItem = new EquipmentItem();
 		legsItem.name = "Chaps";
 		legsItem.material = "CHAPS_ICON";
 		legsItem.bounds = new Rectangle(baseBounds.x + 64, baseBounds.y + 96, 35, 34);
-		items.add(legsItem);
+		items.put(legsItem.name.toUpperCase(), legsItem);
 
 		EquipmentItem shieldItem = new EquipmentItem();
 		shieldItem.name = "Shield";
 		shieldItem.material = "SHIELD_ICON";
 		shieldItem.bounds = new Rectangle(baseBounds.x + 110, baseBounds.y + 96, 35, 34);
-		items.add(shieldItem);
+		items.put(shieldItem.name.toUpperCase(), shieldItem);
 
 		EquipmentItem bootItem = new EquipmentItem();
 		bootItem.name = "Boots";
 		bootItem.material = "BOOT_ICON";
 		bootItem.bounds = new Rectangle(baseBounds.x + 64, baseBounds.y + 141, 35, 34);
-		items.add(bootItem);
+		items.put(bootItem.name.toUpperCase(), bootItem);
 
 		EquipmentItem glovesItem = new EquipmentItem();
 		glovesItem.name = "Gloves";
 		glovesItem.material = "GLOVES_ICON";
 		glovesItem.bounds = new Rectangle(baseBounds.x + 110, baseBounds.y + 141, 35, 34);
-		items.add(glovesItem);
+		items.put(glovesItem.name.toUpperCase(), glovesItem);
 	}
 
 	@Override
@@ -101,10 +119,16 @@ public class CharacterSystem extends BaseSystem {
 				UserInterface.inventoryHovered = true;
 
 				hint = "";
-				for (EquipmentItem item : items) {
+				for (EquipmentItem item : items.values()) {
 					if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
-						hint = item.name;
+
+						hint = item.name + " Slot";
 						hintPosition = new Point(item.bounds.x, item.bounds.y);
+
+						if (item.item != null) {
+							hint += "(" + item.item.name + ")";
+						}
+
 					}
 				}
 
@@ -127,17 +151,19 @@ public class CharacterSystem extends BaseSystem {
 
 			Color backGround = new Color(0, 0, 0, 0.65f);
 
-			for (EquipmentItem item : items) {
-				Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,
-						item.bounds.height, backGround);
+			for (EquipmentItem item : items.values()) {
+				Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
+						backGround);
 			}
-			
-			
-			GL11.glBegin(GL11.GL_TRIANGLES);
-			for (EquipmentItem item : items) {
-				Renderer.renderModel(item.bounds.x + 1, item.bounds.y + 1, "SQUARE", item.material,
-						new Color(1, 1, 1, 1f));
 
+			GL11.glBegin(GL11.GL_TRIANGLES);
+			for (EquipmentItem item : items.values()) {
+				Renderer.renderModel(item.bounds.x + 1, item.bounds.y + 1, "SQUARE", item.material,
+						new Color(1, 1, 1, 0.5f));
+				if (item.item != null) {
+					Renderer.renderModel(item.bounds.x + 1, item.bounds.y + 1, "SQUARE", item.item.getMaterial(),
+							new Color(1, 1, 1, 1f));
+				}
 			}
 
 			GL11.glEnd();

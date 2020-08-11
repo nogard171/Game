@@ -239,7 +239,14 @@ public class EventManager {
 												} else {
 													item.count = drop.minDropCount;
 												}
-												InventorySystem.addItem(item);
+
+												ItemData itemData = WorldData.itemData.get(item.name);
+												if (itemData != null) {
+													
+													item.setMaterial(itemData.inventoryMaterial);
+													
+													InventorySystem.addItem(item);
+												}
 											}
 
 											obj.setMaterial(rawRes.harvestedMaterial);

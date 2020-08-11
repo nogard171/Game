@@ -31,6 +31,8 @@ public class InventorySystem extends BaseSystem {
 		}
 	}
 
+	
+	
 	@Override
 	public void setup() {
 		super.setup();
@@ -40,6 +42,11 @@ public class InventorySystem extends BaseSystem {
 		baseBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
+		InventoryItem test = new InventoryItem();
+		test.name = "Iron Sword";
+		test.setMaterial("IRON_SWORD_ITEM");
+		items.add(test);
+		
 	}
 
 	@Override
@@ -128,7 +135,7 @@ public class InventorySystem extends BaseSystem {
 
 									GL11.glBegin(GL11.GL_TRIANGLES);
 									Renderer.renderModel(baseBounds.x + 1 + (x * 33), baseBounds.y + 1 + (y * 33),
-											"SQUARE", item.name, new Color(1, 1, 1, 1f));
+											"SQUARE", item.getMaterial(), new Color(1, 1, 1, 1f));
 									GL11.glEnd();
 
 									if (item.count > 1) {
