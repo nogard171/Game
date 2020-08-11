@@ -15,11 +15,9 @@ import classes.Size;
 import utils.Renderer;
 import utils.Window;
 
-public class InventorySystem {
+public class InventorySystem extends BaseSystem {
 	static ArrayList<InventoryItem> items = new ArrayList<InventoryItem>();
 
-	public boolean showInventory = false;
-	public static Rectangle inventoryBounds;
 	public static Size size;
 	public static Index hover;
 
@@ -33,46 +31,45 @@ public class InventorySystem {
 		}
 	}
 
+	@Override
 	public void setup() {
+		super.setup();
 		itemMenu = new ItemMenu();
 		itemMenu.setup();
 		size = new Size(7, 10);
-		inventoryBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
-		inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
-
-		InventoryItem test = new InventoryItem();
-		test.name = "WOOD_LOG_ITEM";
-		test.count = 1;
-		items.add(test);
+		baseBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
+		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
 	}
 
+	@Override
 	public void update() {
-
+		super.update();
 		if (Window.wasResized()) {
-			inventoryBounds.y = (Window.height - 32) - inventoryBounds.height;
+			baseBounds.y = (Window.height - 32) - baseBounds.height;
 		}
-		if (showInventory) {
+		if (this.showSystem) {
 
 			itemMenu.update();
 
-			if (inventoryBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+			if (baseHovered) {
 				UserInterface.inventoryHovered = true;
 
-				int x = (Window.getMouseX() - inventoryBounds.x) / 33;
-				int y = (Window.getMouseY() - inventoryBounds.y) / 33;
+				int x = (Window.getMouseX() - baseBounds.x) / 33;
+				int y = (Window.getMouseY() - baseBounds.y) / 33;
 
 				int index = x + (y * size.getWidth());
 				if (items.size() > index) {
 					InventoryItem item = items.get(index);
 					if (item != null) {
-						hover = new Index(x, y);
 
+						hover = new Index(x, y);
 						hint = item.name;
-						hintPosition = new Point((x * 33) + inventoryBounds.x, (y * 33) + inventoryBounds.y);
+						hintPosition = new Point((x * 33) + baseBounds.x, (y * 33) + baseBounds.y);
 					}
 				} else {
 					hint = "";
+					hover = null;
 				}
 
 			} else {
@@ -90,11 +87,12 @@ public class InventorySystem {
 	Point hintPosition = new Point(0, 0);
 	public int inventoryBackID = -1;
 
+	@Override
 	public void render() {
-		if (showInventory) {
+		if (showSystem) {
 
-			Renderer.renderRectangle(inventoryBounds.x, inventoryBounds.y, inventoryBounds.width,
-					inventoryBounds.height, new Color(0, 0, 0, 0.5f));
+			Renderer.renderRectangle(baseBounds.x, baseBounds.y, baseBounds.width, baseBounds.height,
+					new Color(0, 0, 0, 0.5f));
 
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glBegin(GL11.GL_QUADS);
@@ -102,45 +100,52 @@ public class InventorySystem {
 				for (int y = 0; y < size.getHeight(); y++) {
 					if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
 					} else {
-						Renderer.renderRectangleWithoutBegin(inventoryBounds.x + 1 + (x * 33),
-								inventoryBounds.y + 1 + (y * 33), 32, 32, new Color(1, 1, 1, 0.5f));
+						Renderer.renderRectangleWithoutBegin(baseBounds.x + 1 + (x * 33), baseBounds.y + 1 + (y * 33),
+								32, 32, new Color(1, 1, 1, 0.5f));
 					}
 				}
 			}
 			GL11.glEnd();
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
+
 			if (items.size() > 0) {
+				if (hover != null) {
+					GL11.glBegin(GL11.GL_QUADS);
+					Renderer.renderRectangleWithoutBegin(baseBounds.x + 1 + (hover.getX() * 33),
+							baseBounds.y + 1 + (hover.getY() * 33), 32, 32, new Color(0, 0, 0, 0.5f));
+					GL11.glEnd();
+				}
 				for (int x = 0; x < size.getWidth(); x++) {
 					for (int y = 0; y < size.getHeight(); y++) {
 						if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
 						} else {
+							int index = x + (y * size.getWidth());
+							if (items.size() > index) {
+								InventoryItem item = items.get(index);
 
-							if (items.size() > 0) {
-								int index = x + (y * size.getWidth());
-								if (items.size() > index) {
-									InventoryItem item = items.get(index);
-									if (item != null) {
-										GL11.glBegin(GL11.GL_TRIANGLES);
-										Renderer.renderModel(inventoryBounds.x + 1 + (x * 33),
-												inventoryBounds.y + 1 + (y * 33), "SQUARE", item.name,
-												new Color(1, 1, 1, 1f));
-										GL11.glEnd();
+								if (item != null) {
 
-										if (item.count > 1) {
+									GL11.glBegin(GL11.GL_TRIANGLES);
+									Renderer.renderModel(baseBounds.x + 1 + (x * 33), baseBounds.y + 1 + (y * 33),
+											"SQUARE", item.name, new Color(1, 1, 1, 1f));
+									GL11.glEnd();
 
-											Renderer.renderText(
-													new Vector2f(inventoryBounds.x + 24 + (x * 33),
-															inventoryBounds.y + 17 + (y * 33)),
-													item.count + "", 12, Color.white);
-										}
+									if (item.count > 1) {
 
+										Renderer.renderText(
+												new Vector2f(baseBounds.x + 24 + (x * 33),
+														baseBounds.y + 17 + (y * 33)),
+												item.count + "", 12, Color.white);
 									}
+									item.hovered = false;
 
-								} else {
-									break;
 								}
+
+							} else {
+								break;
 							}
+
 						}
 					}
 				}
@@ -152,19 +157,20 @@ public class InventorySystem {
 				Renderer.renderText(new Vector2f(hintPosition.x, hintPosition.y), hint, 12, Color.white);
 			}
 
-			Renderer.renderText(new Vector2f(inventoryBounds.x + 1 + ((size.getWidth() - 1) * 33),
-					inventoryBounds.y + 0 + ((size.getHeight() - 1) * 33)), items.size() + "", 12, Color.white);
-			Renderer.renderText(new Vector2f(inventoryBounds.x + 13 + ((size.getWidth() - 1) * 33),
-					inventoryBounds.y + 8 + ((size.getHeight() - 1) * 33)), "/", 12, Color.white);
+			Renderer.renderText(new Vector2f(baseBounds.x + 1 + ((size.getWidth() - 1) * 33),
+					baseBounds.y + 0 + ((size.getHeight() - 1) * 33)), items.size() + "", 12, Color.white);
+			Renderer.renderText(new Vector2f(baseBounds.x + 13 + ((size.getWidth() - 1) * 33),
+					baseBounds.y + 8 + ((size.getHeight() - 1) * 33)), "/", 12, Color.white);
 
 			Renderer.renderText(
-					new Vector2f(inventoryBounds.x + 19 + ((size.getWidth() - 1) * 33),
-							inventoryBounds.y + 17 + ((size.getHeight() - 1) * 33)),
+					new Vector2f(baseBounds.x + 19 + ((size.getWidth() - 1) * 33),
+							baseBounds.y + 17 + ((size.getHeight() - 1) * 33)),
 					"" + ((size.getWidth() * size.getHeight()) - 1), 12, Color.white);
 			itemMenu.render();
 		}
 	}
 
+	@Override
 	public void clean() {
 
 	}

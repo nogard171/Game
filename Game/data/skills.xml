@@ -1,0 +1,5 @@
+<skills>
+	<skill name="walking">
+		<obtain action="CHOP" />
+	</skill>
+</skills>

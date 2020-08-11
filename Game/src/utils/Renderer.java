@@ -34,7 +34,7 @@ public class Renderer {
 
 						MaterialData mat = WorldData.materialData.get(obj.getMaterial());
 						if (mat != null) {
-							
+
 							GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
 							for (int b = 0; b < raw.indices.length; b++) {
 
@@ -47,7 +47,7 @@ public class Renderer {
 
 								GL11.glTexCoord2f(textureVec.x / WorldData.texture.getImageWidth(),
 										textureVec.y / WorldData.texture.getImageHeight());
-								
+
 								Vector2f vec = raw.vectors[i];
 
 								int objX = (x * 32) - (z * 32);
@@ -69,7 +69,7 @@ public class Renderer {
 			if (mat != null) {
 				GL11.glColor4f(c.r, c.g, c.b, c.a);
 				for (int b = 0; b < raw.indices.length; b++) {
-					
+
 					byte i = raw.indices[b];
 					byte ti = i;
 					if (mat.indices.length > 0) {

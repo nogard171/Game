@@ -68,17 +68,17 @@ public class ItemMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && InventorySystem.getHover() != null && !showMenu) {
+		if (Mouse.isButtonDown(1) && UserInterface.inventory.getHover() != null && !showMenu) {
 
 			showMenu = true;
-			itemIndex = InventorySystem.getHover();
+			itemIndex = UserInterface.inventory.getHover();
 			/*
 			 * if (itemIndex != null) { int x = itemIndex.getX(); int y = itemIndex.getY();
 			 * 
-			 * int index = x + (y * InventorySystem.size.getWidth()); if
-			 * (InventorySystem.items.size() > index) {
+			 * int index = x + (y * UserInterface.inventory.size.getWidth()); if
+			 * (UserInterface.inventory.items.size() > index) {
 			 * 
-			 * Item item = InventorySystem.items.get(index); if (item != null) {
+			 * Item item = UserInterface.inventory.items.get(index); if (item != null) {
 			 * System.out.println("Item: " + item.name); } } }
 			 */
 
@@ -112,8 +112,8 @@ public class ItemMenu {
 	public void render() {
 		if (showMenu) {
 			if (itemIndex != null) {
-				int cartX = (int) ((itemIndex.getX() * 33) + InventorySystem.inventoryBounds.getX());
-				int cartZ = (int) ((itemIndex.getY() * 33) + InventorySystem.inventoryBounds.getY());
+				int cartX = (int) ((itemIndex.getX() * 33) + UserInterface.inventory.baseBounds.getX());
+				int cartZ = (int) ((itemIndex.getY() * 33) + UserInterface.inventory.baseBounds.getY());
 
 				menuBounds.x = cartX;
 				menuBounds.y = cartZ;

@@ -15,6 +15,7 @@ import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
 import data.WorldData;
+import utils.KeySystem;
 import utils.Renderer;
 import utils.View;
 import utils.Window;
@@ -28,7 +29,8 @@ public class UserInterface {
 	ObjectMenu objectMenu;
 
 	EventManager eventManager;
-	InventorySystem inventory;
+	public static InventorySystem inventory;
+	CharacterSystem character;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
@@ -38,7 +40,8 @@ public class UserInterface {
 
 		MenuItem bag = new MenuItem(new AFunction() {
 			public void click() {
-				inventory.showInventory = !inventory.showInventory;
+				inventory.showSystem = !inventory.showSystem;
+				character.showSystem = false;
 			}
 		});
 		bag.bounds = new Rectangle(0, 0, 32, 32);
@@ -46,10 +49,24 @@ public class UserInterface {
 		bag.material = "BAG";
 		menu.add(bag);
 
+		MenuItem chara = new MenuItem(new AFunction() {
+			public void click() {
+				character.showSystem = !character.showSystem;
+				inventory.showSystem = false;
+			}
+		});
+		chara.bounds = new Rectangle(32, 0, 32, 32);
+		chara.text = "Character";
+		chara.material = "CHARACTER_ICON";
+		menu.add(chara);
+
 		menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 
 		inventory = new InventorySystem();
 		inventory.setup();
+
+		character = new CharacterSystem();
+		character.setup();
 
 		eventManager = new EventManager();
 		eventManager.setup();
@@ -160,9 +177,26 @@ public class UserInterface {
 		}
 		eventManager.update();
 		inventory.update();
+		character.update();
 
-		if (Window.isKeyPressed(Keyboard.KEY_I)) {
-			inventory.showInventory = !inventory.showInventory;
+		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
+			inventory.showSystem = !inventory.showSystem;
+
+			character.showSystem = false;
+			keyDownCount++;
+		}
+
+		if (KeySystem.keyPressed(Keyboard.KEY_C)) {
+			character.showSystem = !character.showSystem;
+
+			inventory.showSystem = false;
+			keyDownCount++;
+		}
+
+		KeySystem.poll();
+		if (KeySystem.keyPressed(Keyboard.KEY_A)) {
+
+			System.out.println("test:");
 		}
 
 		if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
@@ -182,6 +216,10 @@ public class UserInterface {
 			}
 		}
 	}
+	
+	
+
+	private int keyDownCount = 0;
 
 	public void renderOnMap() {
 		if (hover != null) {
@@ -197,6 +235,7 @@ public class UserInterface {
 
 	public void render() {
 		inventory.render();
+		character.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
@@ -205,8 +244,7 @@ public class UserInterface {
 		for (MenuItem item : menu) {
 			item.bounds.x = menuBounds.x + (i * 33);
 			item.bounds.y = menuBounds.y;
-			Renderer.renderModel(item.bounds.x, item.bounds.y, "SQUARE", "BAG", new Color(1, 1, 1, 1f));
-			Renderer.renderRectangle(menuBounds.x + (i * 33), menuBounds.y, 32, 32, new Color(1, 1, 1, 0.5f));
+			Renderer.renderModel(item.bounds.x, item.bounds.y, "SQUARE", item.material, new Color(1, 1, 1, 1f));
 			i++;
 		}
 		GL11.glEnd();

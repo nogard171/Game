@@ -43,4 +43,44 @@
 	<material name="WHEAT_SEED_ITEM">
 		<data file="data/materials/wheat_seed_item.mat" />
 	</material>
+
+
+	<material name="ARMS_ICON">
+		<data file="data/materials/arms_icon.mat" />
+	</material>
+	<material name="BOOT_ICON">
+		<data file="data/materials/boot_icon.mat" />
+	</material>
+	<material name="CAPE_ICON">
+		<data file="data/materials/cape_icon.mat" />
+	</material>
+	<material name="CHAPS_ICON">
+		<data file="data/materials/chaps_icon.mat" />
+	</material>
+	<material name="CHARACTER_ICON">
+		<data file="data/materials/character_icon.mat" />
+	</material>
+	<material name="CHEST_ICON">
+		<data file="data/materials/chest_icon.mat" />
+	</material>
+	<material name="GLOVES_ICON">
+		<data file="data/materials/gloves_icon.mat" />
+	</material>
+	<material name="HELM_ICON">
+		<data file="data/materials/helm_icon.mat" />
+	</material>
+	<material name="SHIELD_ICON">
+		<data file="data/materials/shield_icon.mat" />
+	</material>
+	<material name="SHOULDER_ICON">
+		<data file="data/materials/shoulder_icon.mat" />
+	</material>
+	<material name="WEAPON_ICON">
+		<data file="data/materials/weapon_icon.mat" />
+	</material>
+
+
+	<material name="CHARACTER_ICON">
+		<data file="data/materials/character_icon.mat" />
+	</material>
 </materials>
