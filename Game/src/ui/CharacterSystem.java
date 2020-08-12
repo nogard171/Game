@@ -167,6 +167,18 @@ public class CharacterSystem extends BaseSystem {
 			}
 
 			GL11.glEnd();
+			
+			Renderer.renderText(new Vector2f(baseBounds.x+16, baseBounds.y+190), "DMG:10000", 12, Color.white);
+
+			Renderer.renderText(new Vector2f(baseBounds.x+85, baseBounds.y+190), "DEF:10000", 12, Color.white);
+
+			Renderer.renderText(new Vector2f(baseBounds.x+16, baseBounds.y+212), "AGI:10000", 12, Color.white);
+
+			Renderer.renderText(new Vector2f(baseBounds.x+85, baseBounds.y+212), "INT:10000", 12, Color.white);
+
+			Renderer.renderText(new Vector2f(baseBounds.x+16, baseBounds.y+234), "WEG:10000", 12, Color.white);
+
+			Renderer.renderText(new Vector2f(baseBounds.x+85, baseBounds.y+234), "SPP:10000", 12, Color.white);
 
 			if (hint != "") {
 
