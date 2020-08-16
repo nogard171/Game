@@ -14,4 +14,7 @@
 	<model name='SQUARE'>
 		<data file="data/models/square.obj"/>
 	</model>
+	<model name='COIN'>
+		<data file="data/models/coin.obj"/>
+	</model>
 </models>

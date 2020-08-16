@@ -30,11 +30,12 @@ public class UserInterface {
 
 	EventManager eventManager;
 	public static InventorySystem inventory;
-	CharacterSystem character;
+	public static CharacterSystem character;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
 	public static boolean menuHovered = false;
+	public static boolean characterHovered = false;
 
 	public void setup() {
 
@@ -95,7 +96,7 @@ public class UserInterface {
 	}
 
 	public void update() {
-		if (!inventoryHovered && !menuHovered) {
+		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered) {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(0) && hover != null) {
@@ -196,7 +197,7 @@ public class UserInterface {
 		KeySystem.poll();
 		if (KeySystem.keyPressed(Keyboard.KEY_A)) {
 
-			System.out.println("test:");
+			// System.out.println("test:");
 		}
 
 		if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
@@ -216,8 +217,6 @@ public class UserInterface {
 			}
 		}
 	}
-	
-	
 
 	private int keyDownCount = 0;
 
@@ -250,8 +249,9 @@ public class UserInterface {
 		GL11.glEnd();
 
 		Renderer.renderRectangle(0, 0, 100, 30, new Color(0, 0, 0, 0.5f));
-		if (hover != null) {
-			Renderer.renderText(new Vector2f(0, 0), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
+		if (InventorySystem.hover != null) {
+			Renderer.renderText(new Vector2f(0, 0),
+					"Hover:" + InventorySystem.hover.getX() + "," + InventorySystem.hover.getY(), 12, Color.white);
 			int hoverX = hover.getX();
 			int hoverY = hover.getY();
 			int chunkX = hoverX / 16;

@@ -4,7 +4,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
@@ -16,23 +18,51 @@ import utils.Renderer;
 import utils.Window;
 
 public class InventorySystem extends BaseSystem {
-	static ArrayList<InventoryItem> items = new ArrayList<InventoryItem>();
+	static LinkedHashMap<Integer, InventoryItem> items = new LinkedHashMap<Integer, InventoryItem>();
 
+	static int lastIndex = 0;
 	public static Size size;
 	public static Index hover;
+	public Index startIndex;
+	public InventoryItem draggedItem = null;
+	public Point draggedPosition = new Point(0, 0);
+	public static boolean dragging = false;
 
 	ItemMenu itemMenu;
 
 	public static void addItem(InventoryItem newItem) {
 		int count = newItem.count;
+
 		for (int c = 0; c < count; c++) {
+			boolean add = false;
 			newItem.count = 1;
-			items.add(newItem);
+			while (!add) {
+				if (items.containsKey(lastIndex)) {
+					if (items.get(lastIndex) == null) {
+						add = true;
+					} else {
+						lastIndex++;
+					}
+				} else {
+					add = true;
+				}
+			}
+
+			if (add) {
+				items.put(lastIndex, newItem);
+			}
 		}
 	}
 
-	
-	
+	public static void addItemAt(int index, InventoryItem newItem) {
+		int count = newItem.count;
+		for (int c = 0; c < count; c++) {
+			newItem.count = 1;
+			items.put(index, newItem);
+			// lastIndex += index;
+		}
+	}
+
 	@Override
 	public void setup() {
 		super.setup();
@@ -45,8 +75,8 @@ public class InventorySystem extends BaseSystem {
 		InventoryItem test = new InventoryItem();
 		test.name = "Iron Sword";
 		test.setMaterial("IRON_SWORD_ITEM");
-		items.add(test);
-		
+		addItem(test);
+
 	}
 
 	@Override
@@ -65,18 +95,31 @@ public class InventorySystem extends BaseSystem {
 				int x = (Window.getMouseX() - baseBounds.x) / 33;
 				int y = (Window.getMouseY() - baseBounds.y) / 33;
 
-				int index = x + (y * size.getWidth());
-				if (items.size() > index) {
-					InventoryItem item = items.get(index);
-					if (item != null) {
-
-						hover = new Index(x, y);
-						hint = item.name;
-						hintPosition = new Point((x * 33) + baseBounds.x, (y * 33) + baseBounds.y);
-					}
+				if (x >= size.getWidth() - 1 && y >= size.getHeight() - 1) {
 				} else {
-					hint = "";
-					hover = null;
+					hover = new Index(x, y);
+					int index = x + (y * size.getWidth());
+					if (items.containsKey(index)) {
+						InventoryItem item = items.get(index);
+						if (item != null) {
+
+							hint = item.name;
+							hintPosition = new Point((x * 33) + baseBounds.x, (y * 33) + baseBounds.y);
+						}
+					} else {
+						hint = "";
+					}
+					if (Mouse.isButtonDown(0) && hover != null && draggedItem == null && !itemMenu.showMenu) {
+						draggedItem = items.remove(index);
+						startIndex = hover;
+						dragging = true;
+					}
+
+					if (!Mouse.isButtonDown(0) && draggedItem != null) {
+						addItemAt(index, draggedItem);
+						dragging = false;
+						draggedItem = null;
+					}
 				}
 
 			} else {
@@ -84,9 +127,17 @@ public class InventorySystem extends BaseSystem {
 				hintPosition = null;
 				hover = null;
 				UserInterface.inventoryHovered = false;
+				if (!Mouse.isButtonDown(0) && draggedItem != null) {
+					int start = startIndex.getX() + (startIndex.getY() * size.getWidth());
+					addItemAt(start, draggedItem);
+					dragging = false;
+					draggedItem = null;
+				}
+			}
+			if (Mouse.isButtonDown(0) && draggedItem != null) {
+				draggedPosition = new Point(Window.getMouseX(), Window.getMouseY());
 			}
 		} else {
-
 		}
 	}
 
@@ -114,21 +165,25 @@ public class InventorySystem extends BaseSystem {
 			}
 			GL11.glEnd();
 
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-
-			if (items.size() > 0) {
-				if (hover != null) {
+			if (hover != null) {
+				if (hover.getX() == size.getWidth() - 1 && hover.getY() == size.getHeight() - 1) {
+				} else {
 					GL11.glBegin(GL11.GL_QUADS);
 					Renderer.renderRectangleWithoutBegin(baseBounds.x + 1 + (hover.getX() * 33),
 							baseBounds.y + 1 + (hover.getY() * 33), 32, 32, new Color(0, 0, 0, 0.5f));
 					GL11.glEnd();
 				}
+			}
+
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+			if (items.size() > 0) {
 				for (int x = 0; x < size.getWidth(); x++) {
 					for (int y = 0; y < size.getHeight(); y++) {
-						if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
+						if (x >= size.getWidth() - 1 && y >= size.getHeight() - 1) {
 						} else {
 							int index = x + (y * size.getWidth());
-							if (items.size() > index) {
+							if (items.containsKey(index)) {
 								InventoryItem item = items.get(index);
 
 								if (item != null) {
@@ -149,13 +204,18 @@ public class InventorySystem extends BaseSystem {
 
 								}
 
-							} else {
-								break;
 							}
 
 						}
 					}
 				}
+			}
+
+			if (draggedItem != null) {
+				GL11.glBegin(GL11.GL_TRIANGLES);
+				Renderer.renderModel(draggedPosition.x, draggedPosition.y, "SQUARE", draggedItem.getMaterial(),
+						new Color(1, 1, 1, 1f));
+				GL11.glEnd();
 			}
 
 			if (hint != "") {
@@ -174,6 +234,7 @@ public class InventorySystem extends BaseSystem {
 							baseBounds.y + 17 + ((size.getHeight() - 1) * 33)),
 					"" + ((size.getWidth() * size.getHeight()) - 1), 12, Color.white);
 			itemMenu.render();
+
 		}
 	}
 

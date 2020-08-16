@@ -13,10 +13,12 @@ import classes.AFunction;
 import classes.Chunk;
 import classes.Index;
 import classes.InventoryItem;
+import classes.ItemData;
 import classes.Object;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
+import data.CharacterData;
 
 public class ItemMenu {
 	InventoryItem item;
@@ -38,14 +40,14 @@ public class ItemMenu {
 				int y = itemIndex.getY();
 
 				int itemIndex = x + (y * UserInterface.inventory.size.getWidth());
-				if (UserInterface.inventory.items.size() > itemIndex) {
+				if (UserInterface.inventory.items.containsKey(itemIndex)) {
 					InventoryItem equipItem = InventorySystem.items.remove(itemIndex);
 
 					InventoryItem returnItem = CharacterSystem.equipItem(equipItem);
 
 					if (returnItem != null) {
 						InventorySystem.addItem(returnItem);
-					}
+					} 
 
 				}
 			}
@@ -100,12 +102,11 @@ public class ItemMenu {
 				int y = itemIndex.getY();
 
 				int index = x + (y * UserInterface.inventory.size.getWidth());
-				if (UserInterface.inventory.items.size() > index) {
+				if (UserInterface.inventory.items.containsKey(index)) {
 
 					InventoryItem inventiryItem = UserInterface.inventory.items.get(index);
 					if (inventiryItem != null) {
 						item = inventiryItem;
-
 					}
 				}
 			}

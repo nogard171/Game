@@ -134,9 +134,7 @@ public class EventManager {
 								chunk.needsUpdating();
 								ItemData itemData = WorldData.itemData.get(groundItem.name);
 
-								System.out.println("test" + "/" + itemData);
 								if (itemData != null) {
-									System.out.println("test" + "/" + itemData);
 									InventoryItem item = new InventoryItem();
 									item.setMaterial(itemData.inventoryMaterial);
 									item.name = groundItem.name;
@@ -253,7 +251,6 @@ public class EventManager {
 											obj.setModel(rawRes.harvestedModel);
 
 											chunk.needsUpdating();
-											System.out.println("task: " + event.eventName);
 
 										}
 									}

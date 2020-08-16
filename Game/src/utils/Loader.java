@@ -317,8 +317,10 @@ public class Loader {
 
 						String material = dataNode.getAttribute("material");
 						String inventoryMaterial = dataNode.getAttribute("inventory_material");
-
-						int stackSize = Integer.parseInt(dataNode.getAttribute("stacksize"));
+						int stackSize = 1;
+						if (dataNode.hasAttribute("stacksize")) {
+							stackSize = Integer.parseInt(dataNode.getAttribute("stacksize"));
+						}
 						int value = Integer.parseInt(dataNode.getAttribute("value"));
 
 						raw.material = material;

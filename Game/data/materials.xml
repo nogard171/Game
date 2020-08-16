@@ -90,4 +90,18 @@
 	<material name="IRON_SWORD_ITEM">
 		<data file="data/materials/iron_sword_item.mat" />
 	</material>
+	
+	
+	<material name="COPPER_CURRENCY">
+		<data file="data/materials/copper_currency.mat" />
+	</material>
+	<material name="SILVER_CURRENCY">
+		<data file="data/materials/silver_currency.mat" />
+	</material>
+	<material name="GOLD_CURRENCY">
+		<data file="data/materials/gold_currency.mat" />
+	</material>
+	<material name="PLATINUM_CURRENCY">
+		<data file="data/materials/platinum_currency.mat" />
+	</material>
 </materials>
