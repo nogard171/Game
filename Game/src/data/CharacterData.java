@@ -1,5 +1,10 @@
 package data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import classes.Skill;
+
 public class CharacterData {
 	public static String name = "";
 	public static int damage = 10;
@@ -12,6 +17,9 @@ public class CharacterData {
 	public static int gold = 0;
 	public static int silver = 0;
 	public static int copper = 0;
+
+	public static ArrayList<String> obtainedSkills = new ArrayList<String>();
+	public static HashMap<String, Skill> skills = new HashMap<String, Skill>();
 
 	public static void addAttribute(String name, int amount) {
 		switch (name) {

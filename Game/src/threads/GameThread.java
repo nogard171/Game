@@ -44,6 +44,7 @@ public class GameThread extends BaseThread {
 		Loader.loadTextures();
 		Loader.loadResources();
 		Loader.loadItems();
+		Loader.loadSkills();
 
 		world = new World();
 		world.setup();

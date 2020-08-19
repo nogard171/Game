@@ -47,7 +47,7 @@ public class ItemMenu {
 
 					if (returnItem != null) {
 						InventorySystem.addItem(returnItem);
-					} 
+					}
 
 				}
 			}
@@ -67,15 +67,15 @@ public class ItemMenu {
 		drop.text = "Drop";
 		drop.anlwaysVisible = true;
 		menuItems.put(drop.text.toUpperCase(), drop);
-		
-		MenuItem craft = new MenuItem(new AFunction() {
+
+		MenuItem carve = new MenuItem(new AFunction() {
 			public void click() {
 
-				
+				UserInterface.carving.showSystem = true;
 			}
 		});
-		craft.text = "Craft";
-		menuItems.put(craft.text.toUpperCase(), craft);
+		carve.text = "Carve";
+		menuItems.put(carve.text.toUpperCase(), carve);
 
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
@@ -162,6 +162,16 @@ public class ItemMenu {
 			MenuItem menuItem;
 			if (item.name.toUpperCase().contains("SWORD")) {
 				menuItem = menuItems.get("EQUIP");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			}
+		}
+		if (item != null) {
+			MenuItem menuItem;
+			if (item.name.toUpperCase().contains("KNIFE")) {
+				menuItem = menuItems.get("CARVE");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;

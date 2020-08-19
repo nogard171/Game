@@ -18,17 +18,20 @@ import data.UIData;
 import utils.Renderer;
 import utils.Window;
 
-public class CraftingSystem extends BaseSystem {
+public class CarvingSystem extends BaseSystem {
 	public ArrayList<String> recipes = new ArrayList<String>();
 	public ArrayList<Rectangle> bounds = new ArrayList<Rectangle>();
+	private Rectangle closeBounds;
 	private int start = 0;
 	private int hover = -1;
 
 	@Override
 	public void setup() {
 		super.setup();
-		baseBounds = new Rectangle(0, 0, 300, 330);
+		baseBounds = new Rectangle(100, 100, 300, 330);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
+
+		closeBounds = new Rectangle(baseBounds.x + baseBounds.width - 16, baseBounds.y, 16, 16);
 
 		for (int i = 0; i < 13; i++) {
 			RecipeData newRecipe = new RecipeData();
@@ -52,11 +55,18 @@ public class CraftingSystem extends BaseSystem {
 	public void update() {
 		super.update();
 		if (Window.wasResized()) {
-			baseBounds.y = (Window.height - 32) - baseBounds.height;
+			// baseBounds.y = (Window.height - 32) - baseBounds.height;
 		}
 		if (this.showSystem) {
 
 			if (baseHovered) {
+
+				if (closeBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+					if (Mouse.isButtonDown(0) && mouseDownCount == 0) {
+						showSystem = false;
+					}
+				}
+
 				UserInterface.craftingHovered = true;
 				int wheel = Mouse.getDWheel();
 				if (wheel != 0) {
@@ -74,8 +84,13 @@ public class CraftingSystem extends BaseSystem {
 					}
 				}
 
-				if (hover > -1 && Mouse.isButtonDown(0)) {
+				if (hover > -1 && Mouse.isButtonDown(0) && mouseDownCount == 0) {
 					System.out.println("Hover: " + hover);
+					mouseDownCount++;
+				}
+
+				if (!Mouse.isButtonDown(0) && mouseDownCount > 0) {
+					mouseDownCount = 0;
 				}
 
 			} else {
@@ -87,9 +102,14 @@ public class CraftingSystem extends BaseSystem {
 		}
 	}
 
+	int mouseDownCount = 0;
+
 	@Override
 	public void render() {
 		if (showSystem) {
+
+			Renderer.renderRectangle(baseBounds.x + baseBounds.width - 16, baseBounds.y, 16, 16,
+					new Color(1, 0, 0, 0.75f));
 
 			Renderer.renderRectangle(baseBounds.x, baseBounds.y, baseBounds.width, baseBounds.height,
 					new Color(0, 0, 0, 0.5f));
@@ -100,10 +120,10 @@ public class CraftingSystem extends BaseSystem {
 					baseBounds.y + 2 + ((start * 33) * (((float) 10 / (float) recipes.size()))), 6,
 					(baseBounds.height - 5) * ((float) 10 / (float) recipes.size()),
 					new Color(0.25f, 0.25f, 0.25f, 0.75f));
-
-			Renderer.renderRectangle((baseBounds.x + 1), baseBounds.y + 1 + ((hover - start) * 33), 148, 32,
-					new Color(1, 0, 0, 0.5f));
-
+			if (hover > -1) {
+				Renderer.renderRectangle((baseBounds.x + 1), baseBounds.y + 1 + ((hover - start) * 33), 148, 32,
+						new Color(1, 0, 0, 0.5f));
+			}
 			for (int i = start; i < start + 10; i++) {
 				if (recipes.size() > i) {
 					String recipeName = recipes.get(i);

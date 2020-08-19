@@ -1,6 +1,7 @@
 package data;
 
 import classes.Size;
+import classes.SkillData;
 import utils.WorldGenerator;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class WorldData {
 	public static HashMap<String, ModelData> modelData = new HashMap<String, ModelData>();
 	public static HashMap<String, ResourceData> resourceData = new HashMap<String, ResourceData>();
 	public static HashMap<String, ItemData> itemData = new HashMap<String, ItemData>();
+	public static HashMap<String, SkillData> skillData = new HashMap<String, SkillData>();
 
 	public static HashMap<String, Chunk> chunks = new HashMap<String, Chunk>();
 	public static HashMap<Integer, TrueTypeFont> fonts = new HashMap<Integer, TrueTypeFont>();

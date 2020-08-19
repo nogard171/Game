@@ -15,8 +15,10 @@ import classes.ItemDrop;
 import classes.Object;
 import classes.Resource;
 import classes.ResourceData;
+import classes.Skill;
 import data.WorldData;
 import utils.APathFinder;
+import data.CharacterData;
 
 public class EventManager {
 
@@ -69,6 +71,11 @@ public class EventManager {
 
 	public void setupEvent(Event event) {
 		if (event.eventName == "MOVE") {
+			if (!CharacterData.obtainedSkills.contains("WALKING") && !CharacterData.skills.containsKey("WALKING")) {
+				Skill newSkill = new Skill();
+				CharacterData.skills.put("WALKING", newSkill);
+			}
+
 			if (start.x == event.end.x && start.y == event.end.y) {
 				event.setup = true;
 				event.processed = true;
@@ -240,9 +247,9 @@ public class EventManager {
 
 												ItemData itemData = WorldData.itemData.get(item.name);
 												if (itemData != null) {
-													
+
 													item.setMaterial(itemData.inventoryMaterial);
-													
+
 													InventorySystem.addItem(item);
 												}
 											}
@@ -266,6 +273,16 @@ public class EventManager {
 		}
 		if (event.eventName == "MOVE") {
 			if (event.path != null && getTime() >= event.startTime) {
+
+				if (!CharacterData.obtainedSkills.contains("WALKING") && CharacterData.skills.containsKey("WALKING")) {
+					Skill newSkill = CharacterData.skills.get("WALKING");
+					newSkill.learnCount++;
+					if (newSkill.learnCount >= 10) {
+						newSkill.learned = true;
+						CharacterData.obtainedSkills.add("WALKING");
+					}
+				}
+
 				if (event.path.size() > 0) {
 					if (previous != null) {
 

@@ -1,5 +1,13 @@
 <skills>
-	<skill name="walking">
-		<obtain action="CHOP" />
+	<skill name="WALKING">
+		<obtain action="MOVE" />
+	</skill>
+	<skill name="CARVING">
+		<obtain action="CARVE" />
+		<xp formula="" />
+	</skill>
+	<skill name="SWORD_WEILDING">
+		<obtain action="EQUIP" type="sword" />
+		<xp formula="" />
 	</skill>
 </skills>

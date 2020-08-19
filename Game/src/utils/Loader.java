@@ -23,6 +23,7 @@ import classes.ItemDrop;
 import classes.MaterialData;
 import classes.ModelData;
 import classes.ResourceData;
+import classes.SkillData;
 import classes.TextureData;
 import classes.TextureType;
 import data.Settings;
@@ -330,6 +331,61 @@ public class Loader {
 
 					}
 					WorldData.itemData.put(name, raw);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadSkills() {
+		try {
+			File fXmlFile = new File(Settings.skillFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			NodeList resourceNodes = doc.getElementsByTagName("skill");
+
+			for (int temp = 0; temp < resourceNodes.getLength(); temp++) {
+
+				Node resourceNode = resourceNodes.item(temp);
+
+				if (resourceNode.getNodeType() == Node.ELEMENT_NODE) {
+					SkillData raw = new SkillData();
+					Element resourceElement = (Element) resourceNode;
+					String name = resourceElement.getAttribute("name");
+
+					Node dataNodes = resourceElement.getElementsByTagName("obtain").item(0);
+
+					if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
+
+						Element dataNode = (Element) dataNodes;
+
+						String action = dataNode.getAttribute("action");
+
+						raw.obtainingAction = action;
+
+					}
+					if (resourceElement.getElementsByTagName("xp").getLength() > 0) {
+						dataNodes = resourceElement.getElementsByTagName("xp").item(0);
+
+						if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
+
+							Element dataNode = (Element) dataNodes;
+
+							String formula = dataNode.getAttribute("formula");
+
+							raw.formula = formula;
+
+						}
+					}
+					WorldData.skillData.put(name, raw);
 				}
 
 			}
