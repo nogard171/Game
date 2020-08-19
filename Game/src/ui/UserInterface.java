@@ -31,11 +31,13 @@ public class UserInterface {
 	EventManager eventManager;
 	public static InventorySystem inventory;
 	public static CharacterSystem character;
+	public static CraftingSystem crafting;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
 	public static boolean menuHovered = false;
 	public static boolean characterHovered = false;
+	public static boolean craftingHovered = false;
 
 	public void setup() {
 
@@ -43,6 +45,7 @@ public class UserInterface {
 			public void click() {
 				inventory.showSystem = !inventory.showSystem;
 				character.showSystem = false;
+				crafting.showSystem = false;
 			}
 		});
 		bag.bounds = new Rectangle(0, 0, 32, 32);
@@ -54,12 +57,25 @@ public class UserInterface {
 			public void click() {
 				character.showSystem = !character.showSystem;
 				inventory.showSystem = false;
+				crafting.showSystem = false;
 			}
 		});
 		chara.bounds = new Rectangle(32, 0, 32, 32);
 		chara.text = "Character";
 		chara.material = "CHARACTER_ICON";
 		menu.add(chara);
+
+		MenuItem craft = new MenuItem(new AFunction() {
+			public void click() {
+				crafting.showSystem = !crafting.showSystem;
+				inventory.showSystem = false;
+				character.showSystem = false;
+			}
+		});
+		craft.bounds = new Rectangle(64, 0, 32, 32);
+		craft.text = "Crafting";
+		craft.material = "CRAFT_ICON";
+		menu.add(craft);
 
 		menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 
@@ -68,6 +84,9 @@ public class UserInterface {
 
 		character = new CharacterSystem();
 		character.setup();
+
+		crafting = new CraftingSystem();
+		crafting.setup();
 
 		eventManager = new EventManager();
 		eventManager.setup();
@@ -96,7 +115,7 @@ public class UserInterface {
 	}
 
 	public void update() {
-		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered) {
+		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered && !craftingHovered) {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(0) && hover != null) {
@@ -179,6 +198,7 @@ public class UserInterface {
 		eventManager.update();
 		inventory.update();
 		character.update();
+		crafting.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
@@ -235,6 +255,7 @@ public class UserInterface {
 	public void render() {
 		inventory.render();
 		character.render();
+		crafting.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
@@ -249,9 +270,8 @@ public class UserInterface {
 		GL11.glEnd();
 
 		Renderer.renderRectangle(0, 0, 100, 30, new Color(0, 0, 0, 0.5f));
-		if (InventorySystem.hover != null) {
-			Renderer.renderText(new Vector2f(0, 0),
-					"Hover:" + InventorySystem.hover.getX() + "," + InventorySystem.hover.getY(), 12, Color.white);
+		if (hover != null) {
+			Renderer.renderText(new Vector2f(0, 0), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
 			int hoverX = hover.getX();
 			int hoverY = hover.getY();
 			int chunkX = hoverX / 16;

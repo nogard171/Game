@@ -108,14 +108,14 @@ public class Renderer {
 		GL11.glVertex2i(isoX, isoZ);
 	}
 
-	public static void renderRectangle(int x, int y, int width, int height, Color c) {
+	public static void renderRectangle(float x, float y, float width, float height, Color c) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glColor4f(c.r, c.g, c.b, c.a);
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2i(x, y);
-		GL11.glVertex2i(x + width, y);
-		GL11.glVertex2i(x + width, y + height);
-		GL11.glVertex2i(x, y + height);
+		GL11.glVertex2f(x, y);
+		GL11.glVertex2f(x + width, y);
+		GL11.glVertex2f(x + width, y + height);
+		GL11.glVertex2f(x, y + height);
 		GL11.glEnd();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}

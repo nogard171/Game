@@ -17,4 +17,7 @@
 	<model name='COIN'>
 		<data file="data/models/coin.obj"/>
 	</model>
+	<model name='FURNACE'>
+		<data file="data/models/furnace.obj"/>
+	</model>
 </models>

@@ -67,6 +67,15 @@ public class ItemMenu {
 		drop.text = "Drop";
 		drop.anlwaysVisible = true;
 		menuItems.put(drop.text.toUpperCase(), drop);
+		
+		MenuItem craft = new MenuItem(new AFunction() {
+			public void click() {
+
+				
+			}
+		});
+		craft.text = "Craft";
+		menuItems.put(craft.text.toUpperCase(), craft);
 
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {

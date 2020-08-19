@@ -76,6 +76,11 @@ public class InventorySystem extends BaseSystem {
 		test.name = "Iron Sword";
 		test.setMaterial("IRON_SWORD_ITEM");
 		addItem(test);
+		
+		InventoryItem knife = new InventoryItem();
+		knife.name = "Knife";
+		knife.setMaterial("KNIFE_ITEM");
+		addItem(knife);
 
 	}
 
@@ -138,6 +143,7 @@ public class InventorySystem extends BaseSystem {
 				draggedPosition = new Point(Window.getMouseX(), Window.getMouseY());
 			}
 		} else {
+			UserInterface.inventoryHovered = false;
 		}
 	}
 

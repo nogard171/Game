@@ -104,4 +104,18 @@
 	<material name="PLATINUM_CURRENCY">
 		<data file="data/materials/platinum_currency.mat" />
 	</material>
+	
+	
+	<material name="FURNACE">
+		<data file="data/materials/furnace.mat" />
+		<offset x="-16" y="-40" />
+	</material>
+
+
+	<material name="KNIFE_ITEM">
+		<data file="data/materials/knife_item.mat" />
+	</material>
+	<material name="TEST">
+		<data file="data/materials/test.mat" />
+	</material>
 </materials>

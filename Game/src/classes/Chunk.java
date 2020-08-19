@@ -55,6 +55,7 @@ public class Chunk {
 				} else {
 					entityObjects[x][z] = new Object();
 				}
+				
 
 				if (x == 12 && z == 7) {
 
@@ -84,6 +85,15 @@ public class Chunk {
 					newObj.setY(isoY);
 					newObj.setMaterial("TREE");
 					newObj.setModel("TREE");
+
+					maskObjects[x][z] = newObj;
+				} else if (x == 13 && z == 13) {
+
+					Object newObj = new Object();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("FURNACE");
+					newObj.setModel("FURNACE");
 
 					maskObjects[x][z] = newObj;
 				} else {
