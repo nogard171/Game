@@ -33,8 +33,6 @@ public class UserInterface {
 	public static CharacterSystem character;
 	public static SkillSystem skills;
 
-	public static CarvingSystem carving;
-
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
 	public static boolean menuHovered = false;
@@ -89,9 +87,6 @@ public class UserInterface {
 
 		skills = new SkillSystem();
 		skills.setup();
-
-		carving = new CarvingSystem();
-		carving.setup();
 
 		eventManager = new EventManager();
 		eventManager.setup();
@@ -205,8 +200,6 @@ public class UserInterface {
 		character.update();
 		skills.update();
 
-		carving.update();
-
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
 
@@ -263,8 +256,6 @@ public class UserInterface {
 		inventory.render();
 		character.render();
 		skills.render();
-
-		carving.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));

@@ -16,6 +16,7 @@ import classes.Object;
 import classes.Resource;
 import classes.ResourceData;
 import classes.Skill;
+import classes.SkillData;
 import data.WorldData;
 import utils.APathFinder;
 import data.CharacterData;
@@ -71,10 +72,7 @@ public class EventManager {
 
 	public void setupEvent(Event event) {
 		if (event.eventName == "MOVE") {
-			if (!CharacterData.obtainedSkills.contains("WALKING") && !CharacterData.skills.containsKey("WALKING")) {
-				Skill newSkill = new Skill();
-				CharacterData.skills.put("WALKING", newSkill);
-			}
+			checkSkills(event.eventName);
 
 			if (start.x == event.end.x && start.y == event.end.y) {
 				event.setup = true;
@@ -98,6 +96,11 @@ public class EventManager {
 			}
 		}
 		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
+			checkSkills(event.eventName);
+			if (event.eventName == "CHOP") {
+
+			}
+
 			event.step = 10;
 			event.stepTime = 500;
 			event.setup = true;
@@ -112,6 +115,49 @@ public class EventManager {
 			event.setup = true;
 			playerWaiting = false;
 		}
+	}
+
+	public void checkSkills(String action) {
+
+		for (String key : WorldData.skillData.keySet()) {
+			SkillData skill = WorldData.skillData.get(key);
+
+			if (skill.obtainingAction.equals(action)) {
+				if (!CharacterData.obtainedSkills.contains(key) && !CharacterData.skills.containsKey(key)) {
+					Skill newSkill = new Skill();
+					CharacterData.skills.put(key, newSkill);
+				}
+
+			}
+		}
+		/*
+		 * if (!CharacterData.obtainedSkills.contains("WOODCUTTING") &&
+		 * !CharacterData.skills.containsKey("WALKING")) {
+		 * 
+		 * }
+		 */
+	}
+
+	public void processSkill(String action) {
+
+		for (String key : WorldData.skillData.keySet()) {
+
+			SkillData skill = WorldData.skillData.get(key);
+
+			if (skill.obtainingAction.equals(action)) {
+
+				if (!CharacterData.obtainedSkills.contains(key) && CharacterData.skills.containsKey(key)) {
+					System.out.println("test: " + skill.obtainingAction + "/" + action);
+					Skill newSkill = CharacterData.skills.get(key);
+					newSkill.learnCount++;
+					if (newSkill.learnCount >= 10) {
+						newSkill.learned = true;
+						CharacterData.obtainedSkills.add(key);
+					}
+				}
+			}
+		}
+
 	}
 
 	Random r = new Random();
@@ -202,6 +248,7 @@ public class EventManager {
 		}
 		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
 			if (getTime() >= event.startTime) {
+				processSkill(event.eventName);
 				if (event.step > 0) {
 
 					event.startTime = getTime() + event.stepTime;
@@ -274,14 +321,7 @@ public class EventManager {
 		if (event.eventName == "MOVE") {
 			if (event.path != null && getTime() >= event.startTime) {
 
-				if (!CharacterData.obtainedSkills.contains("WALKING") && CharacterData.skills.containsKey("WALKING")) {
-					Skill newSkill = CharacterData.skills.get("WALKING");
-					newSkill.learnCount++;
-					if (newSkill.learnCount >= 10) {
-						newSkill.learned = true;
-						CharacterData.obtainedSkills.add("WALKING");
-					}
-				}
+				processSkill(event.eventName);
 
 				if (event.path.size() > 0) {
 					if (previous != null) {

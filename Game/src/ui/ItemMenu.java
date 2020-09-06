@@ -68,15 +68,6 @@ public class ItemMenu {
 		drop.anlwaysVisible = true;
 		menuItems.put(drop.text.toUpperCase(), drop);
 
-		MenuItem carve = new MenuItem(new AFunction() {
-			public void click() {
-
-				UserInterface.carving.showSystem = true;
-			}
-		});
-		carve.text = "Carve";
-		menuItems.put(carve.text.toUpperCase(), carve);
-
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("inspect");

@@ -115,6 +115,16 @@
 	<material name="KNIFE_ITEM">
 		<data file="data/materials/knife_item.mat" />
 	</material>
+	<material name="WALKING_SKILL_ICON">
+		<data file="data/materials/walking_skill_icon.mat" />
+	</material>
+	<material name="WOODCUTTING_SKILL_ICON">
+		<data file="data/materials/woodcutting_skill_icon.mat" />
+	</material>
+	<material name="MINING_SKILL_ICON">
+		<data file="data/materials/mining_skill_icon.mat" />
+	</material>
+	
 	<material name="TEST">
 		<data file="data/materials/test.mat" />
 	</material>

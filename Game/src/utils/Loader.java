@@ -349,7 +349,7 @@ public class Loader {
 
 			doc.getDocumentElement().normalize();
 
-			Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			//Node resourcesNode = doc.getElementsByTagName("skills").item(0);
 			NodeList resourceNodes = doc.getElementsByTagName("skill");
 
 			for (int temp = 0; temp < resourceNodes.getLength(); temp++) {
@@ -360,6 +360,14 @@ public class Loader {
 					SkillData raw = new SkillData();
 					Element resourceElement = (Element) resourceNode;
 					String name = resourceElement.getAttribute("name");
+					if (resourceElement.hasAttribute("description")) {
+						String description = resourceElement.getAttribute("description");
+						raw.description = description;
+					}
+					if (resourceElement.hasAttribute("material")) {
+						String material = resourceElement.getAttribute("material");
+						raw.material = material;
+					}
 
 					Node dataNodes = resourceElement.getElementsByTagName("obtain").item(0);
 
