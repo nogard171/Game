@@ -103,7 +103,6 @@ public class Window {
 	public static boolean isMousePressed(int button) {
 		boolean isPressed = false;
 
-		System.out.println("test: " + button);
 		//while (Mouse.next()) {
 			if (Mouse.getEventButtonState()) {
 				if (Mouse.isButtonDown(button)) {

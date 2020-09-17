@@ -32,12 +32,14 @@ public class UserInterface {
 	public static InventorySystem inventory;
 	public static CharacterSystem character;
 	public static SkillSystem skills;
+	public static OptionSystem options;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
 	public static boolean menuHovered = false;
 	public static boolean characterHovered = false;
 	public static boolean craftingHovered = false;
+	public static boolean optionsHovered = false;
 
 	public void setup() {
 
@@ -46,6 +48,7 @@ public class UserInterface {
 				inventory.showSystem = !inventory.showSystem;
 				character.showSystem = false;
 				skills.showSystem = false;
+				options.showSystem = false;
 			}
 		});
 		bag.bounds = new Rectangle(0, 0, 32, 32);
@@ -58,6 +61,7 @@ public class UserInterface {
 				character.showSystem = !character.showSystem;
 				inventory.showSystem = false;
 				skills.showSystem = false;
+				options.showSystem = false;
 			}
 		});
 		chara.bounds = new Rectangle(32, 0, 32, 32);
@@ -70,12 +74,26 @@ public class UserInterface {
 				skills.showSystem = !skills.showSystem;
 				inventory.showSystem = false;
 				character.showSystem = false;
+				options.showSystem = false;
 			}
 		});
 		skill.bounds = new Rectangle(64, 0, 32, 32);
 		skill.text = "Skills";
 		skill.material = "SKILL_ICON";
 		menu.add(skill);
+
+		MenuItem optionsButton = new MenuItem(new AFunction() {
+			public void click() {
+				options.showSystem = !options.showSystem;
+				inventory.showSystem = false;
+				character.showSystem = false;
+				skills.showSystem = false;
+			}
+		});
+		optionsButton.bounds = new Rectangle(96, 0, 32, 32);
+		optionsButton.text = "Options";
+		optionsButton.material = "OPTIONS_ICON";
+		menu.add(optionsButton);
 
 		menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 
@@ -87,6 +105,9 @@ public class UserInterface {
 
 		skills = new SkillSystem();
 		skills.setup();
+
+		options = new OptionSystem();
+		options.setup();
 
 		eventManager = new EventManager();
 		eventManager.setup();
@@ -115,7 +136,8 @@ public class UserInterface {
 	}
 
 	public void update() {
-		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered && !craftingHovered) {
+		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered && !craftingHovered
+				&& !optionsHovered) {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(0) && hover != null) {
@@ -199,6 +221,7 @@ public class UserInterface {
 		inventory.update();
 		character.update();
 		skills.update();
+		options.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
@@ -256,6 +279,7 @@ public class UserInterface {
 		inventory.render();
 		character.render();
 		skills.render();
+		options.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));

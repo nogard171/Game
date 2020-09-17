@@ -124,6 +124,12 @@
 	<material name="MINING_SKILL_ICON">
 		<data file="data/materials/mining_skill_icon.mat" />
 	</material>
+	<material name="SKILL_ICON">
+		<data file="data/materials/skills_icon.mat" />
+	</material>
+	<material name="OPTIONS_ICON">
+		<data file="data/materials/options_icon.mat" />
+	</material>
 	
 	<material name="TEST">
 		<data file="data/materials/test.mat" />
