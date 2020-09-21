@@ -15,6 +15,7 @@ import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
 import data.WorldData;
+import utils.FPS;
 import utils.KeySystem;
 import utils.Renderer;
 import utils.View;
@@ -295,7 +296,9 @@ public class UserInterface {
 
 		Renderer.renderRectangle(0, 0, 100, 30, new Color(0, 0, 0, 0.5f));
 		if (hover != null) {
-			Renderer.renderText(new Vector2f(0, 0), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
+			Renderer.renderText(new Vector2f(0, 0), "FPS:" + FPS.getFPS(), 12, Color.white);
+
+			Renderer.renderText(new Vector2f(0, 12), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
 			int hoverX = hover.getX();
 			int hoverY = hover.getY();
 			int chunkX = hoverX / 16;
@@ -309,7 +312,7 @@ public class UserInterface {
 				chunkY -= 1;
 			}
 
-			Renderer.renderText(new Vector2f(0, 12), "chunk:" + chunkX + "," + chunkY, 12, Color.white);
+			Renderer.renderText(new Vector2f(0, 24), "chunk:" + chunkX + "," + chunkY, 12, Color.white);
 			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
 			if (chunk != null) {
 				int objX = hover.getX() % 16;
@@ -336,14 +339,14 @@ public class UserInterface {
 						}
 					}
 
-					Renderer.renderText(new Vector2f(0, 24), "Object:" + ground.getMaterial() + maskString, 12,
+					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial() + maskString, 12,
 							Color.white);
 				}
 			}
 
 		}
 		if (WorldGenerator.centerIndex != null) {
-			Renderer.renderText(new Vector2f(0, 36),
+			Renderer.renderText(new Vector2f(0, 48),
 					"Center Index:" + WorldGenerator.chunkIndex.getX() + "," + WorldGenerator.chunkIndex.getY(), 12,
 					Color.white);
 		}
@@ -354,8 +357,8 @@ public class UserInterface {
 		for (Event ev : eventManager.events) {
 			// System.out.println("event: " + ev.eventName);
 		}
-		Renderer.renderText(new Vector2f(0, 48), "Event Count:" + size, 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 60), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 60), "Event Count:" + size, 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 72), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
 
 	}
 

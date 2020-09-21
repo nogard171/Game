@@ -7,22 +7,32 @@ import java.util.LinkedList;
 import java.util.List;
 
 import classes.Chunk;
+import data.Settings;
 import data.WorldData;
 
 public class APathFinder {
 	HashMap<Point, Point> parentList = new HashMap<Point, Point>();
 	ArrayList<Point> indexes = new ArrayList<Point>();
+	private String previousDirection = "";
 
 	public APathFinder() {
+		setup();
+	}
+
+	public void setup() {
+		indexes.clear();
+
 		indexes.add(new Point(-1, 0));
 		indexes.add(new Point(1, 0));
 		indexes.add(new Point(0, -1));
 		indexes.add(new Point(0, 1));
+		if (Settings.movementDirections.contains("8")) {
 
-		indexes.add(new Point(-1, -1));
-		indexes.add(new Point(-1, 1));
-		indexes.add(new Point(1, 1));
-		indexes.add(new Point(1, -1));
+			indexes.add(new Point(-1, -1));
+			indexes.add(new Point(-1, 1));
+			indexes.add(new Point(1, 1));
+			indexes.add(new Point(1, -1));
+		}
 	}
 
 	protected List constructPath(Point index) {
@@ -36,6 +46,12 @@ public class APathFinder {
 	}
 
 	public List find(Point startIndex, Point endIndex) {
+
+		if (previousDirection != Settings.movementDirections) {
+			setup();
+			previousDirection = Settings.movementDirections;
+		}
+
 		LinkedList openList = new LinkedList();
 		LinkedList closedList = new LinkedList();
 		openList.add(startIndex);

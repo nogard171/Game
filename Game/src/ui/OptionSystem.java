@@ -13,6 +13,7 @@ import classes.EquipmentItem;
 import classes.InventoryItem;
 import classes.ItemData;
 import data.CharacterData;
+import data.Settings;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
@@ -21,6 +22,10 @@ public class OptionSystem extends BaseSystem {
 
 	String hint = "";
 	Point hintPosition = new Point(0, 0);
+
+	private DirectionMenu directionsMenu;
+
+	private Rectangle directionBounds;
 
 	public Rectangle controlsBounds;
 	public Rectangle graphicsBounds;
@@ -35,6 +40,9 @@ public class OptionSystem extends BaseSystem {
 	@Override
 	public void setup() {
 		super.setup();
+		directionsMenu = new DirectionMenu();
+		directionsMenu.setup();
+
 		baseBounds = new Rectangle(0, 0, 304, 333);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
@@ -47,7 +55,10 @@ public class OptionSystem extends BaseSystem {
 	public void update() {
 		super.update();
 		if (showSystem) {
-
+			if (directionBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+				directionsMenu.poll();
+			}
+			directionsMenu.update();
 			if (Window.wasResized()) {
 				baseBounds.y = (Window.height - 32) - baseBounds.height;
 			}
@@ -116,6 +127,31 @@ public class OptionSystem extends BaseSystem {
 			Renderer.renderRectangle(controlsBounds.x, controlsBounds.y, controlsBounds.width, controlsBounds.height,
 					controlColor);
 			Renderer.renderText(new Vector2f(controlsBounds.x + 20, controlsBounds.y + 1), "Controls", 12, Color.white);
+			if (controlSelected) {
+				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 16), "Movement", 18,
+						Color.white);
+				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 40), "Direction", 12,
+						Color.white);
+
+				if (directionBounds == null) {
+					directionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 40, 100, 20);
+				}
+
+				Renderer.renderRectangle(directionBounds.x, directionBounds.y, directionBounds.width,
+						directionBounds.height, new Color(1, 1, 1, 0.5f));
+				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 40),
+						Settings.movementDirections, 12, Color.white);
+
+				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 70), "Sneak", 12,
+						Color.white);
+
+				Renderer.renderRectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20,
+						new Color(1, 1, 1, 0.5f));
+				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 70), Settings.sneakKey, 12,
+						Color.white);
+
+			}
+
 			Color graphicsColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 			if (graphicsSelected) {
 				graphicsColor = new Color(1, 1, 1, 0.5f);
@@ -136,6 +172,7 @@ public class OptionSystem extends BaseSystem {
 			Renderer.renderRectangle(etcBounds.x, etcBounds.y, etcBounds.width, etcBounds.height, etcColor);
 			Renderer.renderText(new Vector2f(etcBounds.x + 40, etcBounds.y + 1), "Etc", 12, Color.white);
 
+			directionsMenu.render();
 		}
 	}
 
