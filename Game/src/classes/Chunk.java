@@ -55,7 +55,6 @@ public class Chunk {
 				} else {
 					entityObjects[x][z] = new Object();
 				}
-				
 
 				if (x == 12 && z == 7) {
 
@@ -89,11 +88,11 @@ public class Chunk {
 					maskObjects[x][z] = newObj;
 				} else if (x == 13 && z == 13) {
 
-					Object newObj = new Object();
+					CraftingTable newObj = new CraftingTable();
 					newObj.setX(isoX);
 					newObj.setY(isoY);
-					newObj.setMaterial("FURNACE");
-					newObj.setModel("FURNACE");
+					newObj.setMaterial("CRAFTING_TABLE");
+					newObj.setModel("CRAFTING_TABLE");
 
 					maskObjects[x][z] = newObj;
 				} else {

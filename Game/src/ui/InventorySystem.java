@@ -14,6 +14,7 @@ import org.newdawn.slick.Color;
 import classes.Index;
 import classes.InventoryItem;
 import classes.Size;
+import data.Settings;
 import utils.Renderer;
 import utils.Window;
 
@@ -76,12 +77,26 @@ public class InventorySystem extends BaseSystem {
 		test.name = "Iron Sword";
 		test.setMaterial("IRON_SWORD_ITEM");
 		addItem(test);
-		
+
 		InventoryItem knife = new InventoryItem();
 		knife.name = "Knife";
 		knife.setMaterial("KNIFE_ITEM");
 		addItem(knife);
 
+	}
+
+	private boolean moveItemOut = false;
+	private InventoryItem movedItem;
+
+	public void moveItemOut(boolean moveOut) {
+		moveItemOut = moveOut;
+	}
+
+	public InventoryItem getDraggedItem() {
+		movedItem = draggedItem;
+		draggedItem = null;
+		dragging = false;
+		return movedItem;
 	}
 
 	@Override
@@ -107,20 +122,19 @@ public class InventorySystem extends BaseSystem {
 					if (items.containsKey(index)) {
 						InventoryItem item = items.get(index);
 						if (item != null) {
-
 							hint = item.name;
 							hintPosition = new Point((x * 33) + baseBounds.x, (y * 33) + baseBounds.y);
 						}
 					} else {
 						hint = "";
 					}
-					if (Mouse.isButtonDown(0) && hover != null && draggedItem == null && !itemMenu.showMenu) {
+					if (Window.isMainAction() && hover != null && draggedItem == null && !itemMenu.showMenu) {
 						draggedItem = items.remove(index);
 						startIndex = hover;
 						dragging = true;
 					}
 
-					if (!Mouse.isButtonDown(0) && draggedItem != null) {
+					if (!Window.isMainAction() && draggedItem != null && !moveItemOut) {
 						addItemAt(index, draggedItem);
 						dragging = false;
 						draggedItem = null;
@@ -132,14 +146,17 @@ public class InventorySystem extends BaseSystem {
 				hintPosition = null;
 				hover = null;
 				UserInterface.inventoryHovered = false;
-				if (!Mouse.isButtonDown(0) && draggedItem != null) {
+				if (!Window.isMainAction() && draggedItem != null && !moveItemOut) {
 					int start = startIndex.getX() + (startIndex.getY() * size.getWidth());
 					addItemAt(start, draggedItem);
 					dragging = false;
 					draggedItem = null;
 				}
+				if (!Window.isMainAction() && draggedItem == null && moveItemOut) {
+					moveItemOut = false;
+				}
 			}
-			if (Mouse.isButtonDown(0) && draggedItem != null) {
+			if (Window.isMainAction() && draggedItem != null) {
 				draggedPosition = new Point(Window.getMouseX(), Window.getMouseY());
 			}
 		} else {
@@ -149,6 +166,7 @@ public class InventorySystem extends BaseSystem {
 
 	String hint = "";
 	Point hintPosition = new Point(0, 0);
+
 	public int inventoryBackID = -1;
 
 	@Override

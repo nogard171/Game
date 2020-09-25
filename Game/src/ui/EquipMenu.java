@@ -12,6 +12,7 @@ import classes.AFunction;
 import classes.EquipmentItem;
 import classes.InventoryItem;
 import classes.ItemData;
+import data.Settings;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
@@ -70,7 +71,7 @@ public class EquipMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && UserInterface.character.equipName != "" && !showMenu) {
+		if (Mouse.isButtonDown(Settings.secondaryActionIndex ) && UserInterface.character.equipName != "" && !showMenu) {
 			showMenu = true;
 			equipmentName = UserInterface.character.equipName;
 		}
@@ -81,7 +82,7 @@ public class EquipMenu {
 					item.hovered = false;
 					if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 						item.hovered = true;
-						if (Mouse.isButtonDown(0)) {
+						if (Window.isMainAction()) {
 							item.click();
 						} else {
 							item.unclick();

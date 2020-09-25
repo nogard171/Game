@@ -67,12 +67,12 @@ public class SkillSystem extends BaseSystem {
 					}
 				}
 
-				if (hover > -1 && Mouse.isButtonDown(0) && mouseDownCount == 0) {
+				if (hover > -1 && Window.isMainAction() && mouseDownCount == 0) {
 					System.out.println("Hover: " + hover);
 					mouseDownCount++;
 				}
 
-				if (!Mouse.isButtonDown(0) && mouseDownCount > 0) {
+				if (!Window.isMainAction() && mouseDownCount > 0) {
 					mouseDownCount = 0;
 				}
 

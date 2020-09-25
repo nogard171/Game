@@ -14,6 +14,7 @@ import org.newdawn.slick.Color;
 import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
+import data.Settings;
 import data.WorldData;
 import utils.FPS;
 import utils.KeySystem;
@@ -34,13 +35,16 @@ public class UserInterface {
 	public static CharacterSystem character;
 	public static SkillSystem skills;
 	public static OptionSystem options;
+	public static CraftingSystem crafting;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
 	public static boolean menuHovered = false;
 	public static boolean characterHovered = false;
-	public static boolean craftingHovered = false;
 	public static boolean optionsHovered = false;
+
+	public static boolean craftingHovered = false;
+	public static boolean craftingDragging = false;
 
 	public void setup() {
 
@@ -110,8 +114,12 @@ public class UserInterface {
 		options = new OptionSystem();
 		options.setup();
 
+		crafting = new CraftingSystem();
+		crafting.setup();
+
 		eventManager = new EventManager();
 		eventManager.setup();
+
 		objectMenu = new ObjectMenu();
 		objectMenu.setup();
 	}
@@ -137,11 +145,11 @@ public class UserInterface {
 	}
 
 	public void update() {
-		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered && !craftingHovered
-				&& !optionsHovered) {
+		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered
+				&& (!craftingHovered && !craftingDragging) && !optionsHovered) {
 			pollHover();
 			objectMenu.update();
-			if (Mouse.isButtonDown(0) && hover != null) {
+			if (Mouse.isButtonDown(Settings.mainActionIndex) && hover != null) {
 				if (!objectMenu.showObjectMenu && mouseDownCount == 0) {
 					int hoverX = hover.getX();
 					int hoverY = hover.getY();
@@ -196,6 +204,29 @@ public class UserInterface {
 											move.followUpEvent = harvest;
 											EventManager.addEvent(move);
 										}
+
+										if (action == "HARVEST") {
+											Event move = new Event();
+											move.eventName = "MOVE";
+											move.end = new Point(hover.getX(), hover.getY());
+
+											Event harvest = new Event();
+											harvest.eventName = "HARVEST";
+											harvest.end = new Point(hover.getX(), hover.getY());
+											move.followUpEvent = harvest;
+											EventManager.addEvent(move);
+										}
+										if (action == "CRAFT") {
+											Event move = new Event();
+											move.eventName = "MOVE";
+											move.end = new Point(hover.getX(), hover.getY());
+
+											Event craft = new Event();
+											craft.eventName = "CRAFT";
+											craft.end = new Point(hover.getX(), hover.getY());
+											move.followUpEvent = craft;
+											EventManager.addEvent(move);
+										}
 									}
 								}
 							}
@@ -211,7 +242,7 @@ public class UserInterface {
 					mouseDownCount++;
 				}
 			}
-			if (!Mouse.isButtonDown(0) && mouseDownCount > 0) {
+			if (!Mouse.isButtonDown(Settings.mainActionIndex) && mouseDownCount > 0) {
 				mouseDownCount = 0;
 			}
 		}
@@ -223,6 +254,7 @@ public class UserInterface {
 		character.update();
 		skills.update();
 		options.update();
+		crafting.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
@@ -241,7 +273,6 @@ public class UserInterface {
 		KeySystem.poll();
 		if (KeySystem.keyPressed(Keyboard.KEY_A)) {
 
-			// System.out.println("test:");
 		}
 
 		if (menuBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
@@ -281,6 +312,7 @@ public class UserInterface {
 		character.render();
 		skills.render();
 		options.render();
+		crafting.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
@@ -380,6 +412,8 @@ public class UserInterface {
 				action = "HARVEST";
 			} else if (obj.getMaterial() == "ORE") {
 				action = "MINE";
+			} else if (obj.getMaterial().contains("CRAFTING")) {
+				action = "CRAFT";
 			}
 		}
 		return action;

@@ -20,4 +20,7 @@
 	<model name='FURNACE'>
 		<data file="data/models/furnace.obj"/>
 	</model>
+	<model name='CRAFTING_TABLE'>
+		<data file="data/models/crafting_table.obj"/>
+	</model>
 </models>

@@ -48,13 +48,16 @@ public class EventManager {
 
 	public void update() {
 		for (Event event : events) {
+
 			if (!event.setup && playerWaiting) {
+				System.out.println("test: " + event.eventName);
 				setupEvent(event);
 			}
 			if (!event.processed && event.setup) {
 				processEvent(event);
 			}
 			if ((!event.processed && !event.failed) && event.followUpEvent != null) {
+
 				if (!event.followUpEvent.processed) {
 					processEvent(event);
 				} else {
@@ -73,11 +76,19 @@ public class EventManager {
 	public void setupEvent(Event event) {
 		if (event.eventName == "MOVE") {
 			checkSkills(event.eventName);
-
 			if (start.x == event.end.x && start.y == event.end.y) {
 				event.setup = true;
-				event.processed = true;
 				playerWaiting = true;
+				if (event.setup) {
+					Event child = event.followUpEvent;
+					if (child != null) {
+						if (!child.setup) {
+							setupEvent(child);
+						}
+					} else {
+						event.processed = true;
+					}
+				}
 			} else {
 				event.path = pathFinder.find(start, event.end);
 
@@ -114,6 +125,11 @@ public class EventManager {
 		if (event.eventName == "PICKUP") {
 			event.setup = true;
 			playerWaiting = false;
+		}
+		if (event.eventName == "CRAFT") {
+			event.setup = true;
+		} else if (UserInterface.crafting.showSystem) {
+			UserInterface.crafting.showSystem = false;
 		}
 	}
 
@@ -163,6 +179,14 @@ public class EventManager {
 	Random r = new Random();
 
 	public void processEvent(Event event) {
+		if (event.eventName == "CRAFT") {
+
+			System.out.println("worked");
+			UserInterface.crafting.showSystem = true;
+
+			event.processed = true;
+			playerWaiting = true;
+		}
 		if (event.eventName == "PICKUP") {
 			Point objectIndex = event.end;
 			if (objectIndex != null) {
@@ -318,7 +342,29 @@ public class EventManager {
 				}
 			}
 		}
+
 		if (event.eventName == "MOVE") {
+
+			if (event.path == null) {
+
+				Event child = event.followUpEvent;
+				if (child != null) {
+					event.childNeedsProcessed = true;
+				} else {
+					event.processed = true;
+					playerWaiting = true;
+				}
+				if (event.childNeedsProcessed) {
+
+					if (child != null) {
+						if (!child.processed) {
+
+							System.out.println("test: " + event.childNeedsProcessed);
+							processEvent(child);
+						}
+					}
+				}
+			}
 			if (event.path != null && getTime() >= event.startTime) {
 
 				processSkill(event.eventName);

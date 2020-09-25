@@ -27,7 +27,7 @@ public class BaseMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && !showMenu) {
+		if (Mouse.isButtonDown(Settings.secondaryActionIndex ) && !showMenu) {
 			showMenu = true;
 			menuBounds = new Rectangle(Window.getMouseX(), Window.getMouseY(), 100, menuItems.size() * 13);
 
@@ -38,7 +38,7 @@ public class BaseMenu {
 					item.hovered = false;
 					if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 						item.hovered = true;
-						if (Mouse.isButtonDown(0)) {
+						if (Window.isMainAction()) {
 							item.click();
 						} else {
 							item.unclick();

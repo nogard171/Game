@@ -14,6 +14,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import data.Settings;
 import threads.GameThread;
 
 public class Window {
@@ -103,35 +104,66 @@ public class Window {
 	public static boolean isMousePressed(int button) {
 		boolean isPressed = false;
 
-		//while (Mouse.next()) {
-			if (Mouse.getEventButtonState()) {
-				if (Mouse.isButtonDown(button)) {
-					isPressed = true;
-				}
+		// while (Mouse.next()) {
+		if (Mouse.getEventButtonState()) {
+			if (Mouse.isButtonDown(button)) {
+				isPressed = true;
 			}
-		//}
+		}
+		// }
 		return isPressed;
 	}
 
 	public static boolean isKeyDown(int key) {
-
-		return Keyboard.isKeyDown(key);
+		if (!Settings.waitForKey) {
+			return Keyboard.isKeyDown(key);
+		} else {
+			return false;
+		}
 	}
 
-	public static boolean isKeyPressed(int key) {
-		boolean isPressed = false;
+	public static int getKeyPressed() {
 		while (Keyboard.next()) {
-			if (key < 0) {
-				continue;
-			}
 			if (Keyboard.getEventKeyState()) {
 				if (!Keyboard.isRepeatEvent()) {
-					if (Keyboard.isKeyDown(key)) {
-						isPressed = true;
-					}
+					return Keyboard.getEventKey();
 				}
 			}
 		}
-		return isPressed;
+
+		return -1;
+	}
+
+	public static String getKey(int keycode) {
+		return Keyboard.getKeyName(keycode);
+	}
+
+	public static boolean isKeyPressed(int key) {
+		if (!Settings.waitForKey) {
+			boolean isPressed = false;
+			while (Keyboard.next()) {
+				if (key < 0) {
+					continue;
+				}
+				if (Keyboard.getEventKeyState()) {
+					if (!Keyboard.isRepeatEvent()) {
+						if (Keyboard.isKeyDown(key)) {
+							isPressed = true;
+						}
+					}
+				}
+			}
+			return isPressed;
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean isMainAction() {
+		return Mouse.isButtonDown(Settings.mainActionIndex);
+	}
+
+	public static boolean isSecondaryAction() {
+		return Mouse.isButtonDown(Settings.secondaryActionIndex);
 	}
 }

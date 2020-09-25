@@ -110,6 +110,10 @@
 		<data file="data/materials/furnace.mat" />
 		<offset x="-16" y="-40" />
 	</material>
+	<material name="CRAFTING_TABLE">
+		<data file="data/materials/crafting_table.mat" />
+		<offset x="-32" y="-32" />
+	</material>
 
 
 	<material name="KNIFE_ITEM">

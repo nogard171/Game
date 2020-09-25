@@ -24,8 +24,10 @@ public class OptionSystem extends BaseSystem {
 	Point hintPosition = new Point(0, 0);
 
 	private DirectionMenu directionsMenu;
+	private ActionMenu actionMenu;
 
 	private Rectangle directionBounds;
+	private Rectangle mainActionBounds;
 
 	public Rectangle controlsBounds;
 	public Rectangle graphicsBounds;
@@ -43,18 +45,28 @@ public class OptionSystem extends BaseSystem {
 		directionsMenu = new DirectionMenu();
 		directionsMenu.setup();
 
+		actionMenu = new ActionMenu();
+		actionMenu.setup();
+
 		baseBounds = new Rectangle(0, 0, 304, 333);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
 		controlsBounds = new Rectangle(baseBounds.x + 1, baseBounds.y + 1, 100, 20);
 		graphicsBounds = new Rectangle(baseBounds.x + 102, baseBounds.y + 1, 100, 20);
 		etcBounds = new Rectangle(baseBounds.x + 203, baseBounds.y + 1, 100, 20);
+
 	}
 
 	@Override
 	public void update() {
 		super.update();
 		if (showSystem) {
+
+			if (mainActionBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+				actionMenu.poll();
+			}
+			actionMenu.update();
+
 			if (directionBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				directionsMenu.poll();
 			}
@@ -88,18 +100,18 @@ public class OptionSystem extends BaseSystem {
 					etcHovered = false;
 				}
 
-				if (controlsHovered && Mouse.isButtonDown(0)) {
+				if (controlsHovered && Window.isMainAction()) {
 					System.out.println("test");
 					controlSelected = true;
 					etcSelected = false;
 					graphicsSelected = false;
 				}
-				if (graphicsHovered && Mouse.isButtonDown(0)) {
+				if (graphicsHovered && Window.isMainAction()) {
 					graphicsSelected = true;
 					controlSelected = false;
 					etcSelected = false;
 				}
-				if (etcHovered && Mouse.isButtonDown(0)) {
+				if (etcHovered && Window.isMainAction()) {
 					etcSelected = true;
 					controlSelected = false;
 					graphicsSelected = false;
@@ -142,13 +154,17 @@ public class OptionSystem extends BaseSystem {
 				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 40),
 						Settings.movementDirections, 12, Color.white);
 
-				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 70), "Sneak", 12,
+				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 70), "Main Action", 12,
 						Color.white);
 
-				Renderer.renderRectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20,
-						new Color(1, 1, 1, 0.5f));
-				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 70), Settings.sneakKey, 12,
-						Color.white);
+				if (mainActionBounds == null) {
+					mainActionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20);
+				}
+
+				Renderer.renderRectangle(mainActionBounds.x, mainActionBounds.y, mainActionBounds.width,
+						mainActionBounds.height, new Color(1, 1, 1, 0.5f));
+				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 70), Settings.mainAction,
+						12, Color.white);
 
 			}
 
@@ -173,6 +189,7 @@ public class OptionSystem extends BaseSystem {
 			Renderer.renderText(new Vector2f(etcBounds.x + 40, etcBounds.y + 1), "Etc", 12, Color.white);
 
 			directionsMenu.render();
+			actionMenu.render();
 		}
 	}
 

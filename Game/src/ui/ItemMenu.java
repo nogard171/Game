@@ -19,6 +19,7 @@ import data.WorldData;
 import utils.Renderer;
 import utils.Window;
 import data.CharacterData;
+import data.Settings;
 
 public class ItemMenu {
 	InventoryItem item;
@@ -92,7 +93,7 @@ public class ItemMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && UserInterface.inventory.getHover() != null && !showMenu) {
+		if (Mouse.isButtonDown(Settings.secondaryActionIndex ) && UserInterface.inventory.getHover() != null && !showMenu) {
 
 			showMenu = true;
 			itemIndex = UserInterface.inventory.getHover();
@@ -119,7 +120,7 @@ public class ItemMenu {
 					item.hovered = false;
 					if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 						item.hovered = true;
-						if (Mouse.isButtonDown(0)) {
+						if (Window.isMainAction()) {
 							item.click();
 						} else {
 							item.unclick();

@@ -7,7 +7,9 @@ public class Settings {
 	public static String itemFile = "data/items.xml";
 	public static String skillFile = "data/skills.xml";
 
-	public static String movementDirections = "8";
-	public static String sneakKey = "Left Shift";
-	public static int sneakCode = 0;
+	public static boolean waitForKey = false;
+	public static String movementDirections = "8 Directions";
+	public static String mainAction = "Left Mouse";
+	public static int mainActionIndex = 0;
+	public static int secondaryActionIndex = 1;
 }

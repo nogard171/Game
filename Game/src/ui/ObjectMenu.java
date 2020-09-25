@@ -13,6 +13,7 @@ import org.newdawn.slick.Color;
 import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
+import data.Settings;
 import data.WorldData;
 import threads.GameThread;
 import utils.Renderer;
@@ -105,16 +106,31 @@ public class ObjectMenu {
 		pickup.text = "Pickup";
 		menuItems.put(pickup.text.toUpperCase(), pickup);
 
+		MenuItem craft = new MenuItem(new AFunction() {
+			public void click() {
+				System.out.println("craft");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
+
+				Event craft = new Event();
+				craft.eventName = "CRAFT";
+				craft.end = new Point(objectIndex.getX(), objectIndex.getY());
+				move.followUpEvent = craft;
+				EventManager.addEvent(move);
+			}
+		});
+		craft.text = "Craft";
+		menuItems.put(craft.text.toUpperCase(), craft);
+
 		MenuItem info = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("info");
-
 			}
 		});
 		info.text = "Info";
 		info.anlwaysVisible = true;
 		menuItems.put(info.text.toUpperCase(), info);
-
 		MenuItem cancel = new MenuItem(new AFunction() {
 			public void click() {
 				showObjectMenu = false;
@@ -129,7 +145,7 @@ public class ObjectMenu {
 	int menuIn = 0;
 
 	public void update() {
-		if (Mouse.isButtonDown(1) && UserInterface.getHover() != null) {
+		if (Window.isSecondaryAction() && UserInterface.getHover() != null) {
 			showObjectMenu = true;
 			objectIndex = UserInterface.getHover();
 
@@ -183,7 +199,7 @@ public class ObjectMenu {
 					item.hovered = false;
 				}
 
-				if (item.hovered && Mouse.isButtonDown(0)) {
+				if (item.hovered && Window.isMainAction()) {
 					item.click();
 				} else {
 					item.unclick();
@@ -264,6 +280,13 @@ public class ObjectMenu {
 			}
 			if (obj.getMaterial().contains("ITEM")) {
 				menuItem = menuItems.get("PICKUP");
+				if (menuItem != null) {
+					menuItem.visible = true;
+					menuCount++;
+				}
+			}
+			if (obj.getMaterial().contains("CRAFTING")) {
+				menuItem = menuItems.get("CRAFT");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;

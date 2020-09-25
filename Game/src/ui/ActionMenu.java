@@ -15,7 +15,7 @@ import data.Settings;
 import utils.Renderer;
 import utils.Window;
 
-public class DirectionMenu {
+public class ActionMenu {
 	public boolean showMenu = false;
 	public boolean hovered = false;
 	Rectangle menuBounds;
@@ -24,31 +24,36 @@ public class DirectionMenu {
 
 	public void setup() {
 
-		MenuItem four = new MenuItem(new AFunction() {
+		MenuItem left = new MenuItem(new AFunction() {
 			public void click() {
-				Settings.movementDirections = "4 Directions";
+				Settings.mainAction = "Left Mouse";
+				Settings.mainActionIndex = 0;
+				Settings.secondaryActionIndex = 1;
 				showMenu = false;
 			}
 		});
-		four.text = "4 Directions";
-		four.anlwaysVisible = true;
-		menuItems.put(four.text.toUpperCase(), four);
-		MenuItem eight = new MenuItem(new AFunction() {
+		left.text = "Left Mouse";
+		left.anlwaysVisible = true;
+		menuItems.put(left.text.toUpperCase(), left);
+		MenuItem right = new MenuItem(new AFunction() {
 			public void click() {
-				Settings.movementDirections = "8 Directions";
+				Settings.mainAction = "Right Mouse";
+				Settings.mainActionIndex = 1;
+				Settings.secondaryActionIndex = 0;
 				showMenu = false;
 			}
 		});
-		eight.text = "8 Directions";
-		eight.anlwaysVisible = true;
-		menuItems.put(eight.text.toUpperCase(), eight);
+		right.text = "Right Mouse";
+		right.anlwaysVisible = true;
+		menuItems.put(right.text.toUpperCase(), right);
 
-		menuBounds = new Rectangle(5, 0, 100, menuItems.size() * 13);
+		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
 	}
 
 	public void poll() {
-		if (Mouse.isButtonDown(Settings.secondaryActionIndex) && !showMenu) {
+		if (Window.isSecondaryAction() && !showMenu) {
 			showMenu = true;
+			System.out.println("test");
 			menuBounds = new Rectangle(Window.getMouseX(), Window.getMouseY(), 100, menuItems.size() * 13);
 
 		}
