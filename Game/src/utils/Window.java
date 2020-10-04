@@ -40,6 +40,14 @@ public class Window {
 		return Display.wasResized();
 	}
 
+	public static boolean differentResolution() {
+		boolean diff = false;
+		if (width != Display.getWidth() || height != Display.getHeight()) {
+			diff = true;
+		}
+		return diff;
+	}
+
 	private static void setup() {
 		width = Display.getWidth();
 		height = Display.getHeight();

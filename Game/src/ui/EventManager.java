@@ -20,6 +20,7 @@ import classes.SkillData;
 import data.WorldData;
 import utils.APathFinder;
 import data.CharacterData;
+import data.UIData;
 
 public class EventManager {
 
@@ -179,9 +180,50 @@ public class EventManager {
 	Random r = new Random();
 
 	public void processEvent(Event event) {
-		if (event.eventName == "CRAFT") {
 
-			System.out.println("worked");
+		if (event.eventName == "CRAFT_RECIPE") {
+			if (event.followUpEvent != null) {
+				String recipeName = event.followUpEvent.eventName;
+
+				if (recipeName != "") {
+					RecipeData data = UIData.recipeData.get(recipeName);
+					if (data != null) {
+						System.out.println("recipe:" + recipeName);
+
+						ItemData item = WorldData.itemData.get(data.name);
+
+						if (item != null) {
+							for (RecipeItem recipeItem : data.items) {
+								if (recipeItem.reuse) {
+									ItemData recipeItemData = WorldData.itemData.get(recipeItem.itemName);
+									if (recipeItemData != null) {
+										System.out.println("test");
+										InventoryItem reusedItem = new InventoryItem();
+										reusedItem.name = recipeItem.itemName;
+										reusedItem.setMaterial(recipeItemData.inventoryMaterial);
+										UserInterface.inventory.addItem(reusedItem);
+									}
+								}
+							}
+
+							InventoryItem craftedItem = new InventoryItem();
+							craftedItem.name = data.name;
+							craftedItem.setMaterial(item.inventoryMaterial);
+							UserInterface.inventory.addItem(craftedItem);
+
+							event.followUpEvent.processed = true;
+							event.processed = true;
+							playerWaiting = true;
+						}
+
+					}
+				}
+
+			}
+			// event.processed = true;
+			// playerWaiting = true;
+		}
+		if (event.eventName == "CRAFT") {
 			UserInterface.crafting.showSystem = true;
 
 			event.processed = true;
@@ -254,12 +296,14 @@ public class EventManager {
 							GroundItem groundItem = new GroundItem();
 
 							ItemData itemData = WorldData.itemData.get(inventoryItem.name);
+
 							if (itemData != null) {
 								groundItem.name = inventoryItem.name;
 								groundItem.setMaterial(itemData.material);
 								chunk.groundItems[objX][objY] = groundItem;
 
 								chunk.needsUpdating();
+								UserInterface.chat.sendMessage(" has dropped " + inventoryItem.name + ".");
 							}
 
 							event.processed = true;
@@ -322,6 +366,7 @@ public class EventManager {
 													item.setMaterial(itemData.inventoryMaterial);
 
 													InventorySystem.addItem(item);
+
 												}
 											}
 
@@ -329,7 +374,7 @@ public class EventManager {
 											obj.setModel(rawRes.harvestedModel);
 
 											chunk.needsUpdating();
-
+											UserInterface.chat.sendMessage(" has " + event.eventName);
 										}
 									}
 								}

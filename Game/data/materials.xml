@@ -116,8 +116,8 @@
 	</material>
 
 
-	<material name="KNIFE_ITEM">
-		<data file="data/materials/knife_item.mat" />
+	<material name="STONE_TOOL_ITEM">
+		<data file="data/materials/stone_tool_item.mat" />
 	</material>
 	<material name="WALKING_SKILL_ICON">
 		<data file="data/materials/walking_skill_icon.mat" />

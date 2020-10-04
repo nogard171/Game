@@ -9,7 +9,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.AFunction;
 import classes.EquipmentItem;
 import data.Settings;
 import utils.Renderer;
@@ -43,7 +42,8 @@ public class DirectionMenu {
 		eight.anlwaysVisible = true;
 		menuItems.put(eight.text.toUpperCase(), eight);
 
-		menuBounds = new Rectangle(5, 0, 100, menuItems.size() * 13);
+		menuBounds = new Rectangle(UserInterface.options.baseBounds.x + 5, UserInterface.options.baseBounds.y, 100,
+				menuItems.size() * 13);
 	}
 
 	public void poll() {

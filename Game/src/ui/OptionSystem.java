@@ -55,13 +55,25 @@ public class OptionSystem extends BaseSystem {
 		graphicsBounds = new Rectangle(baseBounds.x + 102, baseBounds.y + 1, 100, 20);
 		etcBounds = new Rectangle(baseBounds.x + 203, baseBounds.y + 1, 100, 20);
 
+		mainActionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20);
+		directionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 40, 100, 20);
+
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		if (showSystem) {
+		if (Window.wasResized()) {
+			actionMenu.setup();
+			directionsMenu.setup();
+			controlsBounds = new Rectangle(baseBounds.x + 1, baseBounds.y + 1, 100, 20);
+			graphicsBounds = new Rectangle(baseBounds.x + 102, baseBounds.y + 1, 100, 20);
+			etcBounds = new Rectangle(baseBounds.x + 203, baseBounds.y + 1, 100, 20);
 
+			mainActionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20);
+			directionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 40, 100, 20);
+		}
+		if (showSystem) {
 			if (mainActionBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				actionMenu.poll();
 			}
@@ -145,10 +157,6 @@ public class OptionSystem extends BaseSystem {
 				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 40), "Direction", 12,
 						Color.white);
 
-				if (directionBounds == null) {
-					directionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 40, 100, 20);
-				}
-
 				Renderer.renderRectangle(directionBounds.x, directionBounds.y, directionBounds.width,
 						directionBounds.height, new Color(1, 1, 1, 0.5f));
 				Renderer.renderText(new Vector2f(controlsBounds.x + 120, controlsBounds.y + 40),
@@ -156,10 +164,6 @@ public class OptionSystem extends BaseSystem {
 
 				Renderer.renderText(new Vector2f(controlsBounds.x + 15, controlsBounds.y + 70), "Main Action", 12,
 						Color.white);
-
-				if (mainActionBounds == null) {
-					mainActionBounds = new Rectangle(controlsBounds.x + 120, controlsBounds.y + 70, 100, 20);
-				}
 
 				Renderer.renderRectangle(mainActionBounds.x, mainActionBounds.y, mainActionBounds.width,
 						mainActionBounds.height, new Color(1, 1, 1, 0.5f));

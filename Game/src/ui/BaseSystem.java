@@ -16,7 +16,9 @@ public class BaseSystem {
 	}
 
 	public void update() {
-
+		if (Window.wasResized()) {
+			baseBounds.y = (Window.height - 32) - baseBounds.height;
+		}
 		if (showSystem) {
 			if (baseBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				baseHovered = true;

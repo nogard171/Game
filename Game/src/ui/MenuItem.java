@@ -2,8 +2,6 @@ package ui;
 
 import java.awt.Rectangle;
 
-import classes.AFunction;
-
 public class MenuItem {
 	public String text = "";
 	public Rectangle bounds = new Rectangle(0, 0, 0, 0);

@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.RecipeItem;
 import classes.SkillData;
 import data.CharacterData;
 import data.UIData;
@@ -42,9 +41,6 @@ public class SkillSystem extends BaseSystem {
 	@Override
 	public void update() {
 		super.update();
-		if (Window.wasResized()) {
-			baseBounds.y = (Window.height - 32) - baseBounds.height;
-		}
 		if (this.showSystem) {
 
 			if (baseHovered) {

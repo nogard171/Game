@@ -6,7 +6,7 @@ import java.util.HashMap;
 import classes.Skill;
 
 public class CharacterData {
-	public static String name = "";
+	public static String name = "Nogard171";
 	public static int damage = 10;
 	public static int defense = 10;
 	public static int agility = 10;

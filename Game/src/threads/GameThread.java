@@ -16,11 +16,13 @@ import classes.Index;
 import classes.TextureType;
 import classes.World;
 import classes.Object;
+import data.UIData;
 import data.WorldData;
 import ui.Event;
 import ui.EventManager;
 import ui.MouseIndex;
 import ui.ObjectMenu;
+import ui.RecipeData;
 import ui.UserInterface;
 import utils.APathFinder;
 import utils.FPS;
@@ -45,6 +47,9 @@ public class GameThread extends BaseThread {
 		Loader.loadResources();
 		Loader.loadItems();
 		Loader.loadSkills();
+		Loader.loadRecipes();
+		
+
 
 		world = new World();
 		world.setup();

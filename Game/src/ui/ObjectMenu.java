@@ -10,7 +10,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
 import data.Settings;

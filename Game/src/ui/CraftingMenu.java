@@ -16,35 +16,25 @@ import data.WorldData;
 import utils.Renderer;
 import utils.Window;
 
-public class EquipMenu {
+public class CraftingMenu {
 	public boolean showMenu = false;
 	public boolean hovered = false;
 	Rectangle menuBounds;
 
-	public String equipmentName = "";
+	InventoryItem item;
+	Point itemPosition = new Point(0, 0);
 
 	LinkedHashMap<String, MenuItem> menuItems = new LinkedHashMap<String, MenuItem>();
 
 	public void setup() {
-		MenuItem unequip = new MenuItem(new AFunction() {
+		MenuItem remove = new MenuItem(new AFunction() {
 			public void click() {
-				System.out.println("Equip");
-
-				EquipmentItem equipItem = UserInterface.character.items.get(equipmentName.toUpperCase());
-				if (equipItem != null) {
-					if (equipItem.item != null) {
-
-						UserInterface.inventory.addItem(equipItem.item);
-
-						equipItem.item = null;
-
-					}
-				}
+				System.out.println("remove");
 
 			}
 		});
-		unequip.text = "Unequip";
-		menuItems.put(unequip.text.toUpperCase(), unequip);
+		remove.text = "Remove";
+		menuItems.put(remove.text.toUpperCase(), remove);
 
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
@@ -70,9 +60,17 @@ public class EquipMenu {
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(Settings.secondaryActionIndex ) && UserInterface.character.equipName != "" && !showMenu) {
+		if (Mouse.isButtonDown(Settings.secondaryActionIndex) && !showMenu) {
 			showMenu = true;
-			equipmentName = UserInterface.character.equipName;
+			itemPosition = UserInterface.crafting.getHoveredPosition();
+			item = UserInterface.crafting.getHoveredItem();
+			if (item != null) {
+				System.out.println("tesT: " + item.getMaterial());
+			}
+			if(itemPosition==null)
+			{
+				showMenu = false;
+			}
 		}
 		if (showMenu) {
 			fixMenu();
@@ -110,16 +108,18 @@ public class EquipMenu {
 			} else if (item.anlwaysVisible) {
 				menuCount++;
 			}
-			EquipmentItem equipItem = UserInterface.character.items.get(equipmentName.toUpperCase());
-			if (equipItem != null) {
-				if (equipItem.item != null) {
-					item.visible = true;
+
+		}
+		if (item != null) {
+			MenuItem menuItem;
+			if (item !=null) {
+				menuItem = menuItems.get("REMOVE");
+				if (menuItem != null) {
+					menuItem.visible = true;
 					menuCount++;
 				}
-
 			}
 		}
-
 		if (menuCount != previousCount) {
 			menuBounds = new Rectangle(0, 0, 100, (menuCount) * 13);
 			previousCount = menuCount;
@@ -128,32 +128,27 @@ public class EquipMenu {
 
 	public void render() {
 		if (showMenu) {
-			if (equipmentName != "") {
 
-				EquipmentItem equipItem = UserInterface.character.items.get(equipmentName.toUpperCase());
-				// System.out.println("test:" + equipmentName);
-				if (equipItem != null) {
+			int cartX = (int) (UserInterface.crafting.baseBounds.getX()
+					+ (itemPosition.x - UserInterface.crafting.baseBounds.getX()));
+			int cartZ = (int) (UserInterface.crafting.baseBounds.getY()
+					+ (itemPosition.y - UserInterface.crafting.baseBounds.getY()));
 
-					int cartX = (int) ((equipItem.bounds.getX()) + UserInterface.inventory.baseBounds.getX());
-					int cartZ = (int) ((equipItem.bounds.getY()) + UserInterface.inventory.baseBounds.getY());
-
-					menuBounds.x = cartX;
-					menuBounds.y = cartZ;
-					Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
-							new Color(0, 0, 0, 0.5f));
-					int y = 0;
-					for (MenuItem item : menuItems.values()) {
-						if (item.visible || item.anlwaysVisible) {
-							item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
-							if (item.hovered) {
-								Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,
-										item.bounds.height, new Color(1, 0, 0, 0.5f));
-							}
-							Renderer.renderText(new Vector2f(cartX + 3, cartZ + (y * 12)), item.text, 12, Color.white);
-
-							y++;
-						}
+			menuBounds.x = cartX;
+			menuBounds.y = cartZ;
+			Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
+					new Color(0, 0, 0, 0.5f));
+			int y = 0;
+			for (MenuItem item : menuItems.values()) {
+				if (item.visible || item.anlwaysVisible) {
+					item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
+					if (item.hovered) {
+						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
+								new Color(1, 0, 0, 0.5f));
 					}
+					Renderer.renderText(new Vector2f(cartX + 3, cartZ + (y * 12)), item.text, 12, Color.white);
+
+					y++;
 				}
 			}
 		}

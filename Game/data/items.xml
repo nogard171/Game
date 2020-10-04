@@ -1,11 +1,17 @@
 <items>
-	<item name="ORE_ITEM">
-		<data value="10" material="ORE_GROUND_ITEM" inventory_material="ORE_ITEM" />
+	<item name="ORE_ITEM" commonName="Ore">
+		<data value="10" material="ORE_GROUND_ITEM" inventory_material="ORE_ITEM" stack_size="99" />
 	</item>
-	<item name="WOOD_LOG_ITEM">
-		<data value="10" material="WOOD_LOG_ITEM" inventory_material="WOOD_LOG_ITEM" />
+	<item name="WOOD_LOG_ITEM" commonName="Wood Log">
+		<data value="10" material="WOOD_LOG_ITEM" inventory_material="WOOD_LOG_ITEM" stack_size="99" />
 	</item>
-	<item name="IRON_SWORD_ITEM">
+	<item name="IRON_SWORD_ITEM" commonName="Iron Sword">
 		<data value="10" material="IRON_SWORD_ITEM" inventory_material="IRON_SWORD_ITEM" />
+	</item>
+	<item name="STONE_TOOL_ITEM" commonName="Stone Tool">
+		<data value="10" material="STONE_TOOL_ITEM" inventory_material="STONE_TOOL_ITEM" />
+	</item>
+	<item name="STICK" commonName="Stick">
+		<data value="10" material="TEST" inventory_material="TEST" stack_size="99" />
 	</item>
 </items>

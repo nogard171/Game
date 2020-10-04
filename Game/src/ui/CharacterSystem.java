@@ -116,11 +116,9 @@ public class CharacterSystem extends BaseSystem {
 	@Override
 	public void update() {
 		super.update();
+
 		if (showSystem) {
 			equipMenu.update();
-			if (Window.wasResized()) {
-				baseBounds.y = (Window.height - 32) - baseBounds.height;
-			}
 			if (baseBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
 				baseHovered = true;
 			} else {

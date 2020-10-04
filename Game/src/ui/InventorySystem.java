@@ -13,55 +13,90 @@ import org.newdawn.slick.Color;
 
 import classes.Index;
 import classes.InventoryItem;
+import classes.ItemData;
 import classes.Size;
 import data.Settings;
+import data.WorldData;
 import utils.Renderer;
 import utils.Window;
 
 public class InventorySystem extends BaseSystem {
 	static LinkedHashMap<Integer, InventoryItem> items = new LinkedHashMap<Integer, InventoryItem>();
 
-	static int lastIndex = 0;
+	// static int lastIndex = 0;
 	public static Size size;
 	public static Index hover;
 	public Index startIndex;
 	public InventoryItem draggedItem = null;
 	public Point draggedPosition = new Point(0, 0);
 	public static boolean dragging = false;
+	private static int draggedIndex = -1;
 
 	ItemMenu itemMenu;
 
 	public static void addItem(InventoryItem newItem) {
 		int count = newItem.count;
-
-		for (int c = 0; c < count; c++) {
-			boolean add = false;
-			newItem.count = 1;
-			while (!add) {
-				if (items.containsKey(lastIndex)) {
-					if (items.get(lastIndex) == null) {
-						add = true;
-					} else {
-						lastIndex++;
-					}
+		boolean add = true;
+		/*
+		 * // for (int c = 0; c < count; c++) { boolean add = false; // newItem.count =
+		 * 1; while (!add) { if (items.containsKey(lastIndex)) { if
+		 * (items.get(lastIndex) == null) { add = true; } else { lastIndex++; } } else {
+		 * add = true; } }
+		 * 
+		 * 
+		 * if (add) { items.put(lastIndex, newItem); }
+		 * 
+		 * }
+		 */
+		int lastIndex = -1;
+		int nextIndex = -1;
+		for (int x = 0; x < size.getWidth(); x++) {
+			for (int y = 0; y < size.getHeight(); y++) {
+				if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
 				} else {
-					add = true;
+					int index = x + (y * size.getWidth());
+					if (items.containsKey(index)) {
+						InventoryItem item = items.get(index);
+						System.out.println("test: " + index + "=" + item);
+						if (item != null) {
+							ItemData data = WorldData.itemData.get(item.name);
+							if (data != null) {
+								if (item.name == newItem.name && item.count < data.stackSize) {
+									item.count += newItem.count;
+									add = false;
+								} else {
+									nextIndex = index + 1;
+								}
+							} else {
+								lastIndex = index + 1;
+							}
+						}
+					}
 				}
 			}
-
-			if (add) {
-				items.put(lastIndex, newItem);
-			}
+		}
+		if (nextIndex < 0 && lastIndex < 0) {
+			nextIndex = 0;
+		}
+		System.out.println("index: " + lastIndex);
+		if (add && nextIndex >= 0) {
+			items.put(nextIndex, newItem);
+		} else if (add && lastIndex >= 0) {
+			items.put(lastIndex, newItem);
 		}
 	}
 
 	public static void addItemAt(int index, InventoryItem newItem) {
-		int count = newItem.count;
-		for (int c = 0; c < count; c++) {
-			newItem.count = 1;
+		// int count = newItem.count;
+		// for (int c = 0; c < count; c++) {
+		// newItem.count = 1;
+		if (!items.containsKey(index)) {
 			items.put(index, newItem);
-			// lastIndex += index;
+		} else {
+			items.put(draggedIndex, newItem);
 		}
+		// lastIndex += index;
+		// }
 	}
 
 	@Override
@@ -73,14 +108,18 @@ public class InventorySystem extends BaseSystem {
 		baseBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
+		ItemData data = WorldData.itemData.get("IRON_SWORD_ITEM");
 		InventoryItem test = new InventoryItem();
-		test.name = "Iron Sword";
-		test.setMaterial("IRON_SWORD_ITEM");
+		test.commonName = data.commonName;
+		test.name = data.name;
+		test.setMaterial(data.material);
 		addItem(test);
 
+		data = WorldData.itemData.get("STONE_TOOL_ITEM");
 		InventoryItem knife = new InventoryItem();
-		knife.name = "Knife";
-		knife.setMaterial("KNIFE_ITEM");
+		knife.commonName = data.commonName;
+		knife.name = data.name;
+		knife.setMaterial(data.material);
 		addItem(knife);
 
 	}
@@ -102,11 +141,8 @@ public class InventorySystem extends BaseSystem {
 	@Override
 	public void update() {
 		super.update();
-		if (Window.wasResized()) {
-			baseBounds.y = (Window.height - 32) - baseBounds.height;
-		}
-		if (this.showSystem) {
 
+		if (this.showSystem) {
 			itemMenu.update();
 
 			if (baseHovered) {
@@ -130,6 +166,7 @@ public class InventorySystem extends BaseSystem {
 					}
 					if (Window.isMainAction() && hover != null && draggedItem == null && !itemMenu.showMenu) {
 						draggedItem = items.remove(index);
+						draggedIndex = index;
 						startIndex = hover;
 						dragging = true;
 					}
@@ -138,6 +175,7 @@ public class InventorySystem extends BaseSystem {
 						addItemAt(index, draggedItem);
 						dragging = false;
 						draggedItem = null;
+						draggedIndex = -1;
 					}
 				}
 
@@ -212,19 +250,24 @@ public class InventorySystem extends BaseSystem {
 
 								if (item != null) {
 
-									GL11.glBegin(GL11.GL_TRIANGLES);
-									Renderer.renderModel(baseBounds.x + 1 + (x * 33), baseBounds.y + 1 + (y * 33),
-											"SQUARE", item.getMaterial(), new Color(1, 1, 1, 1f));
-									GL11.glEnd();
+									ItemData data = WorldData.itemData.get(item.name);
 
-									if (item.count > 1) {
+									if (data != null) {
+										System.out.println("data: " + data.inventoryMaterial);
+										GL11.glBegin(GL11.GL_TRIANGLES);
+										Renderer.renderModel(baseBounds.x + 1 + (x * 33), baseBounds.y + 1 + (y * 33),
+												"SQUARE", data.inventoryMaterial, new Color(1, 1, 1, 1f));
+										GL11.glEnd();
 
-										Renderer.renderText(
-												new Vector2f(baseBounds.x + 24 + (x * 33),
-														baseBounds.y + 17 + (y * 33)),
-												item.count + "", 12, Color.white);
+										if (item.count > 1) {
+
+											Renderer.renderText(
+													new Vector2f(baseBounds.x + 24 + (x * 33),
+															baseBounds.y + 17 + (y * 33)),
+													item.count + "", 12, Color.white);
+										}
+										item.hovered = false;
 									}
-									item.hovered = false;
 
 								}
 

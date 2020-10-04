@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -22,11 +21,14 @@ import classes.ItemData;
 import classes.ItemDrop;
 import classes.MaterialData;
 import classes.ModelData;
+import ui.RecipeData;
+import ui.RecipeItem;
 import classes.ResourceData;
 import classes.SkillData;
 import classes.TextureData;
 import classes.TextureType;
 import data.Settings;
+import data.UIData;
 import data.WorldData;
 
 public class Loader {
@@ -309,6 +311,11 @@ public class Loader {
 					ItemData raw = new ItemData();
 					Element resourceElement = (Element) resourceNode;
 					String name = resourceElement.getAttribute("name");
+					raw.name = name;
+					if (resourceElement.hasAttribute("commonName")) {
+						String commonName = resourceElement.getAttribute("commonName");
+						raw.commonName = commonName;
+					}
 
 					Node dataNodes = resourceElement.getElementsByTagName("data").item(0);
 
@@ -319,8 +326,8 @@ public class Loader {
 						String material = dataNode.getAttribute("material");
 						String inventoryMaterial = dataNode.getAttribute("inventory_material");
 						int stackSize = 1;
-						if (dataNode.hasAttribute("stacksize")) {
-							stackSize = Integer.parseInt(dataNode.getAttribute("stacksize"));
+						if (dataNode.hasAttribute("stack_size")) {
+							stackSize = Integer.parseInt(dataNode.getAttribute("stack_size"));
 						}
 						int value = Integer.parseInt(dataNode.getAttribute("value"));
 
@@ -349,7 +356,7 @@ public class Loader {
 
 			doc.getDocumentElement().normalize();
 
-			//Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			// Node resourcesNode = doc.getElementsByTagName("skills").item(0);
 			NodeList resourceNodes = doc.getElementsByTagName("skill");
 
 			for (int temp = 0; temp < resourceNodes.getLength(); temp++) {
@@ -394,6 +401,88 @@ public class Loader {
 						}
 					}
 					WorldData.skillData.put(name, raw);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadRecipes() {
+		try {
+			File fXmlFile = new File(Settings.recipesFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			// Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			NodeList recipeNodes = doc.getElementsByTagName("recipe");
+
+			for (int temp = 0; temp < recipeNodes.getLength(); temp++) {
+
+				Node recipeNode = recipeNodes.item(temp);
+
+				if (recipeNode.getNodeType() == Node.ELEMENT_NODE) {
+					RecipeData data = new RecipeData();
+
+					Element recipeElement = (Element) recipeNode;
+					String name = recipeElement.getAttribute("name");
+					data.name = name;
+					if (recipeElement.hasAttribute("count")) {
+
+						String itemCount = recipeElement.getAttribute("count");
+						if (itemCount != "") {
+							if (itemCount.contains("-")) {
+								String[] itemCounts = itemCount.split("-");
+								data.minCount = Integer.parseInt(itemCounts[0]);
+								data.maxCount = Integer.parseInt(itemCounts[1]);
+							} else {
+								data.minCount = Integer.parseInt(itemCount);
+							}
+						}
+					} else {
+						data.minCount = 1;
+					}
+
+					NodeList itemNodes = recipeElement.getElementsByTagName("item");
+					String comboItems = "";
+					for (int itemTemp = 0; itemTemp < itemNodes.getLength(); itemTemp++) {
+
+						Node itemNode = itemNodes.item(itemTemp);
+
+						if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+							RecipeItem item = new RecipeItem();
+
+							Element resourceElement = (Element) itemNode;
+							String itemName = resourceElement.getAttribute("name");
+
+							if (resourceElement.hasAttribute("reuse")) {
+								Boolean itemReuse = Boolean.parseBoolean(resourceElement.getAttribute("reuse"));
+								item.reuse = itemReuse;
+							}
+							item.itemName = itemName;
+
+							if (comboItems == "") {
+								comboItems = itemName;
+							} else {
+								comboItems += "+" + itemName;
+							}
+
+							if (resourceElement.hasAttribute("count")) {
+
+								int itemCount2 = Integer.parseInt(resourceElement.getAttribute("count"));
+								item.itemCount = itemCount2;
+							} else {
+								item.itemCount = 1;
+							}
+							data.items.add(item);
+						}
+					}
+					UIData.recipeData.put(comboItems, data);
 				}
 
 			}

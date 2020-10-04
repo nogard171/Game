@@ -1,6 +1,8 @@
 package classes;
 
 public class ItemData {
+	public String name = "";
+	public String commonName = "";
 	public String material = "";
 	public String inventoryMaterial = "";
 	public int stackSize = 0;

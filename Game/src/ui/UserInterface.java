@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.AFunction;
 import classes.Chunk;
 import classes.Object;
 import data.Settings;
@@ -36,6 +35,7 @@ public class UserInterface {
 	public static SkillSystem skills;
 	public static OptionSystem options;
 	public static CraftingSystem crafting;
+	public static ChatSystem chat;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
@@ -54,6 +54,7 @@ public class UserInterface {
 				character.showSystem = false;
 				skills.showSystem = false;
 				options.showSystem = false;
+				chat.showSystem = false;
 			}
 		});
 		bag.bounds = new Rectangle(0, 0, 32, 32);
@@ -67,6 +68,7 @@ public class UserInterface {
 				inventory.showSystem = false;
 				skills.showSystem = false;
 				options.showSystem = false;
+				chat.showSystem = false;
 			}
 		});
 		chara.bounds = new Rectangle(32, 0, 32, 32);
@@ -80,6 +82,7 @@ public class UserInterface {
 				inventory.showSystem = false;
 				character.showSystem = false;
 				options.showSystem = false;
+				chat.showSystem = false;
 			}
 		});
 		skill.bounds = new Rectangle(64, 0, 32, 32);
@@ -87,12 +90,27 @@ public class UserInterface {
 		skill.material = "SKILL_ICON";
 		menu.add(skill);
 
+		MenuItem chatIcon = new MenuItem(new AFunction() {
+			public void click() {
+				chat.showSystem = !chat.showSystem;
+				inventory.showSystem = false;
+				character.showSystem = false;
+				skills.showSystem = false;
+				options.showSystem = false;
+			}
+		});
+		chatIcon.bounds = new Rectangle(0, 0, 32, 32);
+		chatIcon.text = "Chat";
+		chatIcon.material = "CHAT";
+		menu.add(chatIcon);
+
 		MenuItem optionsButton = new MenuItem(new AFunction() {
 			public void click() {
 				options.showSystem = !options.showSystem;
 				inventory.showSystem = false;
 				character.showSystem = false;
 				skills.showSystem = false;
+				chat.showSystem = false;
 			}
 		});
 		optionsButton.bounds = new Rectangle(96, 0, 32, 32);
@@ -122,6 +140,9 @@ public class UserInterface {
 
 		objectMenu = new ObjectMenu();
 		objectMenu.setup();
+
+		chat = new ChatSystem();
+		chat.setup();
 	}
 
 	private void pollHover() {
@@ -255,6 +276,7 @@ public class UserInterface {
 		skills.update();
 		options.update();
 		crafting.update();
+		chat.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
@@ -313,6 +335,7 @@ public class UserInterface {
 		skills.render();
 		options.render();
 		crafting.render();
+		chat.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
