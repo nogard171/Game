@@ -1,18 +1,25 @@
 <resources>
-	<resource name="TREE">
+	<resource name="TREE" action="CHOP">
 		<data harvestedMaterial="TREE_TRUNK" harvestedModel="TREE_TRUNK">
 			<item name="WOOD_LOG_ITEM" count="1-3" />
 		</data>
 	</resource>
-	<resource name="ORE" model="CUBE">
-		<data regenerate="true" harvestedMaterial="STONE">
+	<resource name="ORE" model="CUBE" action="MINE">
+		<data harvestedMaterial="STONE">
 			<item name="ORE_ITEM" count="1-3" />
 		</data>
 	</resource>
-	<resource name="WHEAT">
+	<resource name="STONE" model="CUBE" action="MINE">
+		<data harvestedMaterial="AIR">
+			<item name="STONE_ITEM" count="1-3" />
+		</data>
+	</resource>
+	<resource name="WHEAT" action="HARVEST">
 		<data>
 			<item name="WHEAT_ITEM" count="1" />
 			<item name="WHEAT_SEED_ITEM" count="1-2" />
 		</data>
 	</resource>
+
+	<resource name="CRAFTING_TABLE" action="CRAFT"></resource>
 </resources>

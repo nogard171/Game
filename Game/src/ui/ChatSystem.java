@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.InventoryItem;
 import data.UIData;
 import utils.Renderer;
 import utils.Window;

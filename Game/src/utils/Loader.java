@@ -235,50 +235,55 @@ public class Loader {
 					ResourceData raw = new ResourceData();
 					Element resourceElement = (Element) resourceNode;
 					String name = resourceElement.getAttribute("name");
+					if (resourceElement.hasAttribute("action")) {
+						String action = resourceElement.getAttribute("action");
+						raw.action = action;
+					}
 					String model = resourceElement.getAttribute("model");
 					raw.model = model;
+					if (resourceElement.hasChildNodes()) {
+						Node dataNodes = resourceElement.getElementsByTagName("data").item(0);
 
-					Node dataNodes = resourceElement.getElementsByTagName("data").item(0);
+						if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
 
-					if (dataNodes.getNodeType() == Node.ELEMENT_NODE) {
+							Element dataNode = (Element) dataNodes;
 
-						Element dataNode = (Element) dataNodes;
-
-						if (dataNode.hasAttribute("regenerate")) {
-							boolean regrow = Boolean.parseBoolean(dataNode.getAttribute("regenerate"));
-							raw.regrow = regrow;
-						}
-
-						String harvestedMaterial = dataNode.getAttribute("harvestedMaterial");
-						String harvestedModel = dataNode.getAttribute("harvestedModel");
-
-						raw.harvestedMaterial = harvestedMaterial;
-						raw.harvestedModel = harvestedModel;
-
-						NodeList itemNodes = dataNode.getElementsByTagName("item");
-
-						for (int tempI = 0; tempI < itemNodes.getLength(); tempI++) {
-							ItemDrop drop = new ItemDrop();
-							Node itemNode = itemNodes.item(tempI);
-
-							if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
-
-								Element itemDataNode = (Element) itemNode;
-								String itemName = itemDataNode.getAttribute("name");
-								String itemCount = itemDataNode.getAttribute("count");
-								if (itemCount != "") {
-									if (itemCount.contains("-")) {
-										String[] itemCounts = itemCount.split("-");
-										drop.minDropCount = Integer.parseInt(itemCounts[0]);
-										drop.maxDropCount = Integer.parseInt(itemCounts[1]);
-									} else {
-										drop.minDropCount = Integer.parseInt(itemCount);
-									}
-								}
-								drop.name = itemName;
-
+							if (dataNode.hasAttribute("regenerate")) {
+								boolean regrow = Boolean.parseBoolean(dataNode.getAttribute("regenerate"));
+								raw.regrow = regrow;
 							}
-							raw.itemDrops.add(drop);
+
+							String harvestedMaterial = dataNode.getAttribute("harvestedMaterial");
+							String harvestedModel = dataNode.getAttribute("harvestedModel");
+
+							raw.harvestedMaterial = harvestedMaterial;
+							raw.harvestedModel = harvestedModel;
+
+							NodeList itemNodes = dataNode.getElementsByTagName("item");
+
+							for (int tempI = 0; tempI < itemNodes.getLength(); tempI++) {
+								ItemDrop drop = new ItemDrop();
+								Node itemNode = itemNodes.item(tempI);
+
+								if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+
+									Element itemDataNode = (Element) itemNode;
+									String itemName = itemDataNode.getAttribute("name");
+									String itemCount = itemDataNode.getAttribute("count");
+									if (itemCount != "") {
+										if (itemCount.contains("-")) {
+											String[] itemCounts = itemCount.split("-");
+											drop.minDropCount = Integer.parseInt(itemCounts[0]);
+											drop.maxDropCount = Integer.parseInt(itemCounts[1]);
+										} else {
+											drop.minDropCount = Integer.parseInt(itemCount);
+										}
+									}
+									drop.name = itemName;
+
+								}
+								raw.itemDrops.add(drop);
+							}
 						}
 					}
 					WorldData.resourceData.put(name, raw);
@@ -315,6 +320,10 @@ public class Loader {
 					if (resourceElement.hasAttribute("commonName")) {
 						String commonName = resourceElement.getAttribute("commonName");
 						raw.commonName = commonName;
+					}
+					if (resourceElement.hasAttribute("durability")) {
+						int durability = Integer.parseInt(resourceElement.getAttribute("durability"));
+						raw.durability = durability;
 					}
 
 					Node dataNodes = resourceElement.getElementsByTagName("data").item(0);

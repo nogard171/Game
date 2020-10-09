@@ -10,7 +10,6 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import classes.EquipmentItem;
-import classes.InventoryItem;
 import classes.ItemData;
 import data.CharacterData;
 import data.Settings;

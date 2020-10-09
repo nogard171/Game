@@ -7,6 +7,7 @@ public class ResourceData {
 	public boolean regrow = false;
 	public String harvestedMaterial = "";
 	public String harvestedModel = "";
+	public String action = "";
 	public ArrayList<ItemDrop> itemDrops = new ArrayList<ItemDrop>();
 
 }

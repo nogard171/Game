@@ -13,6 +13,7 @@ import org.newdawn.slick.Color;
 
 import classes.Chunk;
 import classes.Object;
+import classes.ResourceData;
 import data.Settings;
 import data.WorldData;
 import utils.FPS;
@@ -180,79 +181,52 @@ public class UserInterface {
 					Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
 					if (chunk != null) {
 						boolean ifMove = true;
+						String action = "";
 						int objX = hover.getX() % 16;
 						int objY = hover.getY() % 16;
 						if (objX >= 0 && objY >= 0) {
 
 							Object ground = chunk.groundObjects[objX][objY];
 							Object mask = chunk.maskObjects[objX][objY];
+							Object item = chunk.groundItems[objX][objY];
 							if (ground != null) {
 								if (mask != null) {
-									if (mask.getMaterial() != "AIR") {
+									if (item != null) {
+										System.out.println("test");
 										ifMove = false;
-										String action = objectToAction(mask);
-										if (action == "CHOP") {
-											Event move = new Event();
-											move.eventName = "MOVE";
-											move.end = new Point(hover.getX(), hover.getY());
-
-											Event chop = new Event();
-											chop.eventName = "CHOP";
-											chop.end = new Point(hover.getX(), hover.getY());
-											move.followUpEvent = chop;
-											EventManager.addEvent(move);
-										}
-										if (action == "MINE") {
-											Event move = new Event();
-											move.eventName = "MOVE";
-											move.end = new Point(hover.getX(), hover.getY());
-
-											Event mine = new Event();
-											mine.eventName = "MINE";
-											mine.end = new Point(hover.getX(), hover.getY());
-											move.followUpEvent = mine;
-											EventManager.addEvent(move);
-										}
-
-										if (action == "HARVEST") {
-											Event move = new Event();
-											move.eventName = "MOVE";
-											move.end = new Point(hover.getX(), hover.getY());
-
-											Event harvest = new Event();
-											harvest.eventName = "HARVEST";
-											harvest.end = new Point(hover.getX(), hover.getY());
-											move.followUpEvent = harvest;
-											EventManager.addEvent(move);
-										}
-
-										if (action == "HARVEST") {
-											Event move = new Event();
-											move.eventName = "MOVE";
-											move.end = new Point(hover.getX(), hover.getY());
-
-											Event harvest = new Event();
-											harvest.eventName = "HARVEST";
-											harvest.end = new Point(hover.getX(), hover.getY());
-											move.followUpEvent = harvest;
-											EventManager.addEvent(move);
-										}
-										if (action == "CRAFT") {
-											Event move = new Event();
-											move.eventName = "MOVE";
-											move.end = new Point(hover.getX(), hover.getY());
-
-											Event craft = new Event();
-											craft.eventName = "CRAFT";
-											craft.end = new Point(hover.getX(), hover.getY());
-											move.followUpEvent = craft;
-											EventManager.addEvent(move);
-										}
+										action = objectToAction(item);
+										/*
+										 * Event move = new Event(); move.eventName = "MOVE"; move.end = new
+										 * Point(hover.getX(), hover.getY()); if (action != "MOVE") { Event secondary =
+										 * new Event(); secondary.eventName = action; secondary.end = new
+										 * Point(hover.getX(), hover.getY()); move.followUpEvent = secondary;
+										 * 
+										 * } EventManager.addEvent(move);
+										 */
 									}
+									else if (mask.getMaterial() != "AIR") {
+										ifMove = false;
+										action = objectToAction(mask);
+
+									}
+
 								}
 							}
-						}
 
+						}
+						if (!ifMove) {
+							Event move = new Event();
+							move.eventName = "MOVE";
+							move.end = new Point(hover.getX(), hover.getY());
+							if (action != "MOVE") {
+								Event secondary = new Event();
+								secondary.eventName = action;
+								secondary.end = new Point(hover.getX(), hover.getY());
+								move.followUpEvent = secondary;
+
+							}
+							EventManager.addEvent(move);
+						}
 						if (ifMove) {
 							Event move = new Event();
 							move.eventName = "MOVE";
@@ -429,15 +403,24 @@ public class UserInterface {
 		String action = "MOVE";
 		if (obj != null) {
 			MenuItem menuItem;
-			if (obj.getMaterial() == "TREE") {
-				action = "CHOP";
-			} else if (obj.getMaterial() == "WHEAT") {
-				action = "HARVEST";
-			} else if (obj.getMaterial() == "ORE") {
-				action = "MINE";
-			} else if (obj.getMaterial().contains("CRAFTING")) {
-				action = "CRAFT";
+			/*
+			 * if (obj.getMaterial() == "TREE") { action = "CHOP"; } else if
+			 * (obj.getMaterial() == "WHEAT") { action = "HARVEST"; } else if
+			 * (obj.getMaterial() == "ORE") { action = "MINE"; } else if
+			 * (obj.getMaterial().contains("CRAFTING")) { action = "CRAFT"; }
+			 */
+
+			ResourceData data = WorldData.resourceData.get(obj.getMaterial());
+			if (data != null) {
+				action = data.action.toUpperCase();
+				System.out.println("action: " + obj.getMaterial() + "=" + data.action);
 			}
+			System.out.println("action: " + obj.isItem);
+
+			if (obj.isItem) {
+				action = "PICKUP";
+			}
+
 		}
 		return action;
 	}

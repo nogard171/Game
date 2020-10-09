@@ -11,7 +11,6 @@ import org.newdawn.slick.Color;
 
 import classes.EquipmentItem;
 import classes.Index;
-import classes.InventoryItem;
 import classes.ItemData;
 import classes.Size;
 import data.WorldData;

@@ -2,12 +2,13 @@ package ui;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
-import classes.InventoryItem;
 import data.Settings;
 import data.UIData;
 import utils.Renderer;
@@ -15,15 +16,7 @@ import utils.Window;
 
 public class CraftingSystem extends BaseSystem {
 
-	private Rectangle slotOneBounds;
-	private boolean slotOneHovered = false;
-	private InventoryItem slotOneItem;
-	private Rectangle slotTwoBounds;
-	private boolean slotTwoHovered = false;
-	private InventoryItem slotTwoItem;
-	private Rectangle finalSlotBounds;
-	private boolean finalSlotHovered = false;
-	private InventoryItem finalSlotItem;
+	public static LinkedList<CraftingSlot> slots = new LinkedList<CraftingSlot>();
 
 	private Rectangle closeBounds;
 	private boolean closeHovered = false;
@@ -47,17 +40,18 @@ public class CraftingSystem extends BaseSystem {
 		setupBounds();
 
 		for (RecipeData data : UIData.recipeData.values()) {
-			System.out.println("data: " + data.name);
+			// System.out.println("data: " + data.name);
 		}
+
+		CraftingSlot newSlot = new CraftingSlot(60, 60);
+		slots.add(newSlot);
+		newSlot = new CraftingSlot(120, 60);
+		slots.add(newSlot);
 	}
 
 	public void setupBounds() {
 		titleBarBounds = new Rectangle(baseBounds.x, baseBounds.y, baseBounds.width - 21, 20);
 		closeBounds = new Rectangle((baseBounds.x + baseBounds.width) - 20, baseBounds.y, 20, 20);
-		slotOneBounds = new Rectangle(baseBounds.x + 60, baseBounds.y + 60, 32, 32);
-		slotTwoBounds = new Rectangle(baseBounds.x + 120, baseBounds.y + 60, 32, 32);
-
-		finalSlotBounds = new Rectangle(baseBounds.x + 180, baseBounds.y + 60, 32, 32);
 
 		craft = new Button(new Rectangle(baseBounds.x + 110, baseBounds.y + 100, 50, 20), "Craft", new AFunction() {
 			public void click() {
@@ -97,33 +91,15 @@ public class CraftingSystem extends BaseSystem {
 			} else {
 				UserInterface.inventory.moveItemOut(false);
 			}
+
 			closeHovered = closeBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
-			slotOneHovered = slotOneBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
-			slotTwoHovered = slotTwoBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
-			finalSlotHovered = finalSlotBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
 
 			if (closeHovered && Window.isMainAction()) {
 				this.showSystem = false;
 			}
 
-			if (slotOneHovered && UserInterface.inventory.draggedItem != null && Window.isMainAction()) {
-				UserInterface.inventory.moveItemOut(true);
-			}
-			if (slotOneHovered && UserInterface.inventory.draggedItem != null && !Window.isMainAction()
-					&& slotOneItem == null) {
-				slotOneItem = UserInterface.inventory.getDraggedItem();
-
-				UserInterface.inventory.moveItemOut(false);
-			}
-
-			if (slotTwoHovered && UserInterface.inventory.draggedItem != null && Window.isMainAction()) {
-				UserInterface.inventory.moveItemOut(true);
-			}
-			if (slotTwoHovered && UserInterface.inventory.draggedItem != null && !Window.isMainAction()
-					&& slotTwoItem == null) {
-				slotTwoItem = UserInterface.inventory.getDraggedItem();
-
-				UserInterface.inventory.moveItemOut(false);
+			for (CraftingSlot slot : slots) {
+				slot.update();
 			}
 
 			craft.update();
@@ -158,29 +134,33 @@ public class CraftingSystem extends BaseSystem {
 
 			Renderer.renderText(new Vector2f(closeBounds.x + 6, closeBounds.y + 1), "X", 12, Color.white);
 
-			Renderer.renderRectangle(slotOneBounds.x, slotOneBounds.y, slotOneBounds.width, slotOneBounds.height,
-					new Color(1, 1, 1, 0.5f));
-			Renderer.renderText(new Vector2f(slotOneBounds.x + 43, slotOneBounds.y + 6), "+", 12, Color.white);
-			if (slotOneItem != null) {
-				GL11.glBegin(GL11.GL_TRIANGLES);
-				Renderer.renderModel(slotOneBounds.x, slotOneBounds.y, "SQUARE", slotOneItem.getMaterial(),
-						new Color(1, 1, 1, 1f));
-				GL11.glEnd();
+			for (CraftingSlot slot : slots) {
+				slot.render(baseBounds.x, baseBounds.y);
 			}
 
-			Renderer.renderRectangle(slotTwoBounds.x, slotTwoBounds.y, slotTwoBounds.width, slotTwoBounds.height,
-					new Color(1, 1, 1, 0.5f));
-			if (slotTwoItem != null) {
-				GL11.glBegin(GL11.GL_TRIANGLES);
-				Renderer.renderModel(slotTwoBounds.x, slotTwoBounds.y, "SQUARE", slotTwoItem.getMaterial(),
-						new Color(1, 1, 1, 1f));
-				GL11.glEnd();
-			}
-
-			Renderer.renderText(new Vector2f(slotTwoBounds.x + 43, slotTwoBounds.y + 6), "=", 12, Color.white);
-			Renderer.renderRectangle(finalSlotBounds.x, finalSlotBounds.y, finalSlotBounds.width,
-					finalSlotBounds.height, new Color(1, 1, 1, 0.5f));
-
+			/*
+			 * Renderer.renderRectangle(slotOneBounds.x, slotOneBounds.y,
+			 * slotOneBounds.width, slotOneBounds.height, new Color(1, 1, 1, 0.5f));
+			 * Renderer.renderText(new Vector2f(slotOneBounds.x + 43, slotOneBounds.y + 6),
+			 * "+", 12, Color.white); if (slotOneItem != null) {
+			 * GL11.glBegin(GL11.GL_TRIANGLES); Renderer.renderModel(slotOneBounds.x,
+			 * slotOneBounds.y, "SQUARE", slotOneItem.getMaterial(), new Color(1, 1, 1,
+			 * 1f)); GL11.glEnd(); }
+			 * 
+			 * 
+			 * Renderer.renderRectangle(slotTwoBounds.x, slotTwoBounds.y,
+			 * slotTwoBounds.width, slotTwoBounds.height, new Color(1, 1, 1, 0.5f)); if
+			 * (slotTwoItem != null) { GL11.glBegin(GL11.GL_TRIANGLES);
+			 * Renderer.renderModel(slotTwoBounds.x, slotTwoBounds.y, "SQUARE",
+			 * slotTwoItem.getMaterial(), new Color(1, 1, 1, 1f)); GL11.glEnd(); }
+			 * 
+			 * Renderer.renderText(new Vector2f(slotTwoBounds.x + 43, slotTwoBounds.y + 6),
+			 * "=", 12, Color.white);
+			 */
+			/*
+			 * Renderer.renderRectangle(finalSlotBounds.x, finalSlotBounds.y,
+			 * finalSlotBounds.width, finalSlotBounds.height, new Color(1, 1, 1, 0.5f));
+			 */
 			craft.render();
 
 			menu.render();
@@ -193,65 +173,115 @@ public class CraftingSystem extends BaseSystem {
 
 	}
 
+	public CraftingSlot getHoveredSlot() {
+		CraftingSlot hoveredSlot = null;
+		for (CraftingSlot slot : slots) {
+			if (slot.isHovered()) {
+				hoveredSlot = slot;
+				break;
+			}
+		}
+
+		return hoveredSlot;
+	}
+
 	public Point getHoveredPosition() {
 		Point position = null;
-		if (slotOneHovered) {
-			position = new Point((int) slotOneBounds.getX(), (int) slotOneBounds.getY());
+		/*
+		 * if (slotOneHovered) { position = new Point((int) slotOneBounds.getX(), (int)
+		 * slotOneBounds.getY()); } if (slotTwoHovered) { position = new Point((int)
+		 * slotTwoBounds.getX(), (int) slotTwoBounds.getY()); } if (finalSlotHovered) {
+		 * position = new Point((int) finalSlotBounds.getX(), (int)
+		 * finalSlotBounds.getY()); }
+		 */
+		for (CraftingSlot slot : slots) {
+			if (slot.isHovered()) {
+				position = slot.getPosition();
+			}
 		}
-		if (slotTwoHovered) {
-			position = new Point((int) slotTwoBounds.getX(), (int) slotTwoBounds.getY());
-		}
-		if (finalSlotHovered) {
-			position = new Point((int) finalSlotBounds.getX(), (int) finalSlotBounds.getY());
-		}
+
 		return position;
 	}
 
 	public InventoryItem getHoveredItem() {
 		InventoryItem item = null;
-		if (slotOneHovered) {
-			if (slotOneItem != null) {
-				item = slotOneItem;
+		for (CraftingSlot slot : slots) {
+			if (slot.isHovered()) {
+				item = slot.getItem();
 			}
 		}
-		if (slotTwoHovered) {
-			if (slotTwoItem != null) {
-				item = slotTwoItem;
-			}
-		}
-		if (finalSlotHovered) {
-			if (finalSlotItem != null) {
-				item = finalSlotItem;
-			}
-		}
+
 		return item;
 	}
 
 	public void proceedCrafting() {
-		if (slotOneItem != null && slotTwoItem != null) {
-			String comboName = slotOneItem.name.toUpperCase() + "+" + slotTwoItem.name.toUpperCase();
-			RecipeData data = UIData.recipeData.get(comboName);
-			if (data == null) {
-				comboName = slotTwoItem.name.toUpperCase() + "+" + slotOneItem.name.toUpperCase();
+		/*
+		 * if (slotOneItem != null || slotTwoItem != null) {
+		 * 
+		 * String comboName = ""; if (slotTwoItem != null && slotOneItem != null) {
+		 * comboName = slotOneItem.name.toUpperCase() + "+" +
+		 * slotTwoItem.name.toUpperCase(); } if (slotTwoItem == null && slotOneItem !=
+		 * null) { comboName = slotOneItem.name; } if (slotOneItem == null &&
+		 * slotTwoItem != null) { comboName = slotTwoItem.name; } if (comboName != null)
+		 * { RecipeData data = UIData.recipeData.get(comboName); if (slotOneItem == null
+		 * && slotTwoItem != null) { if (data == null) { comboName =
+		 * slotTwoItem.name.toUpperCase() + "+" + slotOneItem.name.toUpperCase();
+		 * 
+		 * data = UIData.recipeData.get(comboName); if (data == null) {
+		 * 
+		 * comboName = slotTwoItem.name.toUpperCase();
+		 * 
+		 * data = UIData.recipeData.get(comboName); } }
+		 * 
+		 * System.out.println("count1: " + slotOneItem.name);
+		 * 
+		 * System.out.println("count2: " + slotTwoItem.name); }
+		 * System.out.println("test: " + comboName); if (data != null) {
+		 * System.out.println("Begin Crafting");
+		 * 
+		 * Event move = new Event(); move.eventName = "CRAFT_RECIPE"; Event recipe = new
+		 * Event(); recipe.eventName = comboName; move.followUpEvent = recipe;
+		 * EventManager.addEvent(move); } } }
+		 */
 
-				data = UIData.recipeData.get(comboName);
+		String comboRecipeName = "";
+		for (CraftingSlot slot : slots) {
+			if (slot.slotItem != null) {
+
+				if (comboRecipeName != "") {
+					comboRecipeName += "+";
+				}
+				comboRecipeName += slot.slotItem.name;
+
 			}
-			System.out.println("test: " + comboName);
-
-			if (data != null) {
-				System.out.println("Begin Crafting");
-
-				slotOneItem = null;
-				slotTwoItem = null;
-
-				Event move = new Event();
-				move.eventName = "CRAFT_RECIPE";
-				Event recipe = new Event();
-				recipe.eventName = comboName;
-				move.followUpEvent = recipe;
-				EventManager.addEvent(move);
-			}
-
 		}
+
+		RecipeData data = UIData.recipeData.get(comboRecipeName);
+		if (data == null) {
+			comboRecipeName = "";
+			for (int i = slots.size() - 1; i >= 0; i--) {
+				CraftingSlot slot = slots.get(i);
+				if (slot.slotItem != null) {
+
+					if (comboRecipeName != "") {
+						comboRecipeName += "+";
+					}
+					comboRecipeName += slot.slotItem.name;
+
+				}
+			}
+		}
+		System.out.println("test: " + comboRecipeName);
+
+		if (comboRecipeName != "") {
+			Event move = new Event();
+			move.eventName = "CRAFT_RECIPE";
+			Event recipe = new Event();
+			recipe.eventName = comboRecipeName;
+			move.followUpEvent = recipe;
+			EventManager.addEvent(move);
+		}
+
+		System.out.println("crafT: " + comboRecipeName);
 	}
 }

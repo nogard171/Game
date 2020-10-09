@@ -24,6 +24,10 @@
 		<data file="data/materials/stone.mat" />
 		<offset x="0" y="-32" />
 	</material>
+	<material name="STONE_ITEM">
+		<data file="data/materials/stone_item.mat" />
+		<offset x="0" y="0" />
+	</material>
 	<material name="WHEAT">
 		<data file="data/materials/wheat.mat" />
 		<offset x="-16" y="-4" />

@@ -69,10 +69,10 @@ public class Chunk {
 				} else if (x == 7 && z == 12) {
 
 					Resource newObj = new Resource();
-					newObj.name = "ORE";
+					newObj.name = "STONE";
 					newObj.setX(isoX);
 					newObj.setY(isoY);
-					newObj.setMaterial("ORE");
+					newObj.setMaterial("STONE");
 					newObj.setModel("CUBE");
 
 					maskObjects[x][z] = newObj;

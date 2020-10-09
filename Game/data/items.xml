@@ -8,10 +8,13 @@
 	<item name="IRON_SWORD_ITEM" commonName="Iron Sword">
 		<data value="10" material="IRON_SWORD_ITEM" inventory_material="IRON_SWORD_ITEM" />
 	</item>
-	<item name="STONE_TOOL_ITEM" commonName="Stone Tool">
+	<item name="STONE_TOOL_ITEM" commonName="Stone Tool" durability="3">
 		<data value="10" material="STONE_TOOL_ITEM" inventory_material="STONE_TOOL_ITEM" />
 	</item>
 	<item name="STICK" commonName="Stick">
 		<data value="10" material="TEST" inventory_material="TEST" stack_size="99" />
+	</item>
+	<item name="STONE_ITEM" commonName="Stone">
+		<data value="1" material="STONE_ITEM" inventory_material="STONE_ITEM" stack_size="99" />
 	</item>
 </items>

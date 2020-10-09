@@ -9,7 +9,6 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import classes.EquipmentItem;
-import classes.InventoryItem;
 import classes.ItemData;
 import data.Settings;
 import data.WorldData;
@@ -21,6 +20,7 @@ public class CraftingMenu {
 	public boolean hovered = false;
 	Rectangle menuBounds;
 
+	CraftingSlot slot;
 	InventoryItem item;
 	Point itemPosition = new Point(0, 0);
 
@@ -30,7 +30,12 @@ public class CraftingMenu {
 		MenuItem remove = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("remove");
-
+				System.out.println("item: " + slot);
+				InventoryItem slotItem = slot.slotItem;
+				slot.slotItem = null;
+				
+				UserInterface.inventory.addItem(slotItem);
+				
 			}
 		});
 		remove.text = "Remove";
@@ -64,11 +69,11 @@ public class CraftingMenu {
 			showMenu = true;
 			itemPosition = UserInterface.crafting.getHoveredPosition();
 			item = UserInterface.crafting.getHoveredItem();
+			slot = UserInterface.crafting.getHoveredSlot();
 			if (item != null) {
 				System.out.println("tesT: " + item.getMaterial());
 			}
-			if(itemPosition==null)
-			{
+			if (itemPosition == null) {
 				showMenu = false;
 			}
 		}
@@ -112,7 +117,7 @@ public class CraftingMenu {
 		}
 		if (item != null) {
 			MenuItem menuItem;
-			if (item !=null) {
+			if (item != null) {
 				menuItem = menuItems.get("REMOVE");
 				if (menuItem != null) {
 					menuItem.visible = true;

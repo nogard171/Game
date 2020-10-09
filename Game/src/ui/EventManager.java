@@ -9,7 +9,6 @@ import org.lwjgl.input.Mouse;
 
 import classes.Chunk;
 import classes.GroundItem;
-import classes.InventoryItem;
 import classes.ItemData;
 import classes.ItemDrop;
 import classes.Object;
@@ -51,13 +50,13 @@ public class EventManager {
 		for (Event event : events) {
 
 			if (!event.setup && playerWaiting) {
-				System.out.println("test: " + event.eventName);
+				// System.out.println("test: " + event.eventName);
 				setupEvent(event);
 			}
 			if (!event.processed && event.setup) {
 				processEvent(event);
 			}
-			if ((!event.processed && !event.failed) && event.followUpEvent != null) {
+			if ((!event.processed && !event.failed) && event.followUpEvent != null && event.setup) {
 
 				if (!event.followUpEvent.processed) {
 					processEvent(event);
@@ -75,7 +74,7 @@ public class EventManager {
 	}
 
 	public void setupEvent(Event event) {
-		if (event.eventName == "MOVE") {
+		if (event.eventName.equals("MOVE")) {
 			checkSkills(event.eventName);
 			if (start.x == event.end.x && start.y == event.end.y) {
 				event.setup = true;
@@ -107,7 +106,7 @@ public class EventManager {
 				}
 			}
 		}
-		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
+		if (event.eventName.equals("CHOP") || event.eventName.equals("MINE") || event.eventName.equals("HARVEST")) {
 			checkSkills(event.eventName);
 			if (event.eventName == "CHOP") {
 
@@ -118,20 +117,24 @@ public class EventManager {
 			event.setup = true;
 			playerWaiting = false;
 		}
-		if (event.eventName == "DROP_ITEM") {
+		if (event.eventName.equals("DROP_ITEM")) {
 			event.setup = true;
 			playerWaiting = false;
 		}
 
-		if (event.eventName == "PICKUP") {
+		if (event.eventName.equals("PICKUP")) {
 			event.setup = true;
 			playerWaiting = false;
 		}
-		if (event.eventName == "CRAFT") {
+		if (event.eventName.equals("CRAFT")) {
+			event.setup = true;
+			playerWaiting = false;
+		} else if (event.eventName.equals("CRAFT_RECIPE")) {
 			event.setup = true;
 		} else if (UserInterface.crafting.showSystem) {
 			UserInterface.crafting.showSystem = false;
 		}
+
 	}
 
 	public void checkSkills(String action) {
@@ -164,7 +167,7 @@ public class EventManager {
 			if (skill.obtainingAction.equals(action)) {
 
 				if (!CharacterData.obtainedSkills.contains(key) && CharacterData.skills.containsKey(key)) {
-					System.out.println("test: " + skill.obtainingAction + "/" + action);
+					// System.out.println("test: " + skill.obtainingAction + "/" + action);
 					Skill newSkill = CharacterData.skills.get(key);
 					newSkill.learnCount++;
 					if (newSkill.learnCount >= 10) {
@@ -180,37 +183,52 @@ public class EventManager {
 	Random r = new Random();
 
 	public void processEvent(Event event) {
-
-		if (event.eventName == "CRAFT_RECIPE") {
+		if (event.eventName.equals("CRAFT_RECIPE")) {
 			if (event.followUpEvent != null) {
 				String recipeName = event.followUpEvent.eventName;
-
 				if (recipeName != "") {
 					RecipeData data = UIData.recipeData.get(recipeName);
 					if (data != null) {
-						System.out.println("recipe:" + recipeName);
-
 						ItemData item = WorldData.itemData.get(data.name);
-
 						if (item != null) {
-							for (RecipeItem recipeItem : data.items) {
-								if (recipeItem.reuse) {
-									ItemData recipeItemData = WorldData.itemData.get(recipeItem.itemName);
+							int recipeItemCount = 0;
+							for (CraftingSlot slot : CraftingSystem.slots) {
+								if (slot.slotItem != null) {
+									ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
 									if (recipeItemData != null) {
-										System.out.println("test");
-										InventoryItem reusedItem = new InventoryItem();
-										reusedItem.name = recipeItem.itemName;
-										reusedItem.setMaterial(recipeItemData.inventoryMaterial);
-										UserInterface.inventory.addItem(reusedItem);
+										for (RecipeItem recipeItem : data.items) {
+											if (recipeItemData.name.equals(recipeItem.itemName)) {
+												recipeItemCount++;
+												if (recipeItem.reuse) {
+													InventoryItem reusedItem = slot.slotItem;
+													reusedItem.durability -= 1;
+													if (reusedItem.durability > 0) {
+														InventorySystem.addItem(reusedItem);
+													}
+													slot.slotItem = null;
+												} else if (slot.slotItem.count > 1) {
+													InventoryItem reusedItem = slot.slotItem;
+													reusedItem.count--;
+													InventorySystem.addItem(reusedItem);
+													slot.slotItem = null;
+												} else {
+													slot.slotItem = null;
+												}
+											}
+										}
 									}
 								}
 							}
-
-							InventoryItem craftedItem = new InventoryItem();
-							craftedItem.name = data.name;
-							craftedItem.setMaterial(item.inventoryMaterial);
-							UserInterface.inventory.addItem(craftedItem);
-
+							if (recipeItemCount == data.items.size()) {
+								InventoryItem craftedItem = new InventoryItem();
+								craftedItem.name = data.name;
+								ItemData itemData = WorldData.itemData.get(craftedItem.name);
+								if (itemData != null) {
+									craftedItem.durability = itemData.durability;
+									craftedItem.setMaterial(item.inventoryMaterial);
+									InventorySystem.addItem(craftedItem);
+								}
+							}
 							event.followUpEvent.processed = true;
 							event.processed = true;
 							playerWaiting = true;
@@ -220,16 +238,15 @@ public class EventManager {
 				}
 
 			}
-			// event.processed = true;
-			// playerWaiting = true;
 		}
-		if (event.eventName == "CRAFT") {
+		if (event.eventName.equals("CRAFT")) {
+			System.out.println("test:");
 			UserInterface.crafting.showSystem = true;
 
 			event.processed = true;
 			playerWaiting = true;
 		}
-		if (event.eventName == "PICKUP") {
+		if (event.eventName.equals("PICKUP")) {
 			Point objectIndex = event.end;
 			if (objectIndex != null) {
 				int hoverX = objectIndex.x;
@@ -271,7 +288,7 @@ public class EventManager {
 				}
 			}
 		}
-		if (event.eventName == "DROP_ITEM") {
+		if (event.eventName.equals("DROP_ITEM")) {
 			MouseIndex objectIndex = UserInterface.getHover();
 			if (objectIndex != null) {
 				int hoverX = objectIndex.getX();
@@ -314,16 +331,14 @@ public class EventManager {
 				}
 			}
 		}
-		if (event.eventName == "CHOP" || event.eventName == "MINE" || event.eventName == "HARVEST") {
+		if (event.eventName.equals("CHOP") || event.eventName.equals("MINE") || event.eventName.equals("HARVEST")) {
+
 			if (getTime() >= event.startTime) {
 				processSkill(event.eventName);
 				if (event.step > 0) {
-
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
-
 					if (event.step <= 0) {
-
 						int chunkX = event.end.x / 16;
 						int chunkY = event.end.y / 16;
 						Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
@@ -388,7 +403,7 @@ public class EventManager {
 			}
 		}
 
-		if (event.eventName == "MOVE") {
+		if (event.eventName.equals("MOVE")) {
 
 			if (event.path == null) {
 
@@ -404,7 +419,7 @@ public class EventManager {
 					if (child != null) {
 						if (!child.processed) {
 
-							System.out.println("test: " + event.childNeedsProcessed);
+							// System.out.println("test: " + event.childNeedsProcessed);
 							processEvent(child);
 						}
 					}

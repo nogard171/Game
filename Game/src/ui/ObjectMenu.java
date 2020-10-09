@@ -12,6 +12,7 @@ import org.newdawn.slick.Color;
 
 import classes.Chunk;
 import classes.Object;
+import classes.ResourceData;
 import data.Settings;
 import data.WorldData;
 import threads.GameThread;
@@ -258,39 +259,34 @@ public class ObjectMenu {
 		}
 		if (obj != null) {
 			MenuItem menuItem;
-			if (obj.getMaterial() == "TREE") {
-				menuItem = menuItems.get("CHOP");
-				if (menuItem != null) {
-					menuItem.visible = true;
-					menuCount++;
-				}
-			} else if (obj.getMaterial() == "WHEAT") {
-				menuItem = menuItems.get("HARVEST");
-				if (menuItem != null) {
-					menuItem.visible = true;
-					menuCount++;
-				}
-			} else if (obj.getMaterial() == "ORE") {
-				menuItem = menuItems.get("MINE");
+			ResourceData data = WorldData.resourceData.get(obj.getMaterial());
+			if (data != null) {
+				menuItem = menuItems.get(data.action.toUpperCase());
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;
 				}
 			}
-			if (obj.getMaterial().contains("ITEM")) {
+			if (obj.isItem) {
 				menuItem = menuItems.get("PICKUP");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;
 				}
 			}
-			if (obj.getMaterial().contains("CRAFTING")) {
-				menuItem = menuItems.get("CRAFT");
-				if (menuItem != null) {
-					menuItem.visible = true;
-					menuCount++;
-				}
-			}
+
+			/*
+			 * if (obj.getMaterial() == "TREE") { menuItem = menuItems.get("CHOP"); if
+			 * (menuItem != null) { menuItem.visible = true; menuCount++; } } else if
+			 * (obj.getMaterial() == "WHEAT") { menuItem = menuItems.get("HARVEST"); if
+			 * (menuItem != null) { menuItem.visible = true; menuCount++; } } else if
+			 * (obj.getMaterial() == "ORE") { menuItem = menuItems.get("MINE"); if (menuItem
+			 * != null) { menuItem.visible = true; menuCount++; } } if
+			 * (obj.getMaterial().contains("ITEM")) { menuItem = menuItems.get("PICKUP"); if
+			 * (menuItem != null) { menuItem.visible = true; menuCount++; } } if
+			 * (obj.getMaterial().contains("CRAFTING")) { menuItem = menuItems.get("CRAFT");
+			 * if (menuItem != null) { menuItem.visible = true; menuCount++; } }
+			 */
 		}
 		menuBounds = new Rectangle(0, 0, 100, menuCount * 13);
 	}
