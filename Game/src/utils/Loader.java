@@ -333,18 +333,28 @@ public class Loader {
 						Element dataNode = (Element) dataNodes;
 
 						String material = dataNode.getAttribute("material");
+						raw.material = material;
+
 						String inventoryMaterial = dataNode.getAttribute("inventory_material");
+						raw.inventoryMaterial = inventoryMaterial;
+
 						int stackSize = 1;
 						if (dataNode.hasAttribute("stack_size")) {
 							stackSize = Integer.parseInt(dataNode.getAttribute("stack_size"));
 						}
-						int value = Integer.parseInt(dataNode.getAttribute("value"));
-
-						raw.material = material;
-						raw.inventoryMaterial = inventoryMaterial;
 						raw.stackSize = stackSize;
+
+						int value = Integer.parseInt(dataNode.getAttribute("value"));
 						raw.value = value;
 
+						if (dataNode.hasAttribute("fuel_amount")) {
+							int fuelAmount = Integer.parseInt(dataNode.getAttribute("fuel_amount"));
+							raw.fuelAmount = fuelAmount;
+						}
+						if (dataNode.hasAttribute("smelt_time")) {
+							int smeltTime = Integer.parseInt(dataNode.getAttribute("smelt_time"));
+							raw.smeltTime = smeltTime;
+						}
 					}
 					WorldData.itemData.put(name, raw);
 				}

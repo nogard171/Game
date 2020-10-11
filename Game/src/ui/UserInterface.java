@@ -36,6 +36,7 @@ public class UserInterface {
 	public static SkillSystem skills;
 	public static OptionSystem options;
 	public static CraftingSystem crafting;
+	public static SmeltingSystem smelting;
 	public static ChatSystem chat;
 
 	public static MouseIndex hover;
@@ -46,6 +47,9 @@ public class UserInterface {
 
 	public static boolean craftingHovered = false;
 	public static boolean craftingDragging = false;
+
+	public static boolean smeltingHovered = false;
+	public static boolean smeltingDragging = false;
 
 	public void setup() {
 
@@ -136,6 +140,9 @@ public class UserInterface {
 		crafting = new CraftingSystem();
 		crafting.setup();
 
+		smelting = new SmeltingSystem();
+		smelting.setup();
+
 		eventManager = new EventManager();
 		eventManager.setup();
 
@@ -168,7 +175,8 @@ public class UserInterface {
 
 	public void update() {
 		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered
-				&& (!craftingHovered && !craftingDragging) && !optionsHovered) {
+				&& (!craftingHovered && !craftingDragging) && (!smeltingHovered && !smeltingDragging)
+				&& !optionsHovered) {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(Settings.mainActionIndex) && hover != null) {
@@ -203,8 +211,7 @@ public class UserInterface {
 										 * 
 										 * } EventManager.addEvent(move);
 										 */
-									}
-									else if (mask.getMaterial() != "AIR") {
+									} else if (mask.getMaterial() != "AIR") {
 										ifMove = false;
 										action = objectToAction(mask);
 
@@ -250,6 +257,7 @@ public class UserInterface {
 		skills.update();
 		options.update();
 		crafting.update();
+		smelting.update();
 		chat.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
@@ -309,6 +317,7 @@ public class UserInterface {
 		skills.render();
 		options.render();
 		crafting.render();
+		smelting.render();
 		chat.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,

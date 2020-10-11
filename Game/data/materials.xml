@@ -1,13 +1,22 @@
 <materials texture_file="data/textures/tileset.png">
+	<!--entities-->
+	<material name="PLAYER">
+		<data file="data/materials/player.mat" />
+	</material>
+
+	<!--ground-->
 	<material name="GRASS">
 		<data file="data/materials/grass.mat" />
 	</material>
 	<material name="DIRT">
 		<data file="data/materials/dirt.mat" />
 	</material>
-	<material name="PLAYER">
-		<data file="data/materials/player.mat" />
+	<material name="STONE">
+		<data file="data/materials/stone.mat" />
+		<offset x="0" y="-32" />
 	</material>
+
+	<!--objects-->
 	<material name="TREE">
 		<data file="data/materials/tree.mat" />
 		<offset x="0" y="-208" />
@@ -16,30 +25,33 @@
 		<data file="data/materials/tree_trunk.mat" />
 		<offset x="0" y="-16" />
 	</material>
-	<material name="ORE">
-		<data file="data/materials/ore.mat" />
+	<material name="BRONZE_ORE">
+		<data file="data/materials/bronze_ore.mat" />
 		<offset x="0" y="-32" />
-	</material>
-	<material name="STONE">
-		<data file="data/materials/stone.mat" />
-		<offset x="0" y="-32" />
-	</material>
-	<material name="STONE_ITEM">
-		<data file="data/materials/stone_item.mat" />
-		<offset x="0" y="0" />
 	</material>
 	<material name="WHEAT">
 		<data file="data/materials/wheat.mat" />
 		<offset x="-16" y="-4" />
 	</material>
-	<material name="ORE_ITEM">
-		<data file="data/materials/ore_item.mat" />
+	<material name="FURNACE">
+		<data file="data/materials/furnace.mat" />
+		<offset x="-16" y="-40" />
 	</material>
-	<material name="ORE_GROUND_ITEM">
-		<data file="data/materials/ore_ground_item.mat" />
+	<material name="CRAFTING_TABLE">
+		<data file="data/materials/crafting_table.mat" />
+		<offset x="-32" y="-32" />
 	</material>
-	<material name="BAG">
-		<data file="data/materials/bag.mat" />
+
+	<!--items-->
+	<material name="STONE_ITEM">
+		<data file="data/materials/stone_item.mat" />
+		<offset x="0" y="0" />
+	</material>
+	<material name="BRONZE_ORE_ITEM">
+		<data file="data/materials/bronze_ore_item.mat" />
+	</material>
+	<material name="BRONZE_ORE_GROUND_ITEM">
+		<data file="data/materials/bronze_ore_ground_item.mat" />
 	</material>
 	<material name="WOOD_LOG_ITEM">
 		<data file="data/materials/wood_log_ITEM.mat" />
@@ -50,8 +62,33 @@
 	<material name="WHEAT_SEED_ITEM">
 		<data file="data/materials/wheat_seed_item.mat" />
 	</material>
+	<material name="IRON_SWORD_ITEM">
+		<data file="data/materials/iron_sword_item.mat" />
+	</material>
+	<material name="STONE_TOOL_ITEM">
+		<data file="data/materials/stone_tool_item.mat" />
+	</material>
+	<material name="WALKING_SKILL_ICON">
+		<data file="data/materials/walking_skill_icon.mat" />
+	</material>
+	<material name="WOODCUTTING_SKILL_ICON">
+		<data file="data/materials/woodcutting_skill_icon.mat" />
+	</material>
+	<material name="MINING_SKILL_ICON">
+		<data file="data/materials/mining_skill_icon.mat" />
+	</material>
+	<material name="SKILL_ICON">
+		<data file="data/materials/skills_icon.mat" />
+	</material>
+	<material name="OPTIONS_ICON">
+		<data file="data/materials/options_icon.mat" />
+	</material>
 
 
+	<!--UI-->
+	<material name="BAG">
+		<data file="data/materials/bag.mat" />
+	</material>
 	<material name="ARMS_ICON">
 		<data file="data/materials/arms_icon.mat" />
 	</material>
@@ -85,17 +122,9 @@
 	<material name="WEAPON_ICON">
 		<data file="data/materials/weapon_icon.mat" />
 	</material>
-
-
 	<material name="CHARACTER_ICON">
 		<data file="data/materials/character_icon.mat" />
 	</material>
-
-	<material name="IRON_SWORD_ITEM">
-		<data file="data/materials/iron_sword_item.mat" />
-	</material>
-	
-	
 	<material name="COPPER_CURRENCY">
 		<data file="data/materials/copper_currency.mat" />
 	</material>
@@ -108,37 +137,9 @@
 	<material name="PLATINUM_CURRENCY">
 		<data file="data/materials/platinum_currency.mat" />
 	</material>
-	
-	
-	<material name="FURNACE">
-		<data file="data/materials/furnace.mat" />
-		<offset x="-16" y="-40" />
-	</material>
-	<material name="CRAFTING_TABLE">
-		<data file="data/materials/crafting_table.mat" />
-		<offset x="-32" y="-32" />
-	</material>
 
 
-	<material name="STONE_TOOL_ITEM">
-		<data file="data/materials/stone_tool_item.mat" />
-	</material>
-	<material name="WALKING_SKILL_ICON">
-		<data file="data/materials/walking_skill_icon.mat" />
-	</material>
-	<material name="WOODCUTTING_SKILL_ICON">
-		<data file="data/materials/woodcutting_skill_icon.mat" />
-	</material>
-	<material name="MINING_SKILL_ICON">
-		<data file="data/materials/mining_skill_icon.mat" />
-	</material>
-	<material name="SKILL_ICON">
-		<data file="data/materials/skills_icon.mat" />
-	</material>
-	<material name="OPTIONS_ICON">
-		<data file="data/materials/options_icon.mat" />
-	</material>
-	
+	<!--testing-->
 	<material name="TEST">
 		<data file="data/materials/test.mat" />
 	</material>

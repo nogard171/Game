@@ -10,13 +10,13 @@ import org.newdawn.slick.Color;
 import utils.Renderer;
 import utils.Window;
 
-public class CraftingSlot {
+public class SmeltingSlot {
 	private Point slotOffset;
 	private Rectangle slotBounds;
 	private boolean slotHovered = false;
 	public InventoryItem slotItem;
 
-	public CraftingSlot(int x, int y) {
+	public SmeltingSlot(int x, int y) {
 		slotOffset = new Point(x, y);
 		slotBounds = new Rectangle(0, 0, 32, 32);
 	}
@@ -42,7 +42,8 @@ public class CraftingSlot {
 			Renderer.renderModel(slotBounds.x, slotBounds.y, "SQUARE", slotItem.getMaterial(), new Color(1, 1, 1, 1f));
 			GL11.glEnd();
 			if (slotItem.count > 1) {
-				Renderer.renderText(new Vector2f(slotBounds.x+24, slotBounds.y+17), slotItem.count + "", 12, Color.white);
+				Renderer.renderText(new Vector2f(slotBounds.x + 24, slotBounds.y + 17), slotItem.count + "", 12,
+						Color.white);
 			}
 		}
 	}

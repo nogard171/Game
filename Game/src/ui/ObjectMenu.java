@@ -123,6 +123,23 @@ public class ObjectMenu {
 		craft.text = "Craft";
 		menuItems.put(craft.text.toUpperCase(), craft);
 
+		MenuItem smelt = new MenuItem(new AFunction() {
+			public void click() {
+				System.out.println("craft");
+				Event move = new Event();
+				move.eventName = "MOVE";
+				move.end = new Point(objectIndex.getX(), objectIndex.getY());
+
+				Event smelt = new Event();
+				smelt.eventName = "SMELT";
+				smelt.end = new Point(objectIndex.getX(), objectIndex.getY());
+				move.followUpEvent = smelt;
+				EventManager.addEvent(move);
+			}
+		});
+		smelt.text = "Smelt";
+		menuItems.put(smelt.text.toUpperCase(), smelt);
+
 		MenuItem info = new MenuItem(new AFunction() {
 			public void click() {
 				System.out.println("info");

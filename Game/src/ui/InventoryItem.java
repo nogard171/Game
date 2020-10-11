@@ -10,4 +10,5 @@ public class InventoryItem extends Object {
 	public int count = 1;
 	public boolean hovered = false;
 	public int durability = -1;
+	public int smeltTime = 0;
 }

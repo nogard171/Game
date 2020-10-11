@@ -6,4 +6,8 @@
 	<recipe name="STONE_TOOL_ITEM" count="1-2">
 		<item name="STONE_ITEM" />
 	</recipe>
+	<recipe name="BRONZE_BAR_ITEM" count="1-2">
+		<item name="BRONZE_ORE_ITEM" />
+		<item name="FUEL" />
+	</recipe>
 </recipes>

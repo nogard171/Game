@@ -11,4 +11,6 @@ public class ItemData {
 
 	public int attributeValue = 10;
 	public String attribute = "damage";
+	public int fuelAmount = 0;
+	public int smeltTime = 0;
 }

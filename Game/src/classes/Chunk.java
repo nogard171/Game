@@ -69,6 +69,16 @@ public class Chunk {
 				} else if (x == 7 && z == 12) {
 
 					Resource newObj = new Resource();
+					newObj.name = "BRONZE_ORE";
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("BRONZE_ORE");
+					newObj.setModel("CUBE");
+
+					maskObjects[x][z] = newObj;
+				} else if (x == 7 && z == 13) {
+
+					Resource newObj = new Resource();
 					newObj.name = "STONE";
 					newObj.setX(isoX);
 					newObj.setY(isoY);
@@ -76,7 +86,7 @@ public class Chunk {
 					newObj.setModel("CUBE");
 
 					maskObjects[x][z] = newObj;
-				} else if (x == 7 && z == 7) {
+				}else if (x == 7 && z == 7) {
 
 					Resource newObj = new Resource();
 					newObj.name = "TREE";
@@ -87,6 +97,15 @@ public class Chunk {
 
 					maskObjects[x][z] = newObj;
 				} else if (x == 13 && z == 13) {
+
+					Furnace newObj = new Furnace();
+					newObj.setX(isoX);
+					newObj.setY(isoY);
+					newObj.setMaterial("FURNACE");
+					newObj.setModel("FURNACE");
+
+					maskObjects[x][z] = newObj;
+				}  else if (x == 13 && z == 14) {
 
 					CraftingTable newObj = new CraftingTable();
 					newObj.setX(isoX);
