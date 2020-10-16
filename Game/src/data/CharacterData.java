@@ -20,6 +20,7 @@ public class CharacterData {
 
 	public static ArrayList<String> obtainedSkills = new ArrayList<String>();
 	public static HashMap<String, Skill> skills = new HashMap<String, Skill>();
+	public static ArrayList<String> obtainedRecipes = new ArrayList<String>();
 
 	public static void addAttribute(String name, int amount) {
 		switch (name) {

@@ -9,7 +9,7 @@ public class MenuItem {
 	public AFunction func;
 	private int clicked = 0;
 	public boolean visible = false;
-	public boolean anlwaysVisible = false;
+	public boolean alwaysVisible = false;
 	public String material = "";
 
 	public MenuItem(AFunction newFunc) {

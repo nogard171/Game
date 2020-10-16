@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.Random;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -28,6 +30,8 @@ public class Chunk {
 		return index;
 	}
 
+	Random r = new Random();
+
 	public void setup() {
 		data = new int[size.getWidth()][size.getDepth()];
 		groundObjects = new Object[size.getWidth()][size.getDepth()];
@@ -41,6 +45,7 @@ public class Chunk {
 				int carY = z * 32;
 				int isoX = carX - carY;
 				int isoY = (carY + carX) / 2;
+
 				Object obj = new Object();
 				obj.setX(isoX);
 				obj.setY(isoY);
@@ -86,7 +91,7 @@ public class Chunk {
 					newObj.setModel("CUBE");
 
 					maskObjects[x][z] = newObj;
-				}else if (x == 7 && z == 7) {
+				} else if (x == 7 && z == 7) {
 
 					Resource newObj = new Resource();
 					newObj.name = "TREE";
@@ -105,7 +110,7 @@ public class Chunk {
 					newObj.setModel("FURNACE");
 
 					maskObjects[x][z] = newObj;
-				}  else if (x == 13 && z == 14) {
+				} else if (x == 13 && z == 14) {
 
 					CraftingTable newObj = new CraftingTable();
 					newObj.setX(isoX);
@@ -121,7 +126,27 @@ public class Chunk {
 				obj.setMaterial("GRASS");
 				groundObjects[x][z] = obj;
 
-				groundItems[x][z] = null;
+				int randItems = r.nextInt(100 - 0);
+
+				if (randItems == 0) {
+					GroundItem item = new GroundItem();
+					item.count = 1;
+					item.isItem = true;
+					item.name = "STICK_ITEM";
+					item.setMaterial("STICK_ITEM");
+					item.setModel("TILE");
+					groundItems[x][z] = item;
+				} else if (randItems == 1) {
+					GroundItem item = new GroundItem();
+					item.count = 1;
+					item.isItem = true;
+					item.name = "STONE_ITEM";
+					item.setMaterial("STONE_ITEM");
+					item.setModel("TILE");
+					groundItems[x][z] = item;
+				} else {
+					groundItems[x][z] = null;
+				}
 
 			}
 		}

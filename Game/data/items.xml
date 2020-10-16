@@ -8,14 +8,14 @@
 	<item name="WOOD_LOG_ITEM" commonName="Wood Log">
 		<data value="10" material="WOOD_LOG_ITEM" inventory_material="WOOD_LOG_ITEM" stack_size="99" fuel_amount="100" />
 	</item>
-	<item name="IRON_SWORD_ITEM" commonName="Iron Sword">
-		<data value="10" material="IRON_SWORD_ITEM" inventory_material="IRON_SWORD_ITEM" />
+	<item name="STONE_SWORD_ITEM" commonName="Stone Sword">
+		<data value="10" material="STONE_SWORD_ITEM" inventory_material="STONE_SWORD_ITEM" />
 	</item>
 	<item name="STONE_TOOL_ITEM" commonName="Stone Tool" durability="3">
 		<data value="10" material="STONE_TOOL_ITEM" inventory_material="STONE_TOOL_ITEM" />
 	</item>
-	<item name="STICK" commonName="Stick">
-		<data value="10" material="TEST" inventory_material="TEST" stack_size="99" fuel_amount="25" />
+	<item name="STICK_ITEM" commonName="Stick">
+		<data value="10" material="STICK_ITEM" inventory_material="STICK_ITEM" stack_size="99" fuel_amount="25" />
 	</item>
 	<item name="STONE_ITEM" commonName="Stone">
 		<data value="1" material="STONE_ITEM" inventory_material="STONE_ITEM" stack_size="99" />

@@ -64,7 +64,7 @@ public class BaseMenu {
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (MenuItem item : menuItems.values()) {
-				if (item.visible || item.anlwaysVisible) {
+				if (item.visible || item.alwaysVisible) {
 					item.bounds = new Rectangle(menuBounds.x, (menuBounds.y) + (y * 12) + 2, 100, 12);
 					if (item.hovered) {
 						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,

@@ -115,6 +115,7 @@ public class InventorySystem extends BaseSystem {
 		baseBounds = new Rectangle(0, 0, (size.getWidth() * 33) + 1, (size.getHeight() * 33) + 1);
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
+		/*
 		ItemData data = WorldData.itemData.get("IRON_SWORD_ITEM");
 		InventoryItem test = new InventoryItem();
 		test.commonName = data.commonName;
@@ -128,7 +129,7 @@ public class InventorySystem extends BaseSystem {
 		knife.name = data.name;
 		knife.setMaterial(data.material);
 		knife.durability = 1;
-		addItem(knife);
+		addItem(knife);*/
 
 	}
 

@@ -10,4 +10,8 @@
 		<obtain action="MINE" />
 		<xp formula="" />
 	</skill>
+	<skill name="CRAFTING" material="CRAFTING_SKILL_ICON">
+		<obtain action="CRAFT_RECIPE" />
+		<xp formula="" />
+	</skill>
 </skills>

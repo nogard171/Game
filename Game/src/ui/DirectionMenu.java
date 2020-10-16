@@ -30,7 +30,7 @@ public class DirectionMenu {
 			}
 		});
 		four.text = "4 Directions";
-		four.anlwaysVisible = true;
+		four.alwaysVisible = true;
 		menuItems.put(four.text.toUpperCase(), four);
 		MenuItem eight = new MenuItem(new AFunction() {
 			public void click() {
@@ -39,7 +39,7 @@ public class DirectionMenu {
 			}
 		});
 		eight.text = "8 Directions";
-		eight.anlwaysVisible = true;
+		eight.alwaysVisible = true;
 		menuItems.put(eight.text.toUpperCase(), eight);
 
 		menuBounds = new Rectangle(UserInterface.options.baseBounds.x + 5, UserInterface.options.baseBounds.y, 100,
@@ -89,7 +89,7 @@ public class DirectionMenu {
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (MenuItem item : menuItems.values()) {
-				if (item.visible || item.anlwaysVisible) {
+				if (item.visible || item.alwaysVisible) {
 					item.bounds = new Rectangle(menuBounds.x, (menuBounds.y) + (y * 12) + 2, 100, 12);
 					if (item.hovered) {
 						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,

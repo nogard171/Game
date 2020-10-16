@@ -467,6 +467,22 @@ public class Loader {
 						data.minCount = 1;
 					}
 
+					if (recipeElement.hasAttribute("craft_time")) {
+
+						int craftTime = Integer.parseInt(recipeElement.getAttribute("craft_time"));
+						data.craftTime = craftTime;
+					}
+					if (recipeElement.hasAttribute("level")) {
+
+						int level = Integer.parseInt(recipeElement.getAttribute("level"));
+						data.requiredLevel = level;
+					}
+
+					if (recipeElement.hasAttribute("skill")) {
+
+						String skill = recipeElement.getAttribute("skill");
+						data.requiredSkill = skill;
+					}
 					NodeList itemNodes = recipeElement.getElementsByTagName("item");
 					String comboItems = "";
 					for (int itemTemp = 0; itemTemp < itemNodes.getLength(); itemTemp++) {
@@ -501,7 +517,7 @@ public class Loader {
 							data.items.add(item);
 						}
 					}
-					UIData.recipeData.put(comboItems, data);
+					UIData.recipeData.put(name, data);
 				}
 
 			}

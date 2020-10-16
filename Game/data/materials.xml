@@ -62,12 +62,19 @@
 	<material name="WHEAT_SEED_ITEM">
 		<data file="data/materials/wheat_seed_item.mat" />
 	</material>
-	<material name="IRON_SWORD_ITEM">
-		<data file="data/materials/iron_sword_item.mat" />
+	<material name="STONE_SWORD_ITEM">
+		<data file="data/materials/stone_sword_item.mat" />
 	</material>
 	<material name="STONE_TOOL_ITEM">
 		<data file="data/materials/stone_tool_item.mat" />
 	</material>
+	<material name="STICK_ITEM">
+		<data file="data/materials/stick_item.mat" />
+		<offset x="0" y="0" />
+	</material>
+
+
+	<!--UI-->
 	<material name="WALKING_SKILL_ICON">
 		<data file="data/materials/walking_skill_icon.mat" />
 	</material>
@@ -83,9 +90,6 @@
 	<material name="OPTIONS_ICON">
 		<data file="data/materials/options_icon.mat" />
 	</material>
-
-
-	<!--UI-->
 	<material name="BAG">
 		<data file="data/materials/bag.mat" />
 	</material>

@@ -64,8 +64,20 @@ public class ItemMenu {
 			}
 		});
 		drop.text = "Drop";
-		drop.anlwaysVisible = true;
+		drop.alwaysVisible = true;
 		menuItems.put(drop.text.toUpperCase(), drop);
+
+		MenuItem split = new MenuItem(new AFunction() {
+			public void click() {
+
+				Event drop = new Event();
+				drop.eventName = "DROP_ITEM";
+				drop.end = new Point(itemIndex.getX(), itemIndex.getY());
+				EventManager.addEvent(drop);
+			}
+		});
+		split.text = "Split";
+		menuItems.put(split.text.toUpperCase(), split);
 
 		MenuItem inspect = new MenuItem(new AFunction() {
 			public void click() {
@@ -74,7 +86,7 @@ public class ItemMenu {
 			}
 		});
 		inspect.text = "Inspect";
-		inspect.anlwaysVisible = true;
+		inspect.alwaysVisible = true;
 		menuItems.put(inspect.text.toUpperCase(), inspect);
 
 		MenuItem cancel = new MenuItem(new AFunction() {
@@ -84,14 +96,15 @@ public class ItemMenu {
 			}
 		});
 		cancel.text = "Cancel";
-		cancel.anlwaysVisible = true;
+		cancel.alwaysVisible = true;
 		menuItems.put(cancel.text.toUpperCase(), cancel);
 
 		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
 	}
 
 	public void update() {
-		if (Mouse.isButtonDown(Settings.secondaryActionIndex ) && UserInterface.inventory.getHover() != null && !showMenu) {
+		if (Mouse.isButtonDown(Settings.secondaryActionIndex) && UserInterface.inventory.getHover() != null
+				&& !showMenu) {
 
 			showMenu = true;
 			itemIndex = UserInterface.inventory.getHover();
@@ -142,9 +155,9 @@ public class ItemMenu {
 	public void fixMenu() {
 		menuCount = 0;
 		for (MenuItem item : menuItems.values()) {
-			if (!item.anlwaysVisible) {
+			if (!item.alwaysVisible) {
 				item.visible = false;
-			} else if (item.anlwaysVisible) {
+			} else if (item.alwaysVisible) {
 				menuCount++;
 			}
 		}
@@ -159,15 +172,16 @@ public class ItemMenu {
 			}
 		}
 		if (item != null) {
-			MenuItem menuItem;
-			if (item.name.toUpperCase().contains("KNIFE")) {
-				menuItem = menuItems.get("CARVE");
+			if (item.count > 1) {
+				MenuItem menuItem;
+				menuItem = menuItems.get("SPLIT");
 				if (menuItem != null) {
 					menuItem.visible = true;
 					menuCount++;
 				}
 			}
 		}
+
 		if (menuCount != previousCount) {
 			menuBounds = new Rectangle(0, 0, 100, (menuCount) * 13);
 			previousCount = menuCount;
@@ -186,7 +200,7 @@ public class ItemMenu {
 						new Color(0, 0, 0, 0.5f));
 				int y = 0;
 				for (MenuItem item : menuItems.values()) {
-					if (item.visible || item.anlwaysVisible) {
+					if (item.visible || item.alwaysVisible) {
 						item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
 						if (item.hovered) {
 							Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,

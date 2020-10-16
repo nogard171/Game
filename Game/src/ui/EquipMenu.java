@@ -52,7 +52,7 @@ public class EquipMenu {
 			}
 		});
 		inspect.text = "Inspect";
-		inspect.anlwaysVisible = true;
+		inspect.alwaysVisible = true;
 		menuItems.put(inspect.text.toUpperCase(), inspect);
 
 		MenuItem cancel = new MenuItem(new AFunction() {
@@ -62,7 +62,7 @@ public class EquipMenu {
 			}
 		});
 		cancel.text = "Cancel";
-		cancel.anlwaysVisible = true;
+		cancel.alwaysVisible = true;
 		menuItems.put(cancel.text.toUpperCase(), cancel);
 
 		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
@@ -104,9 +104,9 @@ public class EquipMenu {
 	public void fixMenu() {
 		menuCount = 0;
 		for (MenuItem item : menuItems.values()) {
-			if (!item.anlwaysVisible) {
+			if (!item.alwaysVisible) {
 				item.visible = false;
-			} else if (item.anlwaysVisible) {
+			} else if (item.alwaysVisible) {
 				menuCount++;
 			}
 			EquipmentItem equipItem = UserInterface.character.items.get(equipmentName.toUpperCase());
@@ -142,7 +142,7 @@ public class EquipMenu {
 							new Color(0, 0, 0, 0.5f));
 					int y = 0;
 					for (MenuItem item : menuItems.values()) {
-						if (item.visible || item.anlwaysVisible) {
+						if (item.visible || item.alwaysVisible) {
 							item.bounds = new Rectangle(cartX, (cartZ) + (y * 12) + 2, 100, 12);
 							if (item.hovered) {
 								Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,

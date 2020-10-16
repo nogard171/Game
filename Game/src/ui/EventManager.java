@@ -41,7 +41,32 @@ public class EventManager {
 	}
 
 	public static void addEvent(Event newEvent) {
-		events.add(newEvent);
+		if (!checkForCraft(newEvent)) {
+			events.add(newEvent);
+		}
+	}
+
+	public static boolean checkForCraft(Event recipeEvent) {
+		boolean isQueued = false;
+
+		if (recipeEvent.eventName.equals("CRAFT_RECIPE")) {
+			if (recipeEvent.followUpEvent != null) {
+				String recipe = recipeEvent.followUpEvent.eventName;
+				for (Event event : events) {
+					if (event.eventName.equals("CRAFT_RECIPE")) {
+						if (event.followUpEvent != null) {
+							if (event.followUpEvent.eventName.equals(recipe)) {
+								isQueued = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return isQueued;
+
 	}
 
 	public static boolean playerWaiting = true;
@@ -230,9 +255,10 @@ public class EventManager {
 				if (event.step > 0) {
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
-
+					CraftingSystem.currentCraftTime--;
 				}
 				if (event.step <= 0) {
+
 					if (event.followUpEvent != null) {
 						String recipeName = event.followUpEvent.eventName;
 						if (recipeName != "") {
@@ -275,9 +301,13 @@ public class EventManager {
 										if (itemData != null) {
 											craftedItem.durability = itemData.durability;
 											craftedItem.setMaterial(item.inventoryMaterial);
-											InventorySystem.addItem(craftedItem);
+											// InventorySystem.addItem(craftedItem);
+
+											//CraftingSystem.finalSlot.slotItem = craftedItem;
 										}
 									}
+
+									CraftingSystem.craftTime = 0;
 									event.followUpEvent.processed = true;
 									event.processed = true;
 									playerWaiting = true;
@@ -295,28 +325,30 @@ public class EventManager {
 				if (event.step > 0) {
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
-					
+
 					String recipeName = event.followUpEvent.eventName;
 					if (recipeName != "") {
 						RecipeData data = UIData.recipeData.get(recipeName);
 						if (data != null) {
-							System.out.println("smelt time: "+data.name );
+							System.out.println("smelt time: " + data.name);
 							ItemData item = WorldData.itemData.get(data.name);
 							if (item != null) {
-								//working on event smelting
+								// working on event smelting
 								for (SmeltingSlot slot : SmeltingSystem.slots) {
 									if (slot.slotItem != null) {
 										ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
 										if (recipeItemData != null) {
 											slot.slotItem.smeltTime--;
 											if (slot.slotItem.smeltTime <= 0) {
-												if (SmeltingSystem.smeltedItem.name.equals(slot.slotItem.name)) {
-													if (slot.slotItem.count == 1) {
-														slot.slotItem = null;
-													} else {
-														slot.slotItem.count--;
+												if (SmeltingSystem.smeltedItem != null) {
+													if (SmeltingSystem.smeltedItem.name.equals(slot.slotItem.name)) {
+														if (slot.slotItem.count == 1) {
+															slot.slotItem = null;
+														} else {
+															slot.slotItem.count--;
+														}
+														SmeltingSystem.smeltedItem.count++;
 													}
-													SmeltingSystem.smeltedItem.count++;
 												}
 											}
 										}
@@ -411,6 +443,7 @@ public class EventManager {
 									InventoryItem item = new InventoryItem();
 									item.setMaterial(itemData.inventoryMaterial);
 									item.name = groundItem.name;
+									item.count = groundItem.count;
 									InventorySystem.addItem(item);
 								}
 
@@ -453,6 +486,7 @@ public class EventManager {
 
 							if (itemData != null) {
 								groundItem.name = inventoryItem.name;
+								groundItem.count = inventoryItem.count;
 								groundItem.setMaterial(itemData.material);
 								chunk.groundItems[objX][objY] = groundItem;
 

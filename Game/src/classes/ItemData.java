@@ -5,6 +5,7 @@ public class ItemData {
 	public String commonName = "";
 	public String material = "";
 	public String inventoryMaterial = "";
+	public String description = "";
 	public int stackSize = 0;
 	public int value = 0;
 	public int durability = -1;

@@ -146,7 +146,7 @@ public class ObjectMenu {
 			}
 		});
 		info.text = "Info";
-		info.anlwaysVisible = true;
+		info.alwaysVisible = true;
 		menuItems.put(info.text.toUpperCase(), info);
 		MenuItem cancel = new MenuItem(new AFunction() {
 			public void click() {
@@ -154,7 +154,7 @@ public class ObjectMenu {
 			}
 		});
 		cancel.text = "Cancel";
-		cancel.anlwaysVisible = true;
+		cancel.alwaysVisible = true;
 		menuItems.put(cancel.text.toUpperCase(), cancel);
 		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
 	}
@@ -249,7 +249,7 @@ public class ObjectMenu {
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (MenuItem item : menuItems.values()) {
-				if (item.visible || item.anlwaysVisible) {
+				if (item.visible || item.alwaysVisible) {
 					item.bounds = new Rectangle(isoX, (isoZ) + (y * 12) + 2, 100, 12);
 					if (item.hovered) {
 						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
@@ -268,9 +268,9 @@ public class ObjectMenu {
 	public void fixMenu() {
 		menuCount = 0;
 		for (MenuItem item : menuItems.values()) {
-			if (!item.anlwaysVisible) {
+			if (!item.alwaysVisible) {
 				item.visible = false;
-			} else if (item.anlwaysVisible) {
+			} else if (item.alwaysVisible) {
 				menuCount++;
 			}
 		}

@@ -32,7 +32,7 @@ public class ActionMenu {
 			}
 		});
 		left.text = "Left Mouse";
-		left.anlwaysVisible = true;
+		left.alwaysVisible = true;
 		menuItems.put(left.text.toUpperCase(), left);
 		MenuItem right = new MenuItem(new AFunction() {
 			public void click() {
@@ -43,7 +43,7 @@ public class ActionMenu {
 			}
 		});
 		right.text = "Right Mouse";
-		right.anlwaysVisible = true;
+		right.alwaysVisible = true;
 		menuItems.put(right.text.toUpperCase(), right);
 
 		menuBounds = new Rectangle(0, 0, 100, menuItems.size() * 13);
@@ -93,7 +93,7 @@ public class ActionMenu {
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (MenuItem item : menuItems.values()) {
-				if (item.visible || item.anlwaysVisible) {
+				if (item.visible || item.alwaysVisible) {
 					item.bounds = new Rectangle(menuBounds.x, (menuBounds.y) + (y * 12) + 2, 100, 12);
 					if (item.hovered) {
 						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
