@@ -141,6 +141,9 @@
 	<material name="PLATINUM_CURRENCY">
 		<data file="data/materials/platinum_currency.mat" />
 	</material>
+	<material name="X_ICON">
+		<data file="data/materials/x_icon.mat" />
+	</material>
 
 
 	<!--testing-->

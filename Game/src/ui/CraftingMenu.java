@@ -67,9 +67,7 @@ public class CraftingMenu {
 	public void update() {
 		if (Mouse.isButtonDown(Settings.secondaryActionIndex) && !showMenu) {
 			showMenu = true;
-			itemPosition = UserInterface.crafting.getHoveredPosition();
-			item = UserInterface.crafting.getHoveredItem();
-			slot = UserInterface.crafting.getHoveredSlot();
+			
 			if (item != null) {
 				System.out.println("tesT: " + item.getMaterial());
 			}

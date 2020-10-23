@@ -371,13 +371,13 @@ public class UserInterface {
 					String maskString = "/";
 					if (mask != null) {
 						if (item != null) {
-							maskString += item.getMaterial();
+							maskString += item.getMaterial()+"(I)";
 						} else {
-							maskString += mask.getMaterial();
+							maskString += mask.getMaterial()+"(M)";
 						}
 					}
 
-					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial() + maskString, 12,
+					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial()+"(G)" + maskString, 12,
 							Color.white);
 				}
 			}

@@ -1,5 +1,5 @@
 <recipes>
-	<recipe name="STICK_ITEM" count="1-5" craft_time="100" skill="WOOD_CRAFTING">
+	<recipe name="STICK_ITEM" count="1-5" craft_time="50" skill="WOOD_CRAFTING">
 		<item name="WOOD_LOG_ITEM" />
 		<item name="STONE_TOOL_ITEM" reuse="true" />
 	</recipe>

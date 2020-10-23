@@ -8,6 +8,7 @@ import java.util.Random;
 import org.lwjgl.input.Mouse;
 
 import classes.Chunk;
+import classes.CraftingTable;
 import classes.GroundItem;
 import classes.ItemData;
 import classes.ItemDrop;
@@ -41,9 +42,9 @@ public class EventManager {
 	}
 
 	public static void addEvent(Event newEvent) {
-		if (!checkForCraft(newEvent)) {
-			events.add(newEvent);
-		}
+		// if (!checkForCraft(newEvent)) {
+		events.add(newEvent);
+		// }
 	}
 
 	public static boolean checkForCraft(Event recipeEvent) {
@@ -70,6 +71,7 @@ public class EventManager {
 	}
 
 	public static boolean playerWaiting = true;
+	private boolean craftingWaiting = true;
 
 	public void update() {
 		for (Event event : events) {
@@ -99,6 +101,10 @@ public class EventManager {
 	}
 
 	public void setupEvent(Event event) {
+		if (UserInterface.crafting.showSystem) {
+			UserInterface.crafting.showSystem = false;
+		}
+
 		if (event.eventName.equals("MOVE")) {
 			checkSkills(event.eventName);
 			if (start.x == event.end.x && start.y == event.end.y) {
@@ -154,13 +160,12 @@ public class EventManager {
 		if (event.eventName.equals("CRAFT")) {
 			event.setup = true;
 			playerWaiting = false;
-		} else if (event.eventName.equals("CRAFT_RECIPE")) {
+		}
+		if (event.eventName.equals("CRAFT_RECIPE") && craftingWaiting) {
 			event.setup = true;
 			playerWaiting = true;
-		} else if (UserInterface.crafting.showSystem) {
-			UserInterface.crafting.showSystem = false;
+			craftingWaiting = false;
 		}
-
 		if (event.eventName.equals("SMELT")) {
 			event.setup = true;
 			playerWaiting = false;
@@ -256,6 +261,7 @@ public class EventManager {
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
 					CraftingSystem.currentCraftTime--;
+					CraftingSystem.updateQueuedTime(event.followUpEvent.hash, event.step);
 				}
 				if (event.step <= 0) {
 
@@ -266,56 +272,53 @@ public class EventManager {
 							if (data != null) {
 								ItemData item = WorldData.itemData.get(data.name);
 								if (item != null) {
-									int recipeItemCount = 0;
-									for (CraftingSlot slot : CraftingSystem.slots) {
-										if (slot.slotItem != null) {
-											ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
-											if (recipeItemData != null) {
-												for (RecipeItem recipeItem : data.items) {
-													if (recipeItemData.name.equals(recipeItem.itemName)) {
-														recipeItemCount++;
-														if (recipeItem.reuse) {
-															InventoryItem reusedItem = slot.slotItem;
-															reusedItem.durability -= 1;
-															if (reusedItem.durability > 0) {
-																InventorySystem.addItem(reusedItem);
-															}
-															slot.slotItem = null;
-														} else if (slot.slotItem.count > 1) {
-															InventoryItem reusedItem = slot.slotItem;
-															reusedItem.count--;
-															InventorySystem.addItem(reusedItem);
-															slot.slotItem = null;
-														} else {
-															slot.slotItem = null;
-														}
-													}
-												}
-											}
-										}
-									}
-									if (recipeItemCount == data.items.size()) {
-										InventoryItem craftedItem = new InventoryItem();
-										craftedItem.name = data.name;
-										ItemData itemData = WorldData.itemData.get(craftedItem.name);
-										if (itemData != null) {
-											craftedItem.durability = itemData.durability;
-											craftedItem.setMaterial(item.inventoryMaterial);
-											// InventorySystem.addItem(craftedItem);
+									// System.out.println("item name: " + item.commonName);
+									InventoryItem invItem = new InventoryItem();
+									invItem.name = item.name;
+									invItem.count = data.minCount;
+									invItem.setMaterial(item.inventoryMaterial);
+									invItem.setModel("SQUARE");
+									boolean hasAdded = CraftingSystem.addToTable(event.followUpEvent.end, invItem);
 
-											//CraftingSystem.finalSlot.slotItem = craftedItem;
-										}
+									if (hasAdded) {
+										CraftingSystem.removeQueuedRecipe(event.followUpEvent.hash);
+										event.followUpEvent.processed = true;
+										event.processed = true;
+										craftingWaiting = true;
 									}
-
-									CraftingSystem.craftTime = 0;
-									event.followUpEvent.processed = true;
-									event.processed = true;
-									playerWaiting = true;
 								}
-
 							}
 						}
 					}
+					/*
+					 * if (event.followUpEvent != null) { String recipeName =
+					 * event.followUpEvent.eventName; if (recipeName != "") { RecipeData data =
+					 * UIData.recipeData.get(recipeName); if (data != null) { ItemData item =
+					 * WorldData.itemData.get(data.name); if (item != null) { int recipeItemCount =
+					 * 0; for (CraftingSlot slot : CraftingSystem.slots) { if (slot.slotItem !=
+					 * null) { ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
+					 * if (recipeItemData != null) { for (RecipeItem recipeItem : data.items) { if
+					 * (recipeItemData.name.equals(recipeItem.itemName)) { recipeItemCount++; if
+					 * (recipeItem.reuse) { InventoryItem reusedItem = slot.slotItem;
+					 * reusedItem.durability -= 1; if (reusedItem.durability > 0) {
+					 * InventorySystem.addItem(reusedItem); } slot.slotItem = null; } else if
+					 * (slot.slotItem.count > 1) { InventoryItem reusedItem = slot.slotItem;
+					 * reusedItem.count--; InventorySystem.addItem(reusedItem); slot.slotItem =
+					 * null; } else { slot.slotItem = null; } } } } } } if (recipeItemCount ==
+					 * data.items.size()) { InventoryItem craftedItem = new InventoryItem();
+					 * craftedItem.name = data.name; ItemData itemData =
+					 * WorldData.itemData.get(craftedItem.name); if (itemData != null) {
+					 * craftedItem.durability = itemData.durability;
+					 * craftedItem.setMaterial(item.inventoryMaterial); //
+					 * InventorySystem.addItem(craftedItem);
+					 * 
+					 * // CraftingSystem.finalSlot.slotItem = craftedItem; } }
+					 * 
+					 * CraftingSystem.craftTime = 0; event.followUpEvent.processed = true;
+					 * event.processed = true; playerWaiting = true; }
+					 * 
+					 * } } }
+					 */
 				}
 			}
 		}
@@ -404,7 +407,23 @@ public class EventManager {
 			}
 		}
 		if (event.eventName.equals("CRAFT")) {
+			CraftingSystem.selectedTable = event.end;
 			UserInterface.crafting.showSystem = true;
+
+			System.out.println("test: " + UserInterface.crafting.showSystem);
+			int chunkX = event.end.x / 16;
+			int chunkY = event.end.y / 16;
+
+			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+			if (chunk != null) {
+				int objX = EventManager.start.x % 16;
+				int objY = EventManager.start.y % 16;
+
+				Object obj = chunk.maskObjects[objX][objY];
+				if (obj != null) {
+					CraftingSystem.table = (CraftingTable) obj;
+				}
+			}
 
 			event.processed = true;
 			playerWaiting = true;

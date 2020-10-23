@@ -2,9 +2,9 @@ package ui;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -21,9 +21,14 @@ public class ChatSystem extends BaseSystem {
 
 	public void sendMessage(String message) {
 		String characterName = CharacterData.name;
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		LocalDateTime now = LocalDateTime.now();
-		String newMessage = dtf.format(now) + " " + characterName + message;
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		/*
+		 * DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		 * LocalDateTime now = LocalDateTime.now(); String newMessage = dtf.format(now)
+		 * + " " + characterName + message;
+		 */
+
+		String newMessage = timeStamp + " " + characterName + message;
 		messages.add(newMessage);
 	}
 

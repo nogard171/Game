@@ -93,6 +93,55 @@ public class InventorySystem extends BaseSystem {
 		}
 	}
 
+	public static boolean hasItems(InventoryItem itemToCheck) {
+		boolean has = false;
+		for (int x = 0; x < size.getWidth(); x++) {
+			for (int y = 0; y < size.getHeight(); y++) {
+				if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
+				} else {
+					int index = x + (y * size.getWidth());
+					if (items.containsKey(index)) {
+						InventoryItem item = items.get(index);
+						if (item != null) {
+							if (item.name.equals(itemToCheck.name)) {
+								if (item.count >= itemToCheck.count||item.durability>=itemToCheck.count) {
+									has = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return has;
+	}
+
+	public static void removeItem(InventoryItem itemToRemove) {
+		for (int x = 0; x < size.getWidth(); x++) {
+			for (int y = 0; y < size.getHeight(); y++) {
+				if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
+				} else {
+					int index = x + (y * size.getWidth());
+					if (items.containsKey(index)) {
+						InventoryItem item = items.get(index);
+						if (item != null) {
+							if (item.name.equals(itemToRemove.name)) {
+								if (item.durability > 0) {
+									item.durability -= 1;
+								} else if (item.count > itemToRemove.count) {
+									item.count -= itemToRemove.count;
+								} else if (item.count == itemToRemove.count || item.durability <= 0) {
+									items.remove(index);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void addItemAt(int index, InventoryItem newItem) {
 		// int count = newItem.count;
 		// for (int c = 0; c < count; c++) {
@@ -116,20 +165,14 @@ public class InventorySystem extends BaseSystem {
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 
 		/*
-		ItemData data = WorldData.itemData.get("IRON_SWORD_ITEM");
-		InventoryItem test = new InventoryItem();
-		test.commonName = data.commonName;
-		test.name = data.name;
-		test.setMaterial(data.material);
-		addItem(test);
-
-		data = WorldData.itemData.get("STONE_TOOL_ITEM");
-		InventoryItem knife = new InventoryItem();
-		knife.commonName = data.commonName;
-		knife.name = data.name;
-		knife.setMaterial(data.material);
-		knife.durability = 1;
-		addItem(knife);*/
+		 * ItemData data = WorldData.itemData.get("IRON_SWORD_ITEM"); InventoryItem test
+		 * = new InventoryItem(); test.commonName = data.commonName; test.name =
+		 * data.name; test.setMaterial(data.material); addItem(test);
+		 * 
+		 * data = WorldData.itemData.get("STONE_TOOL_ITEM"); InventoryItem knife = new
+		 * InventoryItem(); knife.commonName = data.commonName; knife.name = data.name;
+		 * knife.setMaterial(data.material); knife.durability = 1; addItem(knife);
+		 */
 
 	}
 

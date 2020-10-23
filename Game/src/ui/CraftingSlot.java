@@ -42,7 +42,8 @@ public class CraftingSlot {
 			Renderer.renderModel(slotBounds.x, slotBounds.y, "SQUARE", slotItem.getMaterial(), new Color(1, 1, 1, 1f));
 			GL11.glEnd();
 			if (slotItem.count > 1) {
-				Renderer.renderText(new Vector2f(slotBounds.x+24, slotBounds.y+17), slotItem.count + "", 12, Color.white);
+				Renderer.renderText(new Vector2f(slotBounds.x + 24, slotBounds.y + 17), slotItem.count + "", 12,
+						Color.white);
 			}
 		}
 	}

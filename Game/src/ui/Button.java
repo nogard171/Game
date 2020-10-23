@@ -15,6 +15,7 @@ public class Button {
 	public boolean hovered = false;
 	public AFunction func;
 	private int clicked = 0;
+	private boolean disabled = false;
 
 	private Color color = new Color(1, 1, 1, 0.5f);
 
@@ -51,7 +52,9 @@ public class Button {
 		if (this.bounds != null) {
 			this.hovered = bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
 		}
-		if (this.hovered) {
+		if (this.disabled) {
+			color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+		} else if (this.hovered) {
 			color = new Color(1, 0, 0, 0.5f);
 		} else {
 			color = new Color(1, 1, 1, 0.5f);
@@ -66,5 +69,9 @@ public class Button {
 	public void render() {
 		Renderer.renderText(new Vector2f(bounds.x + 7, bounds.y), this.text, 12, Color.white);
 		Renderer.renderRectangle(bounds.x, bounds.y, bounds.width, bounds.height, color);
+	}
+
+	public void isDisabled(boolean b) {
+		this.disabled = b;
 	}
 }
