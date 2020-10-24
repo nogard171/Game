@@ -9,6 +9,7 @@ import org.lwjgl.input.Mouse;
 
 import classes.Chunk;
 import classes.CraftingTable;
+import classes.Furnace;
 import classes.GroundItem;
 import classes.ItemData;
 import classes.ItemDrop;
@@ -101,9 +102,6 @@ public class EventManager {
 	}
 
 	public void setupEvent(Event event) {
-		if (UserInterface.crafting.showSystem) {
-			UserInterface.crafting.showSystem = false;
-		}
 
 		if (event.eventName.equals("MOVE")) {
 			checkSkills(event.eventName);
@@ -172,35 +170,6 @@ public class EventManager {
 		} else if (event.eventName.equals("SMELT_RECIPE")) {
 			event.stepTime = 500;
 			String recipeName = event.followUpEvent.eventName;
-			if (recipeName != "") {
-				RecipeData data = UIData.recipeData.get(recipeName);
-				if (data != null) {
-					ItemData item = WorldData.itemData.get(data.name);
-					if (item != null) {
-						for (SmeltingSlot slot : SmeltingSystem.slots) {
-							if (slot.slotItem != null) {
-								ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
-								if (recipeItemData != null) {
-									slot.slotItem.smeltTime = recipeItemData.smeltTime;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (SmeltingSystem.fuelSlot.slotItem != null) {
-				ItemData data = WorldData.itemData.get(SmeltingSystem.fuelSlot.slotItem.name);
-				if (data != null) {
-					SmeltingSystem.fuel = data.fuelAmount;
-					SmeltingSystem.currentFuel = SmeltingSystem.fuel;
-					if (SmeltingSystem.fuelSlot.slotItem.count > 1) {
-						SmeltingSystem.fuelSlot.slotItem.count--;
-					} else {
-						SmeltingSystem.fuelSlot.slotItem = null;
-					}
-				}
-			}
 
 			event.setup = true;
 			playerWaiting = true;
@@ -328,82 +297,10 @@ public class EventManager {
 				if (event.step > 0) {
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
-
-					String recipeName = event.followUpEvent.eventName;
-					if (recipeName != "") {
-						RecipeData data = UIData.recipeData.get(recipeName);
-						if (data != null) {
-							System.out.println("smelt time: " + data.name);
-							ItemData item = WorldData.itemData.get(data.name);
-							if (item != null) {
-								// working on event smelting
-								for (SmeltingSlot slot : SmeltingSystem.slots) {
-									if (slot.slotItem != null) {
-										ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
-										if (recipeItemData != null) {
-											slot.slotItem.smeltTime--;
-											if (slot.slotItem.smeltTime <= 0) {
-												if (SmeltingSystem.smeltedItem != null) {
-													if (SmeltingSystem.smeltedItem.name.equals(slot.slotItem.name)) {
-														if (slot.slotItem.count == 1) {
-															slot.slotItem = null;
-														} else {
-															slot.slotItem.count--;
-														}
-														SmeltingSystem.smeltedItem.count++;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-
-					if (SmeltingSystem.currentFuel > 0) {
-						SmeltingSystem.currentFuel--;
-						if (SmeltingSystem.currentFuel <= 0) {
-							if (SmeltingSystem.fuelSlot.slotItem != null) {
-								ItemData data = WorldData.itemData.get(SmeltingSystem.fuelSlot.slotItem.name);
-								if (data != null) {
-									SmeltingSystem.fuel = data.fuelAmount;
-									SmeltingSystem.currentFuel = SmeltingSystem.fuel;
-									if (SmeltingSystem.fuelSlot.slotItem.count > 1) {
-										SmeltingSystem.fuelSlot.slotItem.count--;
-									} else {
-										SmeltingSystem.fuelSlot.slotItem = null;
-									}
-								}
-							}
-						}
-					}
 				}
-				/*
-				 * if (event.step <= 0) { if (event.followUpEvent != null) { String recipeName =
-				 * event.followUpEvent.eventName; if (recipeName != "") { RecipeData data =
-				 * UIData.recipeData.get(recipeName); if (data != null) { ItemData item =
-				 * WorldData.itemData.get(data.name); if (item != null) { int recipeItemCount =
-				 * 0; for (SmeltingSlot slot : SmeltingSystem.slots) { if (slot.slotItem !=
-				 * null) { ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
-				 * if (recipeItemData != null) { for (RecipeItem recipeItem : data.items) { if
-				 * (recipeItemData.name.equals(recipeItem.itemName)) { recipeItemCount++; if
-				 * (recipeItem.reuse) { InventoryItem reusedItem = slot.slotItem;
-				 * reusedItem.durability -= 1; if (reusedItem.durability > 0) {
-				 * InventorySystem.addItem(reusedItem); } slot.slotItem = null; } else if
-				 * (slot.slotItem.count > 1) { InventoryItem reusedItem = slot.slotItem;
-				 * reusedItem.count--; InventorySystem.addItem(reusedItem); slot.slotItem =
-				 * null; } else { slot.slotItem = null; } } } } } } // if (fuelSlot.slotItem !=
-				 * null) { if (recipeItemCount == data.items.size()) { InventoryItem craftedItem
-				 * = new InventoryItem(); craftedItem.name = data.name; ItemData itemData =
-				 * WorldData.itemData.get(craftedItem.name); if (itemData != null) {
-				 * craftedItem.durability = itemData.durability;
-				 * craftedItem.setMaterial(item.inventoryMaterial);
-				 * InventorySystem.addItem(craftedItem); } } event.followUpEvent.processed =
-				 * true; event.processed = true; playerWaiting = true; }
-				 * 
-				 * } } } }
-				 */
+				if (event.step <= 0) {
+
+				}
 			}
 		}
 		if (event.eventName.equals("CRAFT")) {
@@ -429,8 +326,22 @@ public class EventManager {
 			playerWaiting = true;
 		}
 		if (event.eventName.equals("SMELT")) {
+			SmeltingSystem.selectedFurnace = event.end;
 			UserInterface.smelting.showSystem = true;
 
+			int chunkX = event.end.x / 16;
+			int chunkY = event.end.y / 16;
+
+			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+			if (chunk != null) {
+				int objX = EventManager.start.x % 16;
+				int objY = EventManager.start.y % 16;
+
+				Object obj = chunk.maskObjects[objX][objY];
+				if (obj != null) {
+					SmeltingSystem.furnace = (Furnace) obj;
+				}
+			}
 			event.processed = true;
 			playerWaiting = true;
 		}

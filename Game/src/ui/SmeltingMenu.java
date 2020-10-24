@@ -67,9 +67,9 @@ public class SmeltingMenu {
 	public void update() {
 		if (Mouse.isButtonDown(Settings.secondaryActionIndex) && !showMenu) {
 			showMenu = true;
-			itemPosition = UserInterface.smelting.getHoveredPosition();
-			item = UserInterface.smelting.getHoveredItem();
-			slot = UserInterface.smelting.getHoveredSlot();
+			//itemPosition = UserInterface.smelting.getHoveredPosition();
+			//item = UserInterface.smelting.getHoveredItem();
+			//slot = UserInterface.smelting.getHoveredSlot();
 			if (item != null) {
 				System.out.println("tesT: " + item.getMaterial());
 			}

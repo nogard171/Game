@@ -180,6 +180,9 @@ public class UserInterface {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(Settings.mainActionIndex) && hover != null) {
+				if (UserInterface.crafting.showSystem) {
+					UserInterface.crafting.showSystem = false;
+				}
 				if (!objectMenu.showObjectMenu && mouseDownCount == 0) {
 					int hoverX = hover.getX();
 					int hoverY = hover.getY();

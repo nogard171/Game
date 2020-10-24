@@ -104,7 +104,7 @@ public class InventorySystem extends BaseSystem {
 						InventoryItem item = items.get(index);
 						if (item != null) {
 							if (item.name.equals(itemToCheck.name)) {
-								if (item.count >= itemToCheck.count||item.durability>=itemToCheck.count) {
+								if (item.count >= itemToCheck.count || item.durability >= itemToCheck.count) {
 									has = true;
 									break;
 								}
@@ -118,21 +118,26 @@ public class InventorySystem extends BaseSystem {
 	}
 
 	public static void removeItem(InventoryItem itemToRemove) {
+		boolean itemRemoved = false;
 		for (int x = 0; x < size.getWidth(); x++) {
 			for (int y = 0; y < size.getHeight(); y++) {
 				if (x == size.getWidth() - 1 && y == size.getHeight() - 1) {
 				} else {
 					int index = x + (y * size.getWidth());
-					if (items.containsKey(index)) {
+					if (items.containsKey(index) && !itemRemoved) {
 						InventoryItem item = items.get(index);
 						if (item != null) {
 							if (item.name.equals(itemToRemove.name)) {
+								System.out.println("test123");
 								if (item.durability > 0) {
 									item.durability -= 1;
+									itemRemoved = true;
 								} else if (item.count > itemToRemove.count) {
 									item.count -= itemToRemove.count;
+									itemRemoved = true;
 								} else if (item.count == itemToRemove.count || item.durability <= 0) {
 									items.remove(index);
+									itemRemoved = true;
 								}
 							}
 						}
@@ -264,7 +269,7 @@ public class InventorySystem extends BaseSystem {
 									ItemData data = WorldData.itemData.get(item.name);
 									if (data != null) {
 
-										// System.out.println("dura: " + item.durability + "/" + data.durability);
+										System.out.println("dura: " + item.durability + "/" + data.durability);
 										if (item.durability <= 0 && data.durability > 0) {
 											items.remove(index);
 										}

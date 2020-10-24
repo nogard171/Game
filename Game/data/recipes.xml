@@ -12,6 +12,6 @@
 	</recipe>
 	<recipe name="STONE_SWORD_ITEM" level="2" skill="MASONARY">
 		<item name="STICK_ITEM" count="2" />
-		<item name="STONE_TOOL_ITEM"/>
+		<item name="STONE_TOOL_ITEM" />
 	</recipe>
 </recipes>

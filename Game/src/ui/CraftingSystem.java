@@ -358,7 +358,6 @@ public class CraftingSystem extends BaseSystem {
 
 						if (has) {
 							itemCount++;
-
 						}
 					}
 					if (itemCount == data.items.size()) {
