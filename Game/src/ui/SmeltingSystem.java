@@ -33,7 +33,6 @@ public class SmeltingSystem extends BaseSystem {
 	private boolean dragging = false;
 
 	public static int totalFuel = 0;
-	public static int maxFuel = 100;
 
 	private SmeltingMenu menu;
 	Button smelt;
@@ -74,6 +73,22 @@ public class SmeltingSystem extends BaseSystem {
 				proceedSmelting();
 			}
 		});
+	}
+
+	public static void addFuel() {
+		for (SmeltingSlot slot : fuelSlots) {
+			if (slot.slotItem != null) {
+				ItemData data = WorldData.itemData.get(slot.slotItem.name);
+				if (data != null) {
+					for (int c = 0; c < slot.slotItem.count; c++) {
+						totalFuel += data.fuelAmount;
+						if (slot.slotItem.count >= 1) {
+							slot.slotItem.count--;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -139,8 +154,16 @@ public class SmeltingSystem extends BaseSystem {
 			}
 			for (SmeltingSlot slot : fuelSlots) {
 				slot.update();
+				if (slot.slotItem != null) {
+					if (slot.slotItem.count <= 0) {
+						slot.slotItem = null;
+					}
+				}
 			}
 			smelt.update();
+		} else {
+			UserInterface.smeltingHovered = false;
+			UserInterface.smeltingDragging = false;
 		}
 
 	}
@@ -169,21 +192,16 @@ public class SmeltingSystem extends BaseSystem {
 			}
 			Renderer.renderRectangle(baseBounds.x + 80, baseBounds.y + 32, 10, 98, new Color(1, 1, 1, 0.5f));
 
-			totalFuel = 50;
-			if (totalFuel > 0) {
-				int fuelHeight = (int) (((float) totalFuel / (float) maxFuel) * (float) 98);
-				Renderer.renderRectangle(baseBounds.x + 80, (baseBounds.y + 130) - fuelHeight, 10, fuelHeight,
-						new Color(1, 0.65f, 0, 0.75f));
-			}
-
 			if (furnace != null) {
 				for (CraftingSlot slot : furnace.slots) {
 					slot.render(baseBounds.x, baseBounds.y);
 				}
 			}
+			// System.out.println("Fuel:" + totalFuel);
 
 			smelt.render();
 			menu.render();
+
 		}
 	}
 
@@ -195,12 +213,15 @@ public class SmeltingSystem extends BaseSystem {
 
 	public void proceedSmelting() {
 
-		/*
-		 * String comboRecipeName = getRecipeName(); if (comboRecipeName != "") {
-		 * RecipeData data = UIData.recipeData.get(comboRecipeName); if (data != null) {
-		 * Event move = new Event(); move.step = 100; move.eventName = "SMELT_RECIPE";
-		 * Event recipe = new Event(); recipe.eventName = comboRecipeName;
-		 * move.followUpEvent = recipe; EventManager.addEvent(move); } }
-		 */
+		addFuel();
+
+		Event move = new Event();
+		move.step = 100;
+		move.eventName = "SMELT_RECIPE";
+		Event recipe = new Event();
+		recipe.eventName = "";
+		move.followUpEvent = recipe;
+		EventManager.addEvent(move);
+
 	}
 }

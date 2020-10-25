@@ -71,8 +71,32 @@ public class EventManager {
 
 	}
 
+	public static boolean checkForSmelt(Event recipeEvent) {
+		boolean isQueued = false;
+
+		if (recipeEvent.eventName.equals("SMELT_RECIPE")) {
+			if (recipeEvent.followUpEvent != null) {
+				String recipe = recipeEvent.followUpEvent.eventName;
+				for (Event event : events) {
+					if (event.eventName.equals("SMELT_RECIPE")) {
+						if (event.followUpEvent != null) {
+							if (event.followUpEvent.eventName.equals(recipe)) {
+								isQueued = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return isQueued;
+
+	}
+
 	public static boolean playerWaiting = true;
 	private boolean craftingWaiting = true;
+	private boolean smeltingWaiting = true;
 
 	public void update() {
 		for (Event event : events) {
@@ -167,14 +191,11 @@ public class EventManager {
 		if (event.eventName.equals("SMELT")) {
 			event.setup = true;
 			playerWaiting = false;
-		} else if (event.eventName.equals("SMELT_RECIPE")) {
+		} else if (event.eventName.equals("SMELT_RECIPE")&smeltingWaiting) {
 			event.stepTime = 500;
-			String recipeName = event.followUpEvent.eventName;
-
 			event.setup = true;
 			playerWaiting = true;
-		} else if (UserInterface.smelting.showSystem) {
-			UserInterface.smelting.showSystem = false;
+			smeltingWaiting = false;
 		}
 	}
 
@@ -259,44 +280,20 @@ public class EventManager {
 							}
 						}
 					}
-					/*
-					 * if (event.followUpEvent != null) { String recipeName =
-					 * event.followUpEvent.eventName; if (recipeName != "") { RecipeData data =
-					 * UIData.recipeData.get(recipeName); if (data != null) { ItemData item =
-					 * WorldData.itemData.get(data.name); if (item != null) { int recipeItemCount =
-					 * 0; for (CraftingSlot slot : CraftingSystem.slots) { if (slot.slotItem !=
-					 * null) { ItemData recipeItemData = WorldData.itemData.get(slot.slotItem.name);
-					 * if (recipeItemData != null) { for (RecipeItem recipeItem : data.items) { if
-					 * (recipeItemData.name.equals(recipeItem.itemName)) { recipeItemCount++; if
-					 * (recipeItem.reuse) { InventoryItem reusedItem = slot.slotItem;
-					 * reusedItem.durability -= 1; if (reusedItem.durability > 0) {
-					 * InventorySystem.addItem(reusedItem); } slot.slotItem = null; } else if
-					 * (slot.slotItem.count > 1) { InventoryItem reusedItem = slot.slotItem;
-					 * reusedItem.count--; InventorySystem.addItem(reusedItem); slot.slotItem =
-					 * null; } else { slot.slotItem = null; } } } } } } if (recipeItemCount ==
-					 * data.items.size()) { InventoryItem craftedItem = new InventoryItem();
-					 * craftedItem.name = data.name; ItemData itemData =
-					 * WorldData.itemData.get(craftedItem.name); if (itemData != null) {
-					 * craftedItem.durability = itemData.durability;
-					 * craftedItem.setMaterial(item.inventoryMaterial); //
-					 * InventorySystem.addItem(craftedItem);
-					 * 
-					 * // CraftingSystem.finalSlot.slotItem = craftedItem; } }
-					 * 
-					 * CraftingSystem.craftTime = 0; event.followUpEvent.processed = true;
-					 * event.processed = true; playerWaiting = true; }
-					 * 
-					 * } } }
-					 */
 				}
 			}
 		}
 		if (event.eventName.equals("SMELT_RECIPE")) {
 			if (getTime() >= event.startTime) {
-				System.out.println("step: " + event.step);
 				if (event.step > 0) {
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
+					if (SmeltingSystem.totalFuel > 0) {
+
+						System.out.println("Fuel: " + SmeltingSystem.totalFuel);
+						System.out.println("step: " + event.step);
+						SmeltingSystem.totalFuel--;
+					}
 				}
 				if (event.step <= 0) {
 
