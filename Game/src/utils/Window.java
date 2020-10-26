@@ -24,18 +24,34 @@ public class Window {
 	}
 
 	private static void setupGL() {
-		setupViewport();
+		setupViewport3D();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 	}
 
-	private static void setupViewport() {
+	public static void setupViewport3D() {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluPerspective((float) Settings._Fov, ((float) Settings._Width / (float) Settings._Height), 0.1f, 100);
-		GL11.glLoadIdentity();
+		GL11.glViewport(0, 0, Settings._Width, Settings._Height);
+		GLU.gluPerspective((float) Settings._Fov, ((float) Settings._Width / (float) Settings._Height), 0.1f, 1000);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		//GL11.glLoadIdentity();
+	}
+
+	public static void setupViewport2D() {
+		GL11.glViewport(0, 0, Settings._Width, Settings._Height);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		// GLU.gluPerspective((float) Settings._Fov, ((float) Settings._Width / (float)
+		// Settings._Height), 0.1f, 1000);
+
+		GL11.glOrtho(0, (float) Settings._Width, (float) Settings._Height, 0, 1, -1);
+		// GL11.glLoadIdentity();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
 	}
 
 	public static void update() {
