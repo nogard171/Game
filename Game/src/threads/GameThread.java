@@ -42,14 +42,8 @@ public class GameThread extends BaseThread {
 		super.setup();
 
 		Window.create();
-		Loader.loadMaterials();
-		Loader.loadTextures();
-		Loader.loadResources();
-		Loader.loadItems();
-		Loader.loadSkills();
-		Loader.loadRecipes();
-		
 
+		loadResources();
 
 		world = new World();
 		world.setup();
@@ -58,6 +52,17 @@ public class GameThread extends BaseThread {
 		ui.setup();
 
 		FPS.setup();
+	}
+
+	public void loadResources() {
+		Loader.loadMaterials();
+		Loader.loadModels();
+		Loader.loadResources();
+		Loader.loadItems();
+		Loader.loadSkills();
+		Loader.loadRecipes();
+		Loader.loadBuildings();
+
 	}
 
 	@Override
@@ -70,6 +75,10 @@ public class GameThread extends BaseThread {
 		ui.update();
 
 		float speed = 1 * FPS.getDelta();
+
+		if (Window.isKeyDown(Keyboard.KEY_F1)) {
+			loadResources();
+		}
 
 		if (Window.isKeyDown(Keyboard.KEY_A)) {
 			View.x += speed;

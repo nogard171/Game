@@ -26,4 +26,10 @@
 	<model name='CRAFTING_TABLE'>
 		<data file="data/models/crafting_table.obj"/>
 	</model>
+	<model name='WALL_VERTICAL'>
+		<data file="data/models/wall_vertical.obj"/>
+	</model>
+	<model name='WALL_HORIZONTAL'>
+		<data file="data/models/wall_horizontal.obj"/>
+	</model>
 </models>

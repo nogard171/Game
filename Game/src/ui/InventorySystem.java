@@ -15,6 +15,7 @@ import classes.Index;
 import classes.ItemData;
 import classes.Size;
 import data.Settings;
+import data.UIData;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
@@ -36,17 +37,8 @@ public class InventorySystem extends BaseSystem {
 	public static void addItem(InventoryItem newItem) {
 		int count = newItem.count;
 		boolean add = true;
-		/*
-		 * // for (int c = 0; c < count; c++) { boolean add = false; // newItem.count =
-		 * 1; while (!add) { if (items.containsKey(lastIndex)) { if
-		 * (items.get(lastIndex) == null) { add = true; } else { lastIndex++; } } else {
-		 * add = true; } }
-		 * 
-		 * 
-		 * if (add) { items.put(lastIndex, newItem); }
-		 * 
-		 * }
-		 */
+
+		System.out.println("test");
 		int lastIndex = -1;
 		int nextIndex = -1;
 		for (int x = 0; x < size.getWidth(); x++) {
@@ -58,7 +50,7 @@ public class InventorySystem extends BaseSystem {
 						InventoryItem item = items.get(index);
 						// System.out.println("test: " + index + "=" + item);
 						if (item != null) {
-							ItemData data = WorldData.itemData.get(item.name);
+							ItemData data = UIData.itemData.get(item.name);
 							if (data != null) {
 								if (item.name == newItem.name && item.count < data.stackSize) {
 									item.count += newItem.count;
@@ -266,10 +258,10 @@ public class InventorySystem extends BaseSystem {
 							if (items.containsKey(index)) {
 								InventoryItem item = items.get(index);
 								if (item != null) {
-									ItemData data = WorldData.itemData.get(item.name);
+									ItemData data = UIData.itemData.get(item.name);
 									if (data != null) {
 
-										System.out.println("dura: " + item.durability + "/" + data.durability);
+										//System.out.println("dura: " + item.durability + "/" + data.durability);
 										if (item.durability <= 0 && data.durability > 0) {
 											items.remove(index);
 										}
@@ -334,7 +326,7 @@ public class InventorySystem extends BaseSystem {
 
 								if (item != null) {
 
-									ItemData data = WorldData.itemData.get(item.name);
+									ItemData data = UIData.itemData.get(item.name);
 
 									if (data != null) {
 										// System.out.println("data: " + data.inventoryMaterial);

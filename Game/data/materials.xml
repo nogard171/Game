@@ -41,6 +41,14 @@
 		<data file="data/materials/crafting_table.mat" />
 		<offset x="-32" y="-32" />
 	</material>
+	<material name="WALL_TOP">
+		<data file="data/materials/wall_top.mat" />
+		<offset x="-32" y="-32" />
+	</material>
+	<material name="WALL_BOTTOM">
+		<data file="data/materials/wall_bottom.mat" />
+		<offset x="-32" y="-32" />
+	</material>
 
 	<!--items-->
 	<material name="STONE_ITEM">
@@ -143,6 +151,12 @@
 	</material>
 	<material name="X_ICON">
 		<data file="data/materials/x_icon.mat" />
+	</material>
+	<material name="CHAT_ICON">
+		<data file="data/materials/chat_icon.mat" />
+	</material>
+	<material name="BUILD_ICON">
+		<data file="data/materials/build_icon.mat" />
 	</material>
 
 

@@ -1,0 +1,34 @@
+<buildingitems>
+	<item name="WALL_NORTH" model="WALL_VERTICAL">
+		<material name="WALL_BOTTOM">
+			<offset x="32" y="0" />
+		</material>
+		<material name="WALL_TOP">
+			<offset x="32" y="-32" />
+		</material>
+	</item>
+	<item name="WALL_SOUTH" model="WALL_VERTICAL">
+		<material name="WALL_BOTTOM">
+			<offset x="0" y="16" />
+		</material>
+		<material name="WALL_TOP">
+			<offset x="0" y="-16" />
+		</material>
+	</item>
+	<item name="WALL_WEST" model="WALL_HORIZONTAL">
+		<material name="WALL_BOTTOM">
+			<offset x="0" y="0" />
+		</material>
+		<material name="WALL_TOP">
+			<offset x="0" y="-32" />
+		</material>
+	</item>
+	<item name="WALL_EAST" model="WALL_HORIZONTAL">
+		<material name="WALL_BOTTOM">
+			<offset x="32" y="16" />
+		</material>
+		<material name="WALL_TOP">
+			<offset x="32" y="-16" />
+		</material>
+	</item>
+</buildingitems>

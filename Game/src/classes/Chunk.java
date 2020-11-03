@@ -8,6 +8,9 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 
+import com.sun.scenario.effect.Color4f;
+
+import data.UIData;
 import data.WorldData;
 import utils.Renderer;
 
@@ -119,6 +122,21 @@ public class Chunk {
 					newObj.setModel("CRAFTING_TABLE");
 
 					maskObjects[x][z] = newObj;
+				} else if (x == 13 && z == 15) {
+
+					Building newObj = new Building();
+					newObj.name = "WALL_SOUTH";
+					maskObjects[x][z] = newObj;
+				} else if (x == 14 && z == 15) {
+
+					Building newObj = new Building();
+					newObj.name = "WALL_WEST";
+					maskObjects[x][z] = newObj;
+				} else if (x == 15 && z == 15) {
+
+					Building newObj = new Building();
+					newObj.name = "WALL_NORTH";
+					maskObjects[x][z] = newObj;
 				} else {
 
 					maskObjects[x][z] = new Object();
@@ -181,7 +199,29 @@ public class Chunk {
 
 				Object maskObj = maskObjects[x][z];
 				if (maskObj != null) {
-					Renderer.renderModel(this, x, z, maskObj);
+					if (maskObj.type.equals(ObjectType.BUILDING)) {
+						BuildingData data = UIData.buildingData.get(maskObj.name);
+						if (data != null) {
+							for (int b = 0; b < data.materials.size(); b++) {
+								BuildingMaterial mat = data.materials.get(b);
+								if (mat != null) {
+									int carX = (index.getX() * 32) * 16;
+									int carY = (index.getY() * 32) * 16;
+									int isoX = carX - carY;
+									int isoY = (carY + carX) / 2;
+
+									int selfX = isoX;
+									int selfY = isoY;
+									int objX = (x * 32) - (z * 32);
+									int objY = ((z * 32) + (x * 32)) / 2;
+									Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
+											data.model, mat.name, new Color(1f, 1f, 1f, 1f));
+								}
+							}
+						}
+					} else {
+						Renderer.renderModel(this, x, z, maskObj);
+					}
 				}
 
 			}

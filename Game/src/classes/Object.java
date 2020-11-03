@@ -3,6 +3,7 @@ package classes;
 import org.newdawn.slick.Color;
 
 public class Object {
+	public String name = "";
 	private int x = 0;
 	private int y = 0;
 	private int indexX = 0;
@@ -12,6 +13,7 @@ public class Object {
 	private String material = "AIR";
 	private Color color = Color.white;
 	public boolean isItem = false;
+	public ObjectType type = ObjectType.OBJECT;
 
 	public boolean isResource = false;
 

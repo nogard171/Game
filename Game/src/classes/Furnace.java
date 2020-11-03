@@ -10,6 +10,8 @@ public class Furnace extends Object {
 	public LinkedList<CraftingSlot> slots = new LinkedList<CraftingSlot>();
 
 	public Furnace() {
+		name = "FURNACE";
+		type = ObjectType.FURNACE;
 		for (int i = 0; i < 5; i++) {
 			CraftingSlot newSlot = new CraftingSlot(3 + (i * 33), 170);
 			slots.add(newSlot);

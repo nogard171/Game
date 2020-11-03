@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.Texture;
 
+import classes.BuildingData;
 import classes.Chunk;
 import classes.Index;
 import classes.ItemData;
@@ -19,14 +20,8 @@ import classes.ResourceData;
 
 public class WorldData {
 	public static Texture texture;
-	public static HashMap<String, MaterialData> materialData = new HashMap<String, MaterialData>();
-	public static HashMap<String, ModelData> modelData = new HashMap<String, ModelData>();
-	public static HashMap<String, ResourceData> resourceData = new HashMap<String, ResourceData>();
-	public static HashMap<String, ItemData> itemData = new HashMap<String, ItemData>();
-	public static HashMap<String, SkillData> skillData = new HashMap<String, SkillData>();
 
 	public static HashMap<String, Chunk> chunks = new HashMap<String, Chunk>();
-	public static HashMap<Integer, TrueTypeFont> fonts = new HashMap<Integer, TrueTypeFont>();
 
 	public static Chunk getChunk(int x, int z) {
 		Chunk chunk = null;

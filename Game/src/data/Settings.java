@@ -7,6 +7,7 @@ public class Settings {
 	public static String itemFile = "data/items.xml";
 	public static String skillFile = "data/skills.xml";
 	public static String recipesFile = "data/recipes.xml";
+	public static String buildingsFile = "data/buildings.xml";
 
 	public static boolean waitForKey = false;
 	public static String movementDirections = "8 Directions";

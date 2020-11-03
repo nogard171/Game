@@ -14,6 +14,7 @@ import classes.GroundItem;
 import classes.ItemData;
 import classes.ItemDrop;
 import classes.Object;
+import classes.ObjectType;
 import classes.Resource;
 import classes.ResourceData;
 import classes.Skill;
@@ -191,7 +192,7 @@ public class EventManager {
 		if (event.eventName.equals("SMELT")) {
 			event.setup = true;
 			playerWaiting = false;
-		} else if (event.eventName.equals("SMELT_RECIPE")&smeltingWaiting) {
+		} else if (event.eventName.equals("SMELT_RECIPE") & smeltingWaiting) {
 			event.stepTime = 500;
 			event.setup = true;
 			playerWaiting = true;
@@ -201,8 +202,8 @@ public class EventManager {
 
 	public void checkSkills(String action) {
 
-		for (String key : WorldData.skillData.keySet()) {
-			SkillData skill = WorldData.skillData.get(key);
+		for (String key : UIData.skillData.keySet()) {
+			SkillData skill = UIData.skillData.get(key);
 
 			if (skill.obtainingAction.equals(action)) {
 				if (!CharacterData.obtainedSkills.contains(key) && !CharacterData.skills.containsKey(key)) {
@@ -222,9 +223,9 @@ public class EventManager {
 
 	public void processSkill(String action) {
 
-		for (String key : WorldData.skillData.keySet()) {
+		for (String key : UIData.skillData.keySet()) {
 
-			SkillData skill = WorldData.skillData.get(key);
+			SkillData skill = UIData.skillData.get(key);
 
 			if (skill.obtainingAction.equals(action)) {
 
@@ -260,7 +261,7 @@ public class EventManager {
 						if (recipeName != "") {
 							RecipeData data = UIData.recipeData.get(recipeName);
 							if (data != null) {
-								ItemData item = WorldData.itemData.get(data.name);
+								ItemData item = UIData.itemData.get(data.name);
 								if (item != null) {
 									// System.out.println("item name: " + item.commonName);
 									InventoryItem invItem = new InventoryItem();
@@ -287,16 +288,21 @@ public class EventManager {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {
 					event.startTime = getTime() + event.stepTime;
-					event.step--;
 					if (SmeltingSystem.totalFuel > 0) {
+						event.step--;
 
 						System.out.println("Fuel: " + SmeltingSystem.totalFuel);
 						System.out.println("step: " + event.step);
+						SmeltingSystem.totalSmelting++;
 						SmeltingSystem.totalFuel--;
+					} else {
+						SmeltingSystem.addFuel();
 					}
 				}
 				if (event.step <= 0) {
-
+					SmeltingSystem.smelting = false;
+					event.processed = true;
+					this.smeltingWaiting = true;
 				}
 			}
 		}
@@ -358,13 +364,13 @@ public class EventManager {
 					Object obj = chunk.groundItems[objX][objY];
 
 					if (obj != null) {
-						if (obj.isItem) {
+						if (obj.type.equals(ObjectType.ITEM)) {
 							GroundItem groundItem = (GroundItem) obj;
 
 							if (groundItem.name != "") {
 								chunk.groundItems[objX][objY] = null;
 								chunk.needsUpdating();
-								ItemData itemData = WorldData.itemData.get(groundItem.name);
+								ItemData itemData = UIData.itemData.get(groundItem.name);
 
 								if (itemData != null) {
 									InventoryItem item = new InventoryItem();
@@ -409,7 +415,7 @@ public class EventManager {
 
 							GroundItem groundItem = new GroundItem();
 
-							ItemData itemData = WorldData.itemData.get(inventoryItem.name);
+							ItemData itemData = UIData.itemData.get(inventoryItem.name);
 
 							if (itemData != null) {
 								groundItem.name = inventoryItem.name;
@@ -449,10 +455,11 @@ public class EventManager {
 
 							if (obj != null) {
 
-								if (obj.isResource) {
+								if (obj.type.equals(ObjectType.RESOURCE)) {
 									Resource res = (Resource) obj;
 									if (res != null) {
-										ResourceData rawRes = WorldData.resourceData.get(res.name);
+										ResourceData rawRes = UIData.resourceData.get(res.name);
+										System.out.println("test");
 
 										if (rawRes != null) {
 											if (rawRes.harvestedMaterial == "" && rawRes.harvestedModel == "") {
@@ -463,6 +470,7 @@ public class EventManager {
 											}
 
 											for (ItemDrop drop : rawRes.itemDrops) {
+
 												InventoryItem item = new InventoryItem();
 												item.name = drop.name;
 												if (drop.maxDropCount > 0) {
@@ -473,7 +481,7 @@ public class EventManager {
 													item.count = drop.minDropCount;
 												}
 
-												ItemData itemData = WorldData.itemData.get(item.name);
+												ItemData itemData = UIData.itemData.get(item.name);
 												if (itemData != null) {
 
 													item.setMaterial(itemData.inventoryMaterial);

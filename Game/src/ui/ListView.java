@@ -37,10 +37,8 @@ public class ListView {
 					item.hovered = true;
 					if (Window.isMainAction()) {
 						handleClick(item);
-						// item.click();
 					} else {
 						handleUnClick(item);
-						// item.unclick();
 					}
 				}
 			}

@@ -34,6 +34,9 @@ public class SmeltingSystem extends BaseSystem {
 
 	public static int totalFuel = 0;
 
+	public static int totalSmelting = 0;
+	public static int maxSmelting = 0;
+
 	private SmeltingMenu menu;
 	Button smelt;
 	public static Furnace furnace;
@@ -76,14 +79,17 @@ public class SmeltingSystem extends BaseSystem {
 	}
 
 	public static void addFuel() {
-		for (SmeltingSlot slot : fuelSlots) {
-			if (slot.slotItem != null) {
-				ItemData data = WorldData.itemData.get(slot.slotItem.name);
-				if (data != null) {
-					for (int c = 0; c < slot.slotItem.count; c++) {
-						totalFuel += data.fuelAmount;
-						if (slot.slotItem.count >= 1) {
-							slot.slotItem.count--;
+		if (totalFuel <= 0) {
+			for (SmeltingSlot slot : fuelSlots) {
+				if (slot.slotItem != null) {
+					ItemData data = UIData.itemData.get(slot.slotItem.name);
+					if (data != null) {
+						for (int c = 0; c < slot.slotItem.count; c++) {
+							totalFuel += data.fuelAmount;
+							if (slot.slotItem.count >= 1) {
+								slot.slotItem.count--;
+								break;
+							}
 						}
 					}
 				}
@@ -136,7 +142,7 @@ public class SmeltingSystem extends BaseSystem {
 					if (slot.isHovered() && Window.isMainAction()) {
 						InventoryItem newItem = slot.slotItem;
 						if (newItem != null) {
-							ItemData data = WorldData.itemData.get(newItem.name);
+							ItemData data = UIData.itemData.get(newItem.name);
 							if (data != null) {
 								if (data.durability > 0) {
 									newItem.durability = data.durability;
@@ -192,6 +198,12 @@ public class SmeltingSystem extends BaseSystem {
 			}
 			Renderer.renderRectangle(baseBounds.x + 80, baseBounds.y + 32, 10, 98, new Color(1, 1, 1, 0.5f));
 
+			if (maxSmelting > 0) {
+				int maxHeight = (int) (((float) totalSmelting / (float) maxSmelting) * (float) 98);
+				Renderer.renderRectangle(baseBounds.x + 80, baseBounds.y + 32-maxHeight+98, 10, maxHeight, new Color(0, 1, 0, 0.5f));
+
+			}
+
 			if (furnace != null) {
 				for (CraftingSlot slot : furnace.slots) {
 					slot.render(baseBounds.x, baseBounds.y);
@@ -211,17 +223,22 @@ public class SmeltingSystem extends BaseSystem {
 
 	}
 
+	public static boolean smelting = false;
+
 	public void proceedSmelting() {
 
 		addFuel();
-
-		Event move = new Event();
-		move.step = 100;
-		move.eventName = "SMELT_RECIPE";
-		Event recipe = new Event();
-		recipe.eventName = "";
-		move.followUpEvent = recipe;
-		EventManager.addEvent(move);
+		if (totalFuel > 0 && !smelting) {
+			Event move = new Event();
+			move.step = 100;
+			move.eventName = "SMELT_RECIPE";
+			Event recipe = new Event();
+			recipe.eventName = "";
+			move.followUpEvent = recipe;
+			EventManager.addEvent(move);
+			maxSmelting = 100;
+			smelting = true;
+		}
 
 	}
 }

@@ -15,6 +15,7 @@ import classes.TextureType;
 import classes.Object;
 import classes.MaterialData;
 import classes.ModelData;
+import data.UIData;
 import data.WorldData;
 
 public class Renderer {
@@ -29,10 +30,10 @@ public class Renderer {
 
 					int selfX = isoX;
 					int selfY = isoY;
-					ModelData raw = WorldData.modelData.get(obj.getModel());
+					ModelData raw = UIData.modelData.get(obj.getModel());
 					if (raw != null) {
 
-						MaterialData mat = WorldData.materialData.get(obj.getMaterial());
+						MaterialData mat = UIData.materialData.get(obj.getMaterial());
 						if (mat != null) {
 
 							GL11.glColor4f(obj.getColor().r, obj.getColor().g, obj.getColor().b, obj.getColor().a);
@@ -62,10 +63,46 @@ public class Renderer {
 		}
 	}
 
+	public static void renderModel(Chunk self, int x, int z, String model, String material, Color c) {
+		if (self != null) {
+			int carX = (self.index.getX() * 32) * 16;
+			int carY = (self.index.getY() * 32) * 16;
+			int isoX = carX - carY;
+			int isoY = (carY + carX) / 2;
+
+			int selfX = isoX;
+			int selfY = isoY;
+			ModelData raw = UIData.modelData.get(model);
+			if (raw != null) {
+				MaterialData mat = UIData.materialData.get(material);
+				if (mat != null) {
+					GL11.glColor4f(c.r, c.g, c.b, c.a);
+					for (int b = 0; b < raw.indices.length; b++) {
+
+						byte i = raw.indices[b];
+						byte ti = i;
+						if (mat.indices.length > 0) {
+							ti = mat.indices[b];
+						}
+						Vector2f textureVec = mat.vectors[ti];
+						int objX = (x * 32) - (z * 32);
+						int objY = ((z * 32) + (x * 32)) / 2;
+						GL11.glTexCoord2f(textureVec.x / WorldData.texture.getImageWidth(),
+								textureVec.y / WorldData.texture.getImageHeight());
+						Vector2f vec = raw.vectors[i];
+
+						GL11.glVertex2f(vec.x + selfX + objX + mat.offset.x, vec.y + selfY + objY + mat.offset.y);
+					}
+				}
+			}
+		}
+
+	}
+
 	public static void renderModel(int objX, int objY, String model, String material, Color c) {
-		ModelData raw = WorldData.modelData.get(model);
+		ModelData raw = UIData.modelData.get(model);
 		if (raw != null) {
-			MaterialData mat = WorldData.materialData.get(material);
+			MaterialData mat = UIData.materialData.get(material);
 			if (mat != null) {
 				GL11.glColor4f(c.r, c.g, c.b, c.a);
 				for (int b = 0; b < raw.indices.length; b++) {
@@ -130,11 +167,11 @@ public class Renderer {
 
 	public static void renderText(Vector2f position, String text, int fontSize, Color color) {
 
-		TrueTypeFont font = WorldData.fonts.get(fontSize);
+		TrueTypeFont font = UIData.fonts.get(fontSize);
 
 		if (font == null) {
 			Font awtFont = new Font("Courier", Font.PLAIN, fontSize);
-			WorldData.fonts.put(fontSize, new TrueTypeFont(awtFont, false));
+			UIData.fonts.put(fontSize, new TrueTypeFont(awtFont, false));
 		}
 		if (font != null) {
 			TextureImpl.bindNone();

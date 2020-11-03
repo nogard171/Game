@@ -13,8 +13,10 @@ import org.newdawn.slick.Color;
 
 import classes.Chunk;
 import classes.Object;
+import classes.ObjectType;
 import classes.ResourceData;
 import data.Settings;
+import data.UIData;
 import data.WorldData;
 import utils.FPS;
 import utils.KeySystem;
@@ -37,6 +39,7 @@ public class UserInterface {
 	public static OptionSystem options;
 	public static CraftingSystem crafting;
 	public static SmeltingSystem smelting;
+	public static BuildingSystem building;
 	public static ChatSystem chat;
 
 	public static MouseIndex hover;
@@ -51,6 +54,9 @@ public class UserInterface {
 	public static boolean smeltingHovered = false;
 	public static boolean smeltingDragging = false;
 
+	public static boolean buildingHovered = false;
+	public static boolean buildingDragging = false;
+
 	public void setup() {
 
 		MenuItem bag = new MenuItem(new AFunction() {
@@ -60,6 +66,7 @@ public class UserInterface {
 				skills.showSystem = false;
 				options.showSystem = false;
 				chat.showSystem = false;
+				building.showSystem = false;
 			}
 		});
 		bag.bounds = new Rectangle(0, 0, 32, 32);
@@ -74,6 +81,7 @@ public class UserInterface {
 				skills.showSystem = false;
 				options.showSystem = false;
 				chat.showSystem = false;
+				building.showSystem = false;
 			}
 		});
 		chara.bounds = new Rectangle(32, 0, 32, 32);
@@ -88,6 +96,7 @@ public class UserInterface {
 				character.showSystem = false;
 				options.showSystem = false;
 				chat.showSystem = false;
+				building.showSystem = false;
 			}
 		});
 		skill.bounds = new Rectangle(64, 0, 32, 32);
@@ -102,12 +111,28 @@ public class UserInterface {
 				character.showSystem = false;
 				skills.showSystem = false;
 				options.showSystem = false;
+				building.showSystem = false;
 			}
 		});
 		chatIcon.bounds = new Rectangle(0, 0, 32, 32);
 		chatIcon.text = "Chat";
-		chatIcon.material = "CHAT";
+		chatIcon.material = "CHAT_ICON";
 		menu.add(chatIcon);
+
+		MenuItem buildButton = new MenuItem(new AFunction() {
+			public void click() {
+				building.showSystem = !building.showSystem;
+				options.showSystem = false;
+				inventory.showSystem = false;
+				character.showSystem = false;
+				skills.showSystem = false;
+				chat.showSystem = false;
+			}
+		});
+		buildButton.bounds = new Rectangle(96, 0, 32, 32);
+		buildButton.text = "Build";
+		buildButton.material = "BUILD_ICON";
+		menu.add(buildButton);
 
 		MenuItem optionsButton = new MenuItem(new AFunction() {
 			public void click() {
@@ -116,6 +141,7 @@ public class UserInterface {
 				character.showSystem = false;
 				skills.showSystem = false;
 				chat.showSystem = false;
+				building.showSystem = false;
 			}
 		});
 		optionsButton.bounds = new Rectangle(96, 0, 32, 32);
@@ -142,6 +168,9 @@ public class UserInterface {
 
 		smelting = new SmeltingSystem();
 		smelting.setup();
+
+		building = new BuildingSystem();
+		building.setup();
 
 		eventManager = new EventManager();
 		eventManager.setup();
@@ -174,9 +203,9 @@ public class UserInterface {
 	}
 
 	public void update() {
-		if (!inventoryHovered && !menuHovered && !inventory.dragging && !characterHovered
+		if ((!inventoryHovered && !inventory.dragging) && !menuHovered && !characterHovered
 				&& (!craftingHovered && !craftingDragging) && (!smeltingHovered && !smeltingDragging)
-				&& !optionsHovered) {
+				&& (!buildingHovered && !buildingDragging) && !optionsHovered) {
 			pollHover();
 			objectMenu.update();
 			if (Mouse.isButtonDown(Settings.mainActionIndex) && hover != null) {
@@ -261,6 +290,7 @@ public class UserInterface {
 		options.update();
 		crafting.update();
 		smelting.update();
+		building.update();
 		chat.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
@@ -290,11 +320,14 @@ public class UserInterface {
 		if (menuHovered) {
 			for (MenuItem item : menu) {
 				if (item.bounds.contains(new Point(Window.getMouseX(), Window.getMouseY()))) {
+					item.hovered = true;
 					if (Mouse.isButtonDown(0)) {
 						item.click();
 					} else {
 						item.unclick();
 					}
+				} else {
+					item.hovered = false;
 				}
 			}
 		}
@@ -304,7 +337,7 @@ public class UserInterface {
 
 	public void renderOnMap() {
 		if (hover != null) {
-			GL11.glColor4f(1f, 0, 0, 0.5f);
+			GL11.glColor4f(0f, 0, 0, 0.5f);
 			GL11.glBegin(GL11.GL_QUADS);
 			Renderer.renderGrid(hover.getX(), hover.getY());
 			GL11.glEnd();
@@ -321,16 +354,25 @@ public class UserInterface {
 		options.render();
 		crafting.render();
 		smelting.render();
+		building.render();
 		chat.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
 		int i = 0;
+		for (MenuItem item : menu) {
+			if (item.hovered) {
+				Renderer.renderRectangle(item.bounds.x, item.bounds.y, 32, 32, new Color(1, 1, 1, 0.25f));
+
+			}
+		}
 		GL11.glBegin(GL11.GL_TRIANGLES);
 		for (MenuItem item : menu) {
 			item.bounds.x = menuBounds.x + (i * 33);
 			item.bounds.y = menuBounds.y;
+
 			Renderer.renderModel(item.bounds.x, item.bounds.y, "SQUARE", item.material, new Color(1, 1, 1, 1f));
+
 			i++;
 		}
 		GL11.glEnd();
@@ -374,13 +416,13 @@ public class UserInterface {
 					String maskString = "/";
 					if (mask != null) {
 						if (item != null) {
-							maskString += item.getMaterial()+"(I)";
+							maskString += item.name + "(I)";
 						} else {
-							maskString += mask.getMaterial()+"(M)";
+							maskString += mask.name+ "(M)";
 						}
 					}
 
-					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial()+"(G)" + maskString, 12,
+					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial() + "(G)" + maskString, 12,
 							Color.white);
 				}
 			}
@@ -422,14 +464,14 @@ public class UserInterface {
 			 * (obj.getMaterial().contains("CRAFTING")) { action = "CRAFT"; }
 			 */
 
-			ResourceData data = WorldData.resourceData.get(obj.getMaterial());
+			ResourceData data = UIData.resourceData.get(obj.getMaterial());
 			if (data != null) {
 				action = data.action.toUpperCase();
 				System.out.println("action: " + obj.getMaterial() + "=" + data.action);
 			}
-			System.out.println("action: " + obj.isItem);
+			System.out.println("action: " + obj.type);
 
-			if (obj.isItem) {
+			if (obj.type.equals(ObjectType.ITEM)) {
 				action = "PICKUP";
 			}
 

@@ -14,6 +14,7 @@ import classes.Chunk;
 import classes.Object;
 import classes.ResourceData;
 import data.Settings;
+import data.UIData;
 import data.WorldData;
 import threads.GameThread;
 import utils.Renderer;
@@ -276,7 +277,7 @@ public class ObjectMenu {
 		}
 		if (obj != null) {
 			MenuItem menuItem;
-			ResourceData data = WorldData.resourceData.get(obj.getMaterial());
+			ResourceData data = UIData.resourceData.get(obj.getMaterial());
 			if (data != null) {
 				menuItem = menuItems.get(data.action.toUpperCase());
 				if (menuItem != null) {

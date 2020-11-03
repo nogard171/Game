@@ -98,8 +98,8 @@ public class SkillSystem extends BaseSystem {
 							new Color(1, 1, 1, 0.5f));
 					if (CharacterData.obtainedSkills.size()>i) {
 						String skillName = CharacterData.obtainedSkills.get(i);
-						if (WorldData.skillData.containsKey(skillName)) {
-							SkillData data = WorldData.skillData.get(skillName);
+						if (UIData.skillData.containsKey(skillName)) {
+							SkillData data = UIData.skillData.get(skillName);
 
 							if (data != null) {
 								GL11.glBegin(GL11.GL_TRIANGLES);

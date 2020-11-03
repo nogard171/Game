@@ -74,7 +74,7 @@ public class RecipesListView extends ListView {
 				if (item != null) {
 					RecipeData recipe = UIData.recipeData.get(item.text.toUpperCase());
 					if (recipe != null) {
-						ItemData itemData = WorldData.itemData.get(recipe.name.toUpperCase());
+						ItemData itemData = UIData.itemData.get(recipe.name.toUpperCase());
 						if (itemData != null) {
 							item.bounds = new Rectangle(bounds.x, bounds.y + (itemIndex * 16) + 2, bounds.width, 16);
 							if (item.hovered) {

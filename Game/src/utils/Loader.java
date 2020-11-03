@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,6 +18,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import classes.BuildingData;
+import classes.BuildingMaterial;
 import classes.ItemData;
 import classes.ItemDrop;
 import classes.MaterialData;
@@ -34,6 +37,7 @@ import data.WorldData;
 public class Loader {
 	public static void loadMaterials() {
 		try {
+			UIData.materialData.clear();
 			File fXmlFile = new File(Settings.materialsFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -87,7 +91,7 @@ public class Loader {
 						}
 					}
 					if (mat != null) {
-						WorldData.materialData.put(name, mat);
+						UIData.materialData.put(name, mat);
 					}
 				}
 			}
@@ -136,8 +140,9 @@ public class Loader {
 		return mat;
 	}
 
-	public static void loadTextures() {
+	public static void loadModels() {
 		try {
+			UIData.modelData.clear();
 			File fXmlFile = new File(Settings.textureFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -166,7 +171,7 @@ public class Loader {
 						String modelFile = dataNode.getAttribute("file");
 						ModelData raw = loadModel(modelFile);
 
-						WorldData.modelData.put(name, raw);
+						UIData.modelData.put(name, raw);
 					}
 				}
 			}
@@ -217,6 +222,7 @@ public class Loader {
 
 	public static void loadResources() {
 		try {
+			UIData.resourceData.clear();
 			File fXmlFile = new File(Settings.resourceFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -286,7 +292,7 @@ public class Loader {
 							}
 						}
 					}
-					WorldData.resourceData.put(name, raw);
+					UIData.resourceData.put(name, raw);
 				}
 
 			}
@@ -298,6 +304,7 @@ public class Loader {
 
 	public static void loadItems() {
 		try {
+			UIData.itemData.clear();
 			File fXmlFile = new File(Settings.itemFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -356,7 +363,7 @@ public class Loader {
 							raw.smeltTime = smeltTime;
 						}
 					}
-					WorldData.itemData.put(name, raw);
+					UIData.itemData.put(name, raw);
 				}
 
 			}
@@ -368,6 +375,7 @@ public class Loader {
 
 	public static void loadSkills() {
 		try {
+			UIData.skillData.clear();
 			File fXmlFile = new File(Settings.skillFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -419,7 +427,7 @@ public class Loader {
 
 						}
 					}
-					WorldData.skillData.put(name, raw);
+					UIData.skillData.put(name, raw);
 				}
 
 			}
@@ -431,6 +439,8 @@ public class Loader {
 
 	public static void loadRecipes() {
 		try {
+
+			UIData.recipeData.clear();
 			File fXmlFile = new File(Settings.recipesFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -518,6 +528,72 @@ public class Loader {
 						}
 					}
 					UIData.recipeData.put(name, data);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadBuildings() {
+		try {
+			UIData.buildingData.clear();
+			File fXmlFile = new File(Settings.buildingsFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			// Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			NodeList itemNodes = doc.getElementsByTagName("item");
+
+			for (int temp = 0; temp < itemNodes.getLength(); temp++) {
+
+				Node itemNode = itemNodes.item(temp);
+
+				if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+					BuildingData data = new BuildingData();
+
+					Element itemElement = (Element) itemNode;
+					String name = itemElement.getAttribute("name");
+					data.name = name;
+
+					if (itemElement.hasAttribute("model")) {
+						String model = itemElement.getAttribute("model");
+						data.model = model;
+					}
+
+					NodeList materialsNodes = itemElement.getElementsByTagName("material");
+					for (int materialTemp = 0; materialTemp < materialsNodes.getLength(); materialTemp++) {
+
+						Node materialNode = materialsNodes.item(materialTemp);
+
+						if (materialNode.getNodeType() == Node.ELEMENT_NODE) {
+							BuildingMaterial mat = new BuildingMaterial();
+
+							Element materialElement = (Element) materialNode;
+							String matName = materialElement.getAttribute("name");
+							mat.name = matName;
+
+							if (materialElement.hasChildNodes()) {
+								NodeList offsetNodes = materialElement.getElementsByTagName("offset");
+								Node offsetNode = offsetNodes.item(0);
+
+								if (offsetNode.getNodeType() == Node.ELEMENT_NODE) {
+									Element offsetElement = (Element) offsetNode;
+									int offsetX = Integer.parseInt(offsetElement.getAttribute("x"));
+									int offsetY = Integer.parseInt(offsetElement.getAttribute("y"));
+									mat.offset = new Point(offsetX, offsetY);
+								}
+							}
+
+							data.materials.add(mat);
+						}
+					}
+					UIData.buildingData.put(name, data);
 				}
 
 			}

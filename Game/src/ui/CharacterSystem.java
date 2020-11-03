@@ -16,7 +16,8 @@ import classes.Size;
 import data.WorldData;
 import utils.Renderer;
 import utils.Window;
-import data.CharacterData;;
+import data.CharacterData;
+import data.UIData;;
 
 public class CharacterSystem extends BaseSystem {
 	public static HashMap<String, EquipmentItem> items = new HashMap<String, EquipmentItem>();
@@ -186,7 +187,7 @@ public class CharacterSystem extends BaseSystem {
 			EquipmentItem weapon = items.get("WEAPON");
 			if (weapon != null) {
 				if (weapon.item != null) {
-					ItemData itemData = WorldData.itemData.get(weapon.item.getMaterial());
+					ItemData itemData = UIData.itemData.get(weapon.item.getMaterial());
 					if (itemData != null) {
 						dmg += itemData.attributeValue;
 					}

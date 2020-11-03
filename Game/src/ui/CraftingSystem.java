@@ -130,7 +130,7 @@ public class CraftingSystem extends BaseSystem {
 					if (slot.isHovered() && Window.isMainAction()) {
 						InventoryItem newItem = slot.slotItem;
 						if (newItem != null) {
-							ItemData data = WorldData.itemData.get(newItem.name);
+							ItemData data = UIData.itemData.get(newItem.name);
 							if (data != null) {
 								if (data.durability > 0) {
 									newItem.durability = data.durability;
@@ -187,7 +187,7 @@ public class CraftingSystem extends BaseSystem {
 			if (listView.selectedRecipe != "") {
 				RecipeData recipe = UIData.recipeData.get(listView.selectedRecipe);
 				if (recipe != null) {
-					ItemData itemData = WorldData.itemData.get(recipe.name.toUpperCase());
+					ItemData itemData = UIData.itemData.get(recipe.name.toUpperCase());
 					if (itemData != null) {
 
 						GL11.glBegin(GL11.GL_TRIANGLES);
@@ -208,7 +208,7 @@ public class CraftingSystem extends BaseSystem {
 					int x = 0;
 					int y = 0;
 					for (RecipeItem recipeItem : recipe.items) {
-						ItemData recipeItemData = WorldData.itemData.get(recipeItem.itemName.toUpperCase());
+						ItemData recipeItemData = UIData.itemData.get(recipeItem.itemName.toUpperCase());
 						if (itemData != null) {
 							InventoryItem item = new InventoryItem();
 							item.name = recipeItem.itemName;
@@ -261,7 +261,7 @@ public class CraftingSystem extends BaseSystem {
 				for (CraftingSlot slot : table.slots) {
 					slot.render(baseBounds.x, baseBounds.y);
 					if (slot.slotItem != null) {
-						ItemData itemData = WorldData.itemData.get(slot.slotItem.name.toUpperCase());
+						ItemData itemData = UIData.itemData.get(slot.slotItem.name.toUpperCase());
 						if (itemData != null) {
 
 						}
@@ -278,7 +278,7 @@ public class CraftingSystem extends BaseSystem {
 						if (queuedRecipe != null) {
 							RecipeData recipe = UIData.recipeData.get(queuedRecipe.recipe);
 							if (recipe != null) {
-								ItemData itemData = WorldData.itemData.get(recipe.name);
+								ItemData itemData = UIData.itemData.get(recipe.name);
 								if (itemData != null) {
 									Renderer.renderRectangle(baseBounds.x + baseBounds.width + 3,
 											baseBounds.y + 21 + (i * 33), 32, 32, new Color(1, 1, 1, 0.5f));
