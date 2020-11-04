@@ -9,4 +9,8 @@ public class QueuedRecipe {
 		hash = newHash;
 		recipe = newRecipe;
 	}
+
+	public QueuedRecipe(String newRecipe) {
+		recipe = newRecipe;
+	}
 }

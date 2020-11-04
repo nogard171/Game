@@ -21,6 +21,7 @@ import classes.Skill;
 import classes.SkillData;
 import data.WorldData;
 import utils.APathFinder;
+import utils.Tools;
 import data.CharacterData;
 import data.UIData;
 
@@ -192,11 +193,13 @@ public class EventManager {
 		if (event.eventName.equals("SMELT")) {
 			event.setup = true;
 			playerWaiting = false;
-		} else if (event.eventName.equals("SMELT_RECIPE") & smeltingWaiting) {
-			event.stepTime = 500;
-			event.setup = true;
-			playerWaiting = true;
-			smeltingWaiting = false;
+		} else if (event.eventName.equals("SMELT_RECIPE") && smeltingWaiting) {
+			if (event.followUpEvent != null) {
+				event.stepTime = 500;
+				event.setup = true;
+				playerWaiting = true;
+				smeltingWaiting = false;
+			}
 		}
 	}
 
@@ -255,7 +258,7 @@ public class EventManager {
 					CraftingSystem.updateQueuedTime(event.followUpEvent.hash, event.step);
 				}
 				if (event.step <= 0) {
-
+					CraftingSystem.currentCraftTime = 100;
 					if (event.followUpEvent != null) {
 						String recipeName = event.followUpEvent.eventName;
 						if (recipeName != "") {
@@ -295,14 +298,36 @@ public class EventManager {
 						System.out.println("step: " + event.step);
 						SmeltingSystem.totalSmelting++;
 						SmeltingSystem.totalFuel--;
+						SmeltingSystem.updateQueuedTime(event.followUpEvent.hash, event.step);
 					} else {
 						SmeltingSystem.addFuel();
 					}
 				}
 				if (event.step <= 0) {
-					SmeltingSystem.smelting = false;
-					event.processed = true;
-					this.smeltingWaiting = true;
+					if (event.followUpEvent != null) {
+						String recipeName = event.followUpEvent.eventName;
+						if (recipeName != "") {
+							RecipeData data = UIData.recipeData.get(recipeName);
+							if (data != null) {
+								ItemData item = UIData.itemData.get(data.name);
+								if (item != null) {
+									InventoryItem invItem = new InventoryItem();
+									invItem.name = item.name;
+									invItem.count = data.minCount;
+									invItem.setMaterial(item.inventoryMaterial);
+									invItem.setModel("SQUARE");
+									boolean hasAdded = SmeltingSystem.addToFurnace(event.followUpEvent.end, invItem);
+
+									if (hasAdded) {
+										SmeltingSystem.removeQueuedRecipe(event.followUpEvent.hash);
+										SmeltingSystem.smelting = false;
+										event.processed = true;
+										smeltingWaiting = true;
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

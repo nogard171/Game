@@ -3,7 +3,7 @@
 		<data value="10" material="BRONZE_ORE_GROUND_ITEM" inventory_material="BRONZE_ORE_ITEM" stack_size="99" smelt_time="10" />
 	</item>
 	<item name="BRONZE_BAR_ITEM" commonName="Bronze Ore">
-		<data value="10" material="BRONZE_BAR_GROUND_ITEM" inventory_material="BRONZE_BAR_ITEM" stack_size="99" />
+		<data value="10" material="BRONZE_BAR_GROUND_ITEM" inventory_material="TEST" stack_size="99" />
 	</item>
 	<item name="WOOD_LOG_ITEM" commonName="Wood Log">
 		<data value="10" material="WOOD_LOG_ITEM" inventory_material="WOOD_LOG_ITEM" stack_size="99" fuel_amount="25" />

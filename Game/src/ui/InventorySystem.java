@@ -180,6 +180,10 @@ public class InventorySystem extends BaseSystem {
 		moveItemOut = moveOut;
 	}
 
+	public boolean isDragging() {
+		return dragging;
+	}
+
 	public InventoryItem getDraggedItem() {
 		movedItem = draggedItem;
 		draggedItem = null;

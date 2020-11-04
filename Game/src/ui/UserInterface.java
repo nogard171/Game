@@ -425,6 +425,7 @@ public class UserInterface {
 					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial() + "(G)" + maskString, 12,
 							Color.white);
 				}
+				
 			}
 
 		}

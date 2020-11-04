@@ -143,9 +143,11 @@ public class CraftingSystem extends BaseSystem {
 				}
 			}
 
-			craft.update();
-			left.update();
-			right.update();
+			if (!UserInterface.inventory.isDragging()) {
+				craft.update();
+				left.update();
+				right.update();
+			}
 
 		} else
 
@@ -405,8 +407,8 @@ public class CraftingSystem extends BaseSystem {
 				Object obj = chunk.maskObjects[objX][objY];
 				if (obj != null) {
 					try {
-						CraftingTable table = (CraftingTable) obj;
-						for (CraftingSlot slot : table.slots) {
+						CraftingTable tab = (CraftingTable) obj;
+						for (CraftingSlot slot : tab.slots) {
 							if (slot.slotItem == null) {
 								slot.slotItem = newItem;
 								canAdd = true;
