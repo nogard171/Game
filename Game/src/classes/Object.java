@@ -81,4 +81,8 @@ public class Object {
 		this.color = newColor;
 	}
 
+	public void setAlpha(float i) {
+		this.color.a = i;
+	}
+
 }

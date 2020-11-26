@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import classes.Building;
 import classes.BuildingData;
 import classes.BuildingMaterial;
 import classes.Chunk;
@@ -26,8 +27,6 @@ public class BuildingSystem extends BaseSystem {
 
 	private Rectangle closeBounds;
 	private boolean closeHovered = false;
-
-	public static Point selectedTable = null;
 
 	private Rectangle titleBarBounds;
 	private boolean titleHovered = false;
@@ -47,7 +46,7 @@ public class BuildingSystem extends BaseSystem {
 		baseBounds.y = (Window.height - 32) - baseBounds.height;
 		setupBounds();
 
-		listView = new BuildingListView(0, 16, 98, baseBounds.height - 100);
+		listView = new BuildingListView(0, 16, 98, baseBounds.height - 120);
 		listView.setup();
 
 	}
@@ -132,21 +131,19 @@ public class BuildingSystem extends BaseSystem {
 				Renderer.renderGrid(UserInterface.hover.getX(), UserInterface.hover.getY());
 				GL11.glEnd();
 			}
-			
-			
-			Renderer.renderRectangle(baseBounds.x+1, baseBounds.y+baseBounds.height-33,32,32,
-					new Color(1, 1, 1, 0.5f));
-			Renderer.renderRectangle(baseBounds.x+34, baseBounds.y+baseBounds.height-33,32,32,
-					new Color(1, 1, 1, 0.5f));
-			Renderer.renderRectangle(baseBounds.x+67, baseBounds.y+baseBounds.height-33,32,32,
-					new Color(1, 1, 1, 0.5f));
-			
 
-			Renderer.renderRectangle(baseBounds.x+1, baseBounds.y+baseBounds.height-66,32,32,
+			Renderer.renderRectangle(baseBounds.x + 1, baseBounds.y + baseBounds.height - 33, 32, 32,
 					new Color(1, 1, 1, 0.5f));
-			Renderer.renderRectangle(baseBounds.x+34, baseBounds.y+baseBounds.height-66,32,32,
+			Renderer.renderRectangle(baseBounds.x + 34, baseBounds.y + baseBounds.height - 33, 32, 32,
 					new Color(1, 1, 1, 0.5f));
-			Renderer.renderRectangle(baseBounds.x+67, baseBounds.y+baseBounds.height-66,32,32,
+			Renderer.renderRectangle(baseBounds.x + 67, baseBounds.y + baseBounds.height - 33, 32, 32,
+					new Color(1, 1, 1, 0.5f));
+
+			Renderer.renderRectangle(baseBounds.x + 1, baseBounds.y + baseBounds.height - 66, 32, 32,
+					new Color(1, 1, 1, 0.5f));
+			Renderer.renderRectangle(baseBounds.x + 34, baseBounds.y + baseBounds.height - 66, 32, 32,
+					new Color(1, 1, 1, 0.5f));
+			Renderer.renderRectangle(baseBounds.x + 67, baseBounds.y + baseBounds.height - 66, 32, 32,
 					new Color(1, 1, 1, 0.5f));
 		}
 	}
@@ -161,6 +158,31 @@ public class BuildingSystem extends BaseSystem {
 		secondary.eventName = "BUILD";
 		if (BuildingSystem.selectedBuilding.equals("DECONSTRUCT")) {
 			secondary.eventName = "DECONSTRUCT";
+		} else {
+			int hoverX = x;
+			int hoverY = y;
+			int chunkX = hoverX / 16;
+			int chunkY = hoverY / 16;
+
+			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+			if (chunk != null) {
+				int objX = x % 16;
+				int objY = y % 16;
+
+				Building building = new Building();
+				int carX = objX * 32;
+				int carY = objY * 32;
+				int isoX = carX - carY;
+				int isoY = (carY + carX) / 2;
+
+				building.setX(isoX);
+				building.setY(isoY);
+
+				building.name = selectedBuilding + "_CONSTRUCT";
+
+				chunk.maskObjects[objX][objY] = building;
+				chunk.needsUpdating();
+			}
 		}
 		secondary.end = new Point(x, y);
 

@@ -67,25 +67,27 @@ public class BuildingListView extends ListView {
 			if (i < items.size()) {
 				MenuItem item = items.get(i);
 				if (item != null) {
+					item.bounds = new Rectangle(bounds.x, bounds.y + (itemIndex * 16) + 2, bounds.width, 16);
+
+					if (BuildingSystem.selectedBuilding.equals(item.text)) {
+						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
+								new Color(0.25f, 0.25f, 0.25f, 0.5f));
+					}
+					if (item.hovered) {
+						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
+								new Color(1, 0, 0, 0.5f));
+					}
+
 					if (item.text.equals("DECONSTRUCT")) {
-						item.bounds = new Rectangle(bounds.x, bounds.y + (itemIndex * 16) + 2, bounds.width, 16);
-						if (item.hovered) {
-							Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,
-									item.bounds.height, new Color(1, 0, 0, 0.5f));
-						}
+
 						Renderer.renderText(new Vector2f(bounds.x + 2, bounds.y + (itemIndex * 16)), item.text, 12,
 								Color.white);
 						itemIndex++;
 					} else {
 						BuildingData buildData = UIData.buildingData.get(item.text);
 						if (buildData != null) {
-							item.bounds = new Rectangle(bounds.x, bounds.y + (itemIndex * 16) + 2, bounds.width, 16);
-
 							if (buildData.materials.size() > 0) {
-								if (item.hovered) {
-									Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width,
-											item.bounds.height, new Color(1, 0, 0, 0.5f));
-								}
+
 								Renderer.renderText(new Vector2f(bounds.x + 2, bounds.y + (itemIndex * 16)),
 										buildData.name, 12, Color.white);
 								itemIndex++;

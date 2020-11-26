@@ -57,6 +57,22 @@
 		<data file="data/materials/wall_bottom_shaded.mat" />
 		<offset x="-32" y="-32" />
 	</material>
+	<material name="WALL_TOP_CONSTRUCT">
+		<data file="data/materials/wall_top_construct.mat" />
+		<offset x="-32" y="-32" />
+	</material>
+	<material name="WALL_BOTTOM_CONSTRUCT">
+		<data file="data/materials/wall_bottom_construct.mat" />
+		<offset x="-32" y="-32" />
+	</material>
+	<material name="WALL_TOP_SHADED_CONSTRUCT">
+		<data file="data/materials/wall_top_shaded_construct.mat" />
+		<offset x="-32" y="-32" />
+	</material>
+	<material name="WALL_BOTTOM_SHADED_CONSTRUCT">
+		<data file="data/materials/wall_bottom_shaded_construct.mat" />
+		<offset x="-32" y="-32" />
+	</material>
 
 	<!--items-->
 	<material name="STONE_ITEM">

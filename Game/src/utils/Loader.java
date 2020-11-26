@@ -596,7 +596,7 @@ public class Loader {
 									mat.offset = new Point(offsetX, offsetY);
 								}
 
-								NodeList itemsNodes = materialElement.getElementsByTagName("items");
+								NodeList itemsNodes = materialElement.getElementsByTagName("item");
 								for (int itemTemp = 0; itemTemp < itemsNodes.getLength(); itemTemp++) {
 
 									Node itemCountNode = itemsNodes.item(0);
@@ -604,6 +604,7 @@ public class Loader {
 									if (itemCountNode.getNodeType() == Node.ELEMENT_NODE) {
 										Element itemCountElement = (Element) itemCountNode;
 
+										String itemName = itemCountElement.getAttribute("name");
 										if (itemCountElement.hasAttribute("inherit")) {
 											String inheritBuildingName = itemCountElement.getAttribute("inherit");
 											BuildingData inheritData = UIData.buildingData.get(inheritBuildingName);
@@ -613,8 +614,7 @@ public class Loader {
 												}
 											}
 										} else {
-
-											String itemName = itemCountElement.getAttribute("name");
+											System.out.println("building: " +itemName);
 											int itemCount = Integer.parseInt(itemCountElement.getAttribute("count"));
 
 											BuildingItem item = new BuildingItem();

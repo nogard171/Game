@@ -198,7 +198,8 @@ public class Chunk {
 				Object maskObj = maskObjects[x][z];
 				if (maskObj != null) {
 					if (maskObj.type.equals(ObjectType.BUILDING)) {
-						BuildingData data = UIData.buildingData.get(maskObj.name);
+						String buildingName = maskObj.name;
+						BuildingData data = UIData.buildingData.get(buildingName.replace("_CONSTRUCT", ""));
 						if (data != null) {
 							for (int b = 0; b < data.materials.size(); b++) {
 								BuildingMaterial mat = data.materials.get(b);
@@ -212,8 +213,14 @@ public class Chunk {
 									int selfY = isoY;
 									int objX = (x * 32) - (z * 32);
 									int objY = ((z * 32) + (x * 32)) / 2;
+
+									String matName = mat.name;
+									if (buildingName.contains("_CONSTRUCT")) {
+										matName += "_CONSTRUCT";
+									}
+
 									Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
-											data.model, mat.name, new Color(1f, 1f, 1f, 1f));
+											data.model, matName, maskObj.getColor());
 								}
 							}
 						}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.Color;
 
 import classes.Building;
 import classes.BuildingData;
@@ -291,7 +292,6 @@ public class EventManager {
 					BuildingSystem.deconstruct();
 				}
 				if (event.step > 100) {
-
 					int hoverX = event.end.x;
 					int hoverY = event.end.y;
 					int chunkX = hoverX / 16;
@@ -304,12 +304,13 @@ public class EventManager {
 						chunk.maskObjects[objX][objY] = null;
 
 						chunk.needsUpdating();
-						
+
 						BuildingSystem.complete();
 						event.processed = true;
 						event.followUpEvent.processed = true;
 						playerWaiting = true;
 					}
+
 				}
 			}
 		}
@@ -339,20 +340,12 @@ public class EventManager {
 									int objX = event.end.x % 16;
 									int objY = event.end.y % 16;
 
-									Building building = new Building();
-									int carX = objX * 32;
-									int carY = objY * 32;
-									int isoX = carX - carY;
-									int isoY = (carY + carX) / 2;
-
-									building.setX(isoX);
-									building.setY(isoY);
-
-									building.name = BuildingSystem.selectedBuilding;
-
-									chunk.maskObjects[objX][objY] = building;
-
-									chunk.needsUpdating();
+									Object building = chunk.maskObjects[objX][objY];
+									if (building != null) {
+										building.name = building.name.replace("_CONSTRUCT", "");
+										System.out.println("building: " + building.name);
+										chunk.needsUpdating();
+									}
 									event.followUpEvent.processed = true;
 									event.processed = true;
 									playerWaiting = true;
