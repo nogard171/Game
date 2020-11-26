@@ -1,0 +1,5 @@
+<entities>
+	<entity name="BIRD">
+		<movement name="RANDOM" speed="1" />
+	</entity>
+</entities>

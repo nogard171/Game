@@ -1,0 +1,4 @@
+<actions>
+	<action name="MOVE" xp="1" skill="WALKING"/>
+	<action name="CHOP" xp="1"  skill="WOODCUTTING"/>
+</actions>
