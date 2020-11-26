@@ -101,7 +101,7 @@ public class SmeltingSystem extends BaseSystem {
 			UserInterface.smeltingHovered = baseHovered;
 			titleHovered = titleBarBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
 
-			if (titleHovered && Window.isMainAction()&&!UserInterface.inventory.isDragging()) {
+			if (titleHovered && Window.isMainAction() && !UserInterface.inventory.isDragging()) {
 				if (dragOffset == null) {
 					dragOffset = new Point(Window.getMouseX() - baseBounds.x, Window.getMouseY() - baseBounds.y);
 					dragging = true;
@@ -118,12 +118,12 @@ public class SmeltingSystem extends BaseSystem {
 
 			closeHovered = closeBounds.contains(new Point(Window.getMouseX(), Window.getMouseY()));
 
-			if (closeHovered && Window.isMainAction()&&!UserInterface.inventory.isDragging()) {
+			if (closeHovered && Window.isMainAction() && !UserInterface.inventory.isDragging()) {
 				this.showSystem = false;
 				UserInterface.smeltingHovered = false;
 				UserInterface.smeltingDragging = false;
 			}
-			if (furnace != null&&!UserInterface.inventory.isDragging()) {
+			if (furnace != null && !UserInterface.inventory.isDragging()) {
 				for (SmeltingSlot slot : furnace.slots) {
 					slot.update();
 					if (slot.isHovered() && Window.isMainAction()) {
@@ -275,18 +275,20 @@ public class SmeltingSystem extends BaseSystem {
 					for (int c = slot.slotItem.count; c > 0; c--) {
 						System.out.println("item: " + slot.slotItem.name + "/" + slot.slotItem.count);
 						QueuedRecipe queuedRecipe = setupQueuedRecipe(slot.slotItem.name);
-						Event move = new Event();
-						move.step = 100;
-						move.eventName = "SMELT_RECIPE";
-						Event recipe = new Event();
-						recipe.eventName = queuedRecipe.recipe;
-						recipe.hash = queuedRecipe.hash;
-						recipe.end = selectedFurnace;
-						move.followUpEvent = recipe;
-						EventManager.addEvent(move);
-						maxSmelting += 100;
-						smelting = true;
-						slot.slotItem.count--;
+						if (queuedRecipe != null) {
+							Event move = new Event();
+							move.step = 100;
+							move.eventName = "SMELT_RECIPE";
+							Event recipe = new Event();
+							recipe.eventName = queuedRecipe.recipe;
+							recipe.hash = queuedRecipe.hash;
+							recipe.end = selectedFurnace;
+							move.followUpEvent = recipe;
+							EventManager.addEvent(move);
+							maxSmelting += 100;
+							smelting = true;
+							slot.slotItem.count--;
+						}
 					}
 					if (slot.slotItem.count <= 0) {
 						System.out.println("clear");
@@ -298,23 +300,34 @@ public class SmeltingSystem extends BaseSystem {
 	}
 
 	public QueuedRecipe setupQueuedRecipe(String item) {
+		QueuedRecipe queuedRecipe = null;
 		String hash = "";
 		String recipeName = "";
 		for (RecipeData recipe : UIData.recipeData.values()) {
+			int itemCount = 0;
+			boolean hasFuelItem = false;
 			for (RecipeItem recipeItem : recipe.items) {
 				ItemData data = UIData.itemData.get(recipeItem.itemName);
 				if (data != null) {
 					if (data.name.equals(item)) {
-						recipeName = recipe.name;
-						break;
+						itemCount++;
 					}
 				}
+				if (recipeItem.itemName.equals("FUEL")) {
+					hasFuelItem = true;
+				} else {
+					hasFuelItem = false;
+				}
+			}
+			if (itemCount >= recipe.items.size() - 1 && hasFuelItem) {
+				recipeName = recipe.name;
 			}
 		}
 		if (recipeName != "") {
 			hash = SmeltingSystem.addQueuedRecipe(new QueuedRecipe(recipeName));
+			queuedRecipe = new QueuedRecipe(hash, recipeName);
 		}
-		return new QueuedRecipe(hash, recipeName);
+		return queuedRecipe;
 	}
 
 	public static String addQueuedRecipe(QueuedRecipe recipe) {
@@ -353,6 +366,7 @@ public class SmeltingSystem extends BaseSystem {
 	public static void resetSmelting() {
 		totalSmelting = 0;
 	}
+
 	public static boolean addToFurnace(Point end, InventoryItem newItem) {
 		boolean canAdd = false;
 		if (furnace != null) {

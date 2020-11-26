@@ -7,6 +7,8 @@ import java.util.Random;
 
 import org.lwjgl.input.Mouse;
 
+import classes.Building;
+import classes.BuildingData;
 import classes.Chunk;
 import classes.CraftingTable;
 import classes.Furnace;
@@ -22,6 +24,7 @@ import classes.SkillData;
 import data.WorldData;
 import utils.APathFinder;
 import utils.Tools;
+import data.ActionData;
 import data.CharacterData;
 import data.UIData;
 
@@ -130,7 +133,7 @@ public class EventManager {
 	public void setupEvent(Event event) {
 
 		if (event.eventName.equals("MOVE")) {
-			checkSkills(event.eventName);
+			// checkSkills(event.eventName);
 			if (start.x == event.end.x && start.y == event.end.y) {
 				event.setup = true;
 				playerWaiting = true;
@@ -162,7 +165,7 @@ public class EventManager {
 			}
 		}
 		if (event.eventName.equals("CHOP") || event.eventName.equals("MINE") || event.eventName.equals("HARVEST")) {
-			checkSkills(event.eventName);
+			// checkSkills(event.eventName);
 			if (event.eventName == "CHOP") {
 
 			}
@@ -201,6 +204,11 @@ public class EventManager {
 				smeltingWaiting = false;
 			}
 		}
+
+		if (event.eventName.equals("BUILD") || event.eventName.equals("ERASE")) {
+			event.setup = true;
+			playerWaiting = false;
+		}
 	}
 
 	public void checkSkills(String action) {
@@ -224,6 +232,31 @@ public class EventManager {
 		 */
 	}
 
+	public void handleEXP(String action) {
+
+		ActionData data = UIData.actionData.get(action);
+		if (data != null) {
+			SkillData skill = UIData.skillData.get(data.skill);
+			if (skill != null) {
+				if (!CharacterData.obtainedSkills.contains(data.skill)
+						&& !CharacterData.skills.containsKey(data.skill)) {
+					Skill newSkill = new Skill();
+					CharacterData.skills.put(data.skill, newSkill);
+				}
+				if (!CharacterData.obtainedSkills.contains(data.skill)
+						&& CharacterData.skills.containsKey(data.skill)) {
+					Skill newSkill = CharacterData.skills.get(data.skill);
+					newSkill.learnCount++;
+					if (newSkill.learnCount >= skill.count) {
+						newSkill.learned = true;
+						CharacterData.obtainedSkills.add(data.skill);
+					}
+				}
+
+			}
+		}
+	}
+
 	public void processSkill(String action) {
 
 		for (String key : UIData.skillData.keySet()) {
@@ -233,8 +266,8 @@ public class EventManager {
 			if (skill.obtainingAction.equals(action)) {
 
 				if (!CharacterData.obtainedSkills.contains(key) && CharacterData.skills.containsKey(key)) {
-					// System.out.println("test: " + skill.obtainingAction + "/" + action);
 					Skill newSkill = CharacterData.skills.get(key);
+
 					newSkill.learnCount++;
 					if (newSkill.learnCount >= 10) {
 						newSkill.learned = true;
@@ -249,9 +282,92 @@ public class EventManager {
 	Random r = new Random();
 
 	public void processEvent(Event event) {
+		if (event.eventName.equals("DECONSTRUCT")) {
+			if (getTime() >= event.startTime) {
+				if (event.step >= 0) {
+					handleEXP(event.eventName);
+					event.startTime = getTime() + event.stepTime;
+					event.step++;
+					BuildingSystem.deconstruct();
+				}
+				if (event.step > 100) {
+
+					int hoverX = event.end.x;
+					int hoverY = event.end.y;
+					int chunkX = hoverX / 16;
+					int chunkY = hoverY / 16;
+					Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+					if (chunk != null) {
+						int objX = event.end.x % 16;
+						int objY = event.end.y % 16;
+
+						chunk.maskObjects[objX][objY] = null;
+
+						chunk.needsUpdating();
+						
+						BuildingSystem.complete();
+						event.processed = true;
+						event.followUpEvent.processed = true;
+						playerWaiting = true;
+					}
+				}
+			}
+		}
+		if (event.eventName.equals("BUILD")) {
+			if (getTime() >= event.startTime) {
+				if (event.step >= 0) {
+					handleEXP(event.eventName);
+					event.startTime = getTime() + event.stepTime;
+					event.step++;
+					BuildingSystem.construct();
+				}
+				if (event.step > 100) {
+
+					BuildingSystem.complete();
+					if (event.followUpEvent != null) {
+						String buildingName = event.followUpEvent.eventName;
+						if (buildingName != "") {
+							BuildingData data = UIData.buildingData.get(buildingName);
+							if (data != null) {
+								int hoverX = event.end.x;
+								int hoverY = event.end.y;
+								int chunkX = hoverX / 16;
+								int chunkY = hoverY / 16;
+
+								Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+								if (chunk != null) {
+									int objX = event.end.x % 16;
+									int objY = event.end.y % 16;
+
+									Building building = new Building();
+									int carX = objX * 32;
+									int carY = objY * 32;
+									int isoX = carX - carY;
+									int isoY = (carY + carX) / 2;
+
+									building.setX(isoX);
+									building.setY(isoY);
+
+									building.name = BuildingSystem.selectedBuilding;
+
+									chunk.maskObjects[objX][objY] = building;
+
+									chunk.needsUpdating();
+									event.followUpEvent.processed = true;
+									event.processed = true;
+									playerWaiting = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		if (event.eventName.equals("CRAFT_RECIPE")) {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {
+					handleEXP(event.eventName);
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
 					CraftingSystem.currentCraftTime--;
@@ -290,6 +406,7 @@ public class EventManager {
 		if (event.eventName.equals("SMELT_RECIPE")) {
 			if (getTime() >= event.startTime) {
 				if (event.step > 0) {
+					handleEXP(event.eventName);
 					event.startTime = getTime() + event.stepTime;
 					if (SmeltingSystem.totalFuel > 0) {
 						event.step--;
@@ -463,8 +580,9 @@ public class EventManager {
 		if (event.eventName.equals("CHOP") || event.eventName.equals("MINE") || event.eventName.equals("HARVEST")) {
 
 			if (getTime() >= event.startTime) {
-				processSkill(event.eventName);
+				// processSkill(event.eventName);
 				if (event.step > 0) {
+					handleEXP(event.eventName);
 					event.startTime = getTime() + event.stepTime;
 					event.step--;
 					if (event.step <= 0) {
@@ -557,8 +675,9 @@ public class EventManager {
 				}
 			}
 			if (event.path != null && getTime() >= event.startTime) {
+				handleEXP(event.eventName);
 
-				processSkill(event.eventName);
+				// processSkill(event.eventName);
 
 				if (event.path.size() > 0) {
 					if (previous != null) {
@@ -587,6 +706,7 @@ public class EventManager {
 
 							int objX = point.x % 16;
 							int objY = point.y % 16;
+							CharacterData.index = point;
 
 							chunk.entityObjects[objX][objY].setMaterial("PLAYER");
 							chunk.needsUpdating();

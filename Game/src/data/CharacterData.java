@@ -1,12 +1,25 @@
 package data;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import classes.Skill;
 
 public class CharacterData {
+	public static Point index = new Point(0, 0);
+
 	public static String name = "Nogard171";
+	public static int health = 100;
+	public static int maxHealth = 100;
+	public static int stamina = 100;
+	public static int maxStamina = 100;
+	public static int mana = 100;
+	public static int maxMana = 100;
+	public static long xp = 0;
+	public static long nextXp = 80;
+	public static int level = 1;
+
 	public static int damage = 10;
 	public static int defense = 10;
 	public static int agility = 10;

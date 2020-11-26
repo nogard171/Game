@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import classes.BuildingData;
+import classes.BuildingItem;
 import classes.BuildingMaterial;
 import classes.ItemData;
 import classes.ItemDrop;
@@ -30,6 +31,7 @@ import classes.ResourceData;
 import classes.SkillData;
 import classes.TextureData;
 import classes.TextureType;
+import data.ActionData;
 import data.Settings;
 import data.UIData;
 import data.WorldData;
@@ -413,6 +415,11 @@ public class Loader {
 
 						raw.obtainingAction = action;
 
+						if (dataNode.hasAttribute("count")) {
+							int count = Integer.parseInt(dataNode.getAttribute("count"));
+							raw.count = count;
+						}
+
 					}
 					if (resourceElement.getElementsByTagName("xp").getLength() > 0) {
 						dataNodes = resourceElement.getElementsByTagName("xp").item(0);
@@ -588,12 +595,85 @@ public class Loader {
 									int offsetY = Integer.parseInt(offsetElement.getAttribute("y"));
 									mat.offset = new Point(offsetX, offsetY);
 								}
+
+								NodeList itemsNodes = materialElement.getElementsByTagName("items");
+								for (int itemTemp = 0; itemTemp < itemsNodes.getLength(); itemTemp++) {
+
+									Node itemCountNode = itemsNodes.item(0);
+
+									if (itemCountNode.getNodeType() == Node.ELEMENT_NODE) {
+										Element itemCountElement = (Element) itemCountNode;
+
+										if (itemCountElement.hasAttribute("inherit")) {
+											String inheritBuildingName = itemCountElement.getAttribute("inherit");
+											BuildingData inheritData = UIData.buildingData.get(inheritBuildingName);
+											if (inheritData != null) {
+												for (BuildingItem buildingItem : inheritData.items) {
+													data.items.add(buildingItem);
+												}
+											}
+										} else {
+
+											String itemName = itemCountElement.getAttribute("name");
+											int itemCount = Integer.parseInt(itemCountElement.getAttribute("count"));
+
+											BuildingItem item = new BuildingItem();
+											item.itemName = itemName;
+											item.itemCount = itemCount;
+
+											data.items.add(item);
+										}
+									}
+								}
 							}
 
 							data.materials.add(mat);
 						}
 					}
+					System.out.println("test: " + name);
 					UIData.buildingData.put(name, data);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadActions() {
+		try {
+			UIData.actionData.clear();
+			File fXmlFile = new File(Settings.actionsFile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			doc.getDocumentElement().normalize();
+
+			// Node resourcesNode = doc.getElementsByTagName("skills").item(0);
+			NodeList itemNodes = doc.getElementsByTagName("action");
+
+			for (int temp = 0; temp < itemNodes.getLength(); temp++) {
+
+				Node itemNode = itemNodes.item(temp);
+
+				if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+					ActionData data = new ActionData();
+
+					Element itemElement = (Element) itemNode;
+					String name = itemElement.getAttribute("name");
+
+					if (itemElement.hasAttribute("xp")) {
+						int xp = Integer.parseInt(itemElement.getAttribute("xp"));
+						data.xp = xp;
+					}
+
+					if (itemElement.hasAttribute("skill")) {
+						String skill = itemElement.getAttribute("skill");
+						data.skill = skill;
+					}
+
+					UIData.actionData.put(name, data);
 				}
 
 			}

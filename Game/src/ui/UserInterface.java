@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import classes.Building;
 import classes.Chunk;
 import classes.Object;
 import classes.ObjectType;
@@ -41,6 +42,7 @@ public class UserInterface {
 	public static SmeltingSystem smelting;
 	public static BuildingSystem building;
 	public static ChatSystem chat;
+	public static HudSystem hud;
 
 	public static MouseIndex hover;
 	public static boolean inventoryHovered = false;
@@ -180,6 +182,9 @@ public class UserInterface {
 
 		chat = new ChatSystem();
 		chat.setup();
+
+		hud = new HudSystem();
+		hud.setup();
 	}
 
 	private void pollHover() {
@@ -208,7 +213,7 @@ public class UserInterface {
 				&& (!buildingHovered && !buildingDragging) && !optionsHovered) {
 			pollHover();
 			objectMenu.update();
-			if (Mouse.isButtonDown(Settings.mainActionIndex) && hover != null) {
+			if (Window.isMainAction() && hover != null) {
 				if (UserInterface.crafting.showSystem) {
 					UserInterface.crafting.showSystem = false;
 				}
@@ -220,67 +225,76 @@ public class UserInterface {
 
 					Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
 					if (chunk != null) {
-						boolean ifMove = true;
-						String action = "";
-						int objX = hover.getX() % 16;
-						int objY = hover.getY() % 16;
-						if (objX >= 0 && objY >= 0) {
+						if (BuildingSystem.building) {
+							System.out.println("building");
 
-							Object ground = chunk.groundObjects[objX][objY];
-							Object mask = chunk.maskObjects[objX][objY];
-							Object item = chunk.groundItems[objX][objY];
-							if (ground != null) {
-								if (mask != null) {
-									if (item != null) {
-										System.out.println("test");
-										ifMove = false;
-										action = objectToAction(item);
-										/*
-										 * Event move = new Event(); move.eventName = "MOVE"; move.end = new
-										 * Point(hover.getX(), hover.getY()); if (action != "MOVE") { Event secondary =
-										 * new Event(); secondary.eventName = action; secondary.end = new
-										 * Point(hover.getX(), hover.getY()); move.followUpEvent = secondary;
-										 * 
-										 * } EventManager.addEvent(move);
-										 */
-									} else if (mask.getMaterial() != "AIR") {
-										ifMove = false;
-										action = objectToAction(mask);
+							building.handleBuild(hover.getX(), hover.getY());
+						
+
+						} else {
+							boolean ifMove = true;
+							String action = "";
+							int objX = hover.getX() % 16;
+							int objY = hover.getY() % 16;
+							if (objX >= 0 && objY >= 0) {
+
+								Object ground = chunk.groundObjects[objX][objY];
+								Object mask = chunk.maskObjects[objX][objY];
+								Object item = chunk.groundItems[objX][objY];
+								if (ground != null) {
+									if (mask != null) {
+										if (item != null) {
+											ifMove = false;
+											action = objectToAction(item);
+											/*
+											 * Event move = new Event(); move.eventName = "MOVE"; move.end = new
+											 * Point(hover.getX(), hover.getY()); if (action != "MOVE") { Event
+											 * secondary = new Event(); secondary.eventName = action; secondary.end =
+											 * new Point(hover.getX(), hover.getY()); move.followUpEvent = secondary;
+											 * 
+											 * } EventManager.addEvent(move);
+											 */
+										} else if (mask.getMaterial() != "AIR") {
+											ifMove = false;
+											action = objectToAction(mask);
+
+										}
 
 									}
+								}
+
+							}
+							if (!ifMove) {
+								Event move = new Event();
+								move.eventName = "MOVE";
+								move.end = new Point(hover.getX(), hover.getY());
+								if (action != "MOVE") {
+									Event secondary = new Event();
+									secondary.eventName = action;
+									secondary.end = new Point(hover.getX(), hover.getY());
+									move.followUpEvent = secondary;
 
 								}
+								EventManager.addEvent(move);
 							}
-
-						}
-						if (!ifMove) {
-							Event move = new Event();
-							move.eventName = "MOVE";
-							move.end = new Point(hover.getX(), hover.getY());
-							if (action != "MOVE") {
-								Event secondary = new Event();
-								secondary.eventName = action;
-								secondary.end = new Point(hover.getX(), hover.getY());
-								move.followUpEvent = secondary;
-
+							if (ifMove) {
+								Event move = new Event();
+								move.eventName = "MOVE";
+								move.end = new Point(hover.getX(), hover.getY());
+								EventManager.addEvent(move);
 							}
-							EventManager.addEvent(move);
-						}
-						if (ifMove) {
-							Event move = new Event();
-							move.eventName = "MOVE";
-							move.end = new Point(hover.getX(), hover.getY());
-							EventManager.addEvent(move);
 						}
 					}
 					mouseDownCount++;
 				}
 			}
-			if (!Mouse.isButtonDown(Settings.mainActionIndex) && mouseDownCount > 0) {
+			if (!Window.isMainAction() && mouseDownCount > 0) {
 				mouseDownCount = 0;
 			}
 		}
-		if (Window.wasResized()) {
+		if (Window.wasResized())
+
+		{
 			menuBounds = new Rectangle(0, Window.height - 32, menu.size() * 33, 32);
 		}
 		eventManager.update();
@@ -292,6 +306,7 @@ public class UserInterface {
 		smelting.update();
 		building.update();
 		chat.update();
+		hud.update();
 
 		if (KeySystem.keyPressed(Keyboard.KEY_I)) {
 			inventory.showSystem = !inventory.showSystem;
@@ -343,6 +358,7 @@ public class UserInterface {
 			GL11.glEnd();
 		}
 
+		building.renderOnMap();
 		objectMenu.render();
 
 	}
@@ -356,6 +372,7 @@ public class UserInterface {
 		smelting.render();
 		building.render();
 		chat.render();
+		hud.render();
 
 		Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 				new Color(0, 0, 0, 0.5f));
@@ -377,11 +394,13 @@ public class UserInterface {
 		}
 		GL11.glEnd();
 
-		Renderer.renderRectangle(0, 0, 100, 30, new Color(0, 0, 0, 0.5f));
+		Point debugPosition = new Point(Window.width - 200, 0);
+		Renderer.renderRectangle(debugPosition.x, debugPosition.y, 200, 100, new Color(0, 0, 0, 0.5f));
 		if (hover != null) {
-			Renderer.renderText(new Vector2f(0, 0), "FPS:" + FPS.getFPS(), 12, Color.white);
+			Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y), "FPS:" + FPS.getFPS(), 12, Color.white);
 
-			Renderer.renderText(new Vector2f(0, 12), "Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
+			Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 12),
+					"Hover:" + hover.getX() + "," + hover.getY(), 12, Color.white);
 			int hoverX = hover.getX();
 			int hoverY = hover.getY();
 			int chunkX = hoverX / 16;
@@ -395,7 +414,8 @@ public class UserInterface {
 				chunkY -= 1;
 			}
 
-			Renderer.renderText(new Vector2f(0, 24), "chunk:" + chunkX + "," + chunkY, 12, Color.white);
+			Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 24), "chunk:" + chunkX + "," + chunkY,
+					12, Color.white);
 			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
 			if (chunk != null) {
 				int objX = hover.getX() % 16;
@@ -418,19 +438,19 @@ public class UserInterface {
 						if (item != null) {
 							maskString += item.name + "(I)";
 						} else {
-							maskString += mask.name+ "(M)";
+							maskString += mask.name + "(M)";
 						}
 					}
 
-					Renderer.renderText(new Vector2f(0, 32), "Object:" + ground.getMaterial() + "(G)" + maskString, 12,
-							Color.white);
+					Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 36),
+							"Object:" + ground.getMaterial() + "(G)" + maskString, 12, Color.white);
 				}
-				
+
 			}
 
 		}
 		if (WorldGenerator.centerIndex != null) {
-			Renderer.renderText(new Vector2f(0, 48),
+			Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 48),
 					"Center Index:" + WorldGenerator.chunkIndex.getX() + "," + WorldGenerator.chunkIndex.getY(), 12,
 					Color.white);
 		}
@@ -441,8 +461,10 @@ public class UserInterface {
 		for (Event ev : eventManager.events) {
 			// System.out.println("event: " + ev.eventName);
 		}
-		Renderer.renderText(new Vector2f(0, 60), "Event Count:" + size, 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 72), "Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
+		Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 60), "Event Count:" + size, 12,
+				Color.white);
+		Renderer.renderText(new Vector2f(debugPosition.x, debugPosition.y + 72),
+				"Chunk Render Count:" + WorldData.chunks.size(), 12, Color.white);
 
 	}
 

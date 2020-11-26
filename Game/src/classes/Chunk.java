@@ -187,8 +187,6 @@ public class Chunk {
 				if (itemObj != null) {
 					if (itemObj.getMaterial() != "AIR") {
 						Renderer.renderModel(this, x, z, itemObj);
-
-						// System.out.println("Item: " + itemObj.getMaterial() + "/" + itemObj);
 					}
 				}
 

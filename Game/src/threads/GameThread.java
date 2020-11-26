@@ -62,6 +62,7 @@ public class GameThread extends BaseThread {
 		Loader.loadSkills();
 		Loader.loadRecipes();
 		Loader.loadBuildings();
+		Loader.loadActions();
 
 	}
 

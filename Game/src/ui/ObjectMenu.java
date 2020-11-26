@@ -188,7 +188,6 @@ public class ObjectMenu {
 				Object item = chunk.groundItems[objX][objY];
 				if (ground != null) {
 					obj = ground;
-
 				}
 				if (mask != null && mask.getMaterial() != "AIR") {
 					obj = mask;
@@ -205,7 +204,7 @@ public class ObjectMenu {
 
 			int isoX = menuCartX - menuCartZ;
 			int isoZ = (menuCartX + menuCartZ) / 2;
-			menuBounds.x = isoX;
+			menuBounds.x = isoX-32;
 			menuBounds.y = isoZ;
 
 			for (MenuItem item : menuItems.values()) {
@@ -244,19 +243,19 @@ public class ObjectMenu {
 
 			int isoX = cartX - cartZ;
 			int isoZ = (cartX + cartZ) / 2;
-			menuBounds.x = isoX;
+			menuBounds.x = isoX-32;
 			menuBounds.y = isoZ;
 			Renderer.renderRectangle(menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height,
 					new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (MenuItem item : menuItems.values()) {
 				if (item.visible || item.alwaysVisible) {
-					item.bounds = new Rectangle(isoX, (isoZ) + (y * 12) + 2, 100, 12);
+					item.bounds = new Rectangle(isoX-32, (isoZ) + (y * 12) + 2, 100, 12);
 					if (item.hovered) {
 						Renderer.renderRectangle(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height,
 								new Color(1, 0, 0, 0.5f));
 					}
-					Renderer.renderText(new Vector2f(isoX + 3, isoZ + (y * 12)), item.text, 12, Color.white);
+					Renderer.renderText(new Vector2f(isoX + 3-32, isoZ + (y * 12)), item.text, 12, Color.white);
 
 					y++;
 				}

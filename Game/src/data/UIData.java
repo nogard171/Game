@@ -22,5 +22,6 @@ public class UIData {
 	public static HashMap<String, ItemData> itemData = new HashMap<String, ItemData>();
 	public static HashMap<String, SkillData> skillData = new HashMap<String, SkillData>();
 	public static HashMap<String, BuildingData> buildingData = new HashMap<String, BuildingData>();
+	public static HashMap<String, ActionData> actionData = new HashMap<String, ActionData>();
 	public static HashMap<Integer, TrueTypeFont> fonts = new HashMap<Integer, TrueTypeFont>();
 }

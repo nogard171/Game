@@ -1,17 +1,17 @@
 <skills>
 	<skill name="WALKING" material="WALKING_SKILL_ICON" description="Learning to take your first steps are certainly something to bost about.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
-		<obtain action="MOVE" />
+		<obtain action="MOVE" count="10" />
 	</skill>
 	<skill name="WOODCUTTING" material="WOODCUTTING_SKILL_ICON">
-		<obtain action="CHOP" />
+		<obtain action="CHOP" count="10" />
 		<xp formula="" />
 	</skill>
 	<skill name="MINING" material="MINING_SKILL_ICON">
-		<obtain action="MINE" />
+		<obtain action="MINE" count="10" />
 		<xp formula="" />
 	</skill>
 	<skill name="CRAFTING" material="CRAFTING_SKILL_ICON">
-		<obtain action="CRAFT_RECIPE" />
+		<obtain action="CRAFT_RECIPE" count="10" />
 		<xp formula="" />
 	</skill>
 </skills>

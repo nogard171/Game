@@ -14,4 +14,7 @@
 		<item name="STICK_ITEM" count="2" />
 		<item name="STONE_TOOL_ITEM" />
 	</recipe>
+	<recipe name="WALL_NORTH" skill="WOOD_CRAFTING">
+		<item name="WOOD_LOG_ITEM" count="2" />
+	</recipe>
 </recipes>
