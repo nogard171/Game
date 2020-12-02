@@ -168,19 +168,20 @@ public class BuildingSystem extends BaseSystem {
 			if (chunk != null) {
 				int objX = x % 16;
 				int objY = y % 16;
-
-				Building building = new Building();
+				Object constructObject = new Object();
+				
 				int carX = objX * 32;
 				int carY = objY * 32;
 				int isoX = carX - carY;
 				int isoY = (carY + carX) / 2;
 
-				building.setX(isoX);
-				building.setY(isoY);
+				constructObject.setX(isoX);
+				constructObject.setY(isoY);
 
-				building.name = selectedBuilding + "_CONSTRUCT";
+				constructObject.setMaterial("CONSTRUCTION");
+				constructObject.setModel("TALL_CUBE");
 
-				chunk.maskObjects[objX][objY] = building;
+				chunk.maskObjects[objX][objY] = constructObject;
 				chunk.needsUpdating();
 			}
 		}

@@ -572,6 +572,10 @@ public class Loader {
 						String model = itemElement.getAttribute("model");
 						data.model = model;
 					}
+					if (itemElement.hasAttribute("type")) {
+						String type = itemElement.getAttribute("type");
+						data.type = type;
+					}
 
 					NodeList materialsNodes = itemElement.getElementsByTagName("material");
 					for (int materialTemp = 0; materialTemp < materialsNodes.getLength(); materialTemp++) {
@@ -587,13 +591,15 @@ public class Loader {
 
 							if (materialElement.hasChildNodes()) {
 								NodeList offsetNodes = materialElement.getElementsByTagName("offset");
-								Node offsetNode = offsetNodes.item(0);
+								if (offsetNodes.getLength() > 0) {
+									Node offsetNode = offsetNodes.item(0);
 
-								if (offsetNode.getNodeType() == Node.ELEMENT_NODE) {
-									Element offsetElement = (Element) offsetNode;
-									int offsetX = Integer.parseInt(offsetElement.getAttribute("x"));
-									int offsetY = Integer.parseInt(offsetElement.getAttribute("y"));
-									mat.offset = new Point(offsetX, offsetY);
+									if (offsetNode.getNodeType() == Node.ELEMENT_NODE) {
+										Element offsetElement = (Element) offsetNode;
+										int offsetX = Integer.parseInt(offsetElement.getAttribute("x"));
+										int offsetY = Integer.parseInt(offsetElement.getAttribute("y"));
+										mat.offset = new Point(offsetX, offsetY);
+									}
 								}
 
 								NodeList itemsNodes = materialElement.getElementsByTagName("item");
@@ -614,7 +620,7 @@ public class Loader {
 												}
 											}
 										} else {
-											System.out.println("building: " +itemName);
+											System.out.println("building: " + itemName);
 											int itemCount = Integer.parseInt(itemCountElement.getAttribute("count"));
 
 											BuildingItem item = new BuildingItem();

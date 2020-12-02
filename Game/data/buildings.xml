@@ -1,4 +1,12 @@
 <buildingitems>
+	<item name="WALL" model="WALL_CENTER" type="DIRECTIONAL">
+		<material name="WOOD_WALL">
+			<offset x="0" y="-48" />
+			<items>
+				<item name="WOOD_LOG_ITEM" count="3" />
+			</items>
+		</material>
+	</item>
 	<item name="WALL_NORTH" model="WALL_VERTICAL">
 		<material name="WALL_BOTTOM">
 			<offset x="32" y="0" />

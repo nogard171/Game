@@ -342,7 +342,19 @@ public class EventManager {
 
 									Object building = chunk.maskObjects[objX][objY];
 									if (building != null) {
-										building.name = building.name.replace("_CONSTRUCT", "");
+										building = new Building();
+
+										int carX = objX * 32;
+										int carY = objY * 32;
+										int isoX = carX - carY;
+										int isoY = (carY + carX) / 2;
+
+										building.setX(isoX);
+										building.setY(isoY);
+
+										building.name = event.followUpEvent.eventName;
+
+										chunk.maskObjects[objX][objY] = building;
 										System.out.println("building: " + building.name);
 										chunk.needsUpdating();
 									}

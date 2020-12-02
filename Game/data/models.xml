@@ -32,4 +32,16 @@
 	<model name='WALL_HORIZONTAL'>
 		<data file="data/models/wall_horizontal.obj"/>
 	</model>
+	<model name='TALL_CUBE'>
+		<data file="data/models/tall_cube.obj"/>
+	</model>
+	<model name='WALL_CENTER'>
+		<data file="data/models/wall_center.obj"/>
+	</model>
+	<model name='WALL_EAST'>
+		<data file="data/models/wall_east.obj"/>
+	</model>
+	<model name='WALL_HOR'>
+		<data file="data/models/wall_hor.obj"/>
+	</model>
 </models>

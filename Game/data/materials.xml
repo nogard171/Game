@@ -57,21 +57,12 @@
 		<data file="data/materials/wall_bottom_shaded.mat" />
 		<offset x="-32" y="-32" />
 	</material>
-	<material name="WALL_TOP_CONSTRUCT">
-		<data file="data/materials/wall_top_construct.mat" />
-		<offset x="-32" y="-32" />
+	<material name="WOOD_WALL">
+		<data file="data/materials/wood_wall.mat" />
 	</material>
-	<material name="WALL_BOTTOM_CONSTRUCT">
-		<data file="data/materials/wall_bottom_construct.mat" />
-		<offset x="-32" y="-32" />
-	</material>
-	<material name="WALL_TOP_SHADED_CONSTRUCT">
-		<data file="data/materials/wall_top_shaded_construct.mat" />
-		<offset x="-32" y="-32" />
-	</material>
-	<material name="WALL_BOTTOM_SHADED_CONSTRUCT">
-		<data file="data/materials/wall_bottom_shaded_construct.mat" />
-		<offset x="-32" y="-32" />
+	<material name="CONSTRUCTION">
+		<data file="data/materials/construction.mat" />
+		<offset x="0" y="-64" />
 	</material>
 
 	<!--items-->

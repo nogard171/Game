@@ -23,6 +23,7 @@ public class Chunk {
 	public Object[][] groundObjects;
 	public Object[][] entityObjects;
 	public Object[][] maskObjects;
+	public Object[][] buildingObjects;
 	public GroundItem[][] groundItems;
 
 	public Chunk(int i, int j) {
@@ -199,7 +200,7 @@ public class Chunk {
 				if (maskObj != null) {
 					if (maskObj.type.equals(ObjectType.BUILDING)) {
 						String buildingName = maskObj.name;
-						BuildingData data = UIData.buildingData.get(buildingName.replace("_CONSTRUCT", ""));
+						BuildingData data = UIData.buildingData.get(buildingName);
 						if (data != null) {
 							for (int b = 0; b < data.materials.size(); b++) {
 								BuildingMaterial mat = data.materials.get(b);
@@ -213,14 +214,16 @@ public class Chunk {
 									int selfY = isoY;
 									int objX = (x * 32) - (z * 32);
 									int objY = ((z * 32) + (x * 32)) / 2;
-
-									String matName = mat.name;
-									if (buildingName.contains("_CONSTRUCT")) {
-										matName += "_CONSTRUCT";
+									System.out.println("dir: " + data.type);
+									if (data.type.equals("DIRECTIONAL")) {
+										String model = modifyModel(buildingName, x, z);
+										System.out.println("Wall: " + model);
+										Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
+												model, mat.name, maskObj.getColor());
+									} else {
+										Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
+												data.model, mat.name, maskObj.getColor());
 									}
-
-									Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
-											data.model, matName, maskObj.getColor());
 								}
 							}
 						}
@@ -233,6 +236,26 @@ public class Chunk {
 		}
 		GL11.glEnd();
 		GL11.glEndList();
+	}
+
+	public String modifyModel(String name, int x, int z) {
+		String newModel = name + "_CENTER";
+
+		if (x > 0 && z > 0 && x < this.size.getWidth() && z < this.size.getDepth()) {
+			Object westObj = maskObjects[x - 1][z];
+			Object eastObj = maskObjects[x + 1][z];
+			Object northObj = maskObjects[x][z - 1];
+			Object southObj = maskObjects[x][z + 1];
+			if (westObj.name.equals(name) && eastObj.name.equals(name)) {
+				newModel = name + "_HOR";
+			} else if (westObj.name.equals(name)) {
+				newModel = name + "_WEST";
+			} else if (eastObj.name.equals(name)) {
+				newModel = name + "_EAST";
+			}
+		}
+
+		return newModel;
 	}
 
 	public void update() {
