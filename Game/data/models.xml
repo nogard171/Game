@@ -41,6 +41,9 @@
 	<model name='WALL_EAST'>
 		<data file="data/models/wall_east.obj"/>
 	</model>
+	<model name='WALL_WEST'>
+		<data file="data/models/wall_west.obj"/>
+	</model>
 	<model name='WALL_HOR'>
 		<data file="data/models/wall_hor.obj"/>
 	</model>

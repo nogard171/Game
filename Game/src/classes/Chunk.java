@@ -246,15 +246,14 @@ public class Chunk {
 			Object eastObj = maskObjects[x + 1][z];
 			Object northObj = maskObjects[x][z - 1];
 			Object southObj = maskObjects[x][z + 1];
-			if (westObj.name.equals(name) && eastObj.name.equals(name)) {
+			if (westObj != null && westObj.name.equals(name) && eastObj != null && eastObj.name.equals(name)) {
 				newModel = name + "_HOR";
-			} else if (westObj.name.equals(name)) {
+			} else if (westObj != null && westObj.name.equals(name)) {
 				newModel = name + "_WEST";
-			} else if (eastObj.name.equals(name)) {
+			} else if (eastObj != null && eastObj.name.equals(name)) {
 				newModel = name + "_EAST";
 			}
 		}
-
 		return newModel;
 	}
 
