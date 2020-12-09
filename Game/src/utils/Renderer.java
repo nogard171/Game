@@ -106,7 +106,7 @@ public class Renderer {
 			if (mat != null) {
 				GL11.glColor4f(c.r, c.g, c.b, c.a);
 				for (int b = 0; b < raw.indices.length; b++) {
-
+					//System.out.println("model: "  +model);
 					byte i = raw.indices[b];
 					byte ti = i;
 					if (mat.indices.length > 0) {

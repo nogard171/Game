@@ -241,17 +241,32 @@ public class Chunk {
 	public String modifyModel(String name, int x, int z) {
 		String newModel = name + "_CENTER";
 
-		if (x > 0 && z > 0 && x < this.size.getWidth() && z < this.size.getDepth()) {
+		if (x > 0 && z > 0 && x < this.size.getWidth() - 1 && z < this.size.getDepth() - 1) {
 			Object westObj = maskObjects[x - 1][z];
 			Object eastObj = maskObjects[x + 1][z];
 			Object northObj = maskObjects[x][z - 1];
 			Object southObj = maskObjects[x][z + 1];
-			if (westObj != null && westObj.name.equals(name) && eastObj != null && eastObj.name.equals(name)) {
+			if (westObj != null && westObj.name.equals(name) && northObj != null && northObj.name.equals(name)) {
+				newModel = name + "_NORTH_WEST";
+			} else if (eastObj != null && eastObj.name.equals(name) && northObj != null && northObj.name.equals(name)) {
+				newModel = name + "_NORTH_EAST";
+			} else if (eastObj != null && eastObj.name.equals(name) && southObj != null && southObj.name.equals(name)) {
+				newModel = name + "_SOUTH_EAST";
+			} else if (westObj != null && westObj.name.equals(name) && southObj != null && southObj.name.equals(name)) {
+				newModel = name + "_SOUTH_WEST";
+			} else if (westObj != null && westObj.name.equals(name) && eastObj != null && eastObj.name.equals(name)) {
 				newModel = name + "_HOR";
 			} else if (westObj != null && westObj.name.equals(name)) {
 				newModel = name + "_WEST";
 			} else if (eastObj != null && eastObj.name.equals(name)) {
 				newModel = name + "_EAST";
+			} else if (northObj != null && northObj.name.equals(name) && southObj != null
+					&& southObj.name.equals(name)) {
+				newModel = name + "_VER";
+			} else if (northObj != null && northObj.name.equals(name)) {
+				newModel = name + "_NORTH";
+			} else if (southObj != null && southObj.name.equals(name)) {
+				newModel = name + "_SOUTH";
 			}
 		}
 		return newModel;

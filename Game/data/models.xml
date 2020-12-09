@@ -47,4 +47,25 @@
 	<model name='WALL_HOR'>
 		<data file="data/models/wall_hor.obj"/>
 	</model>
+	<model name='WALL_VER'>
+		<data file="data/models/wall_ver.obj"/>
+	</model>
+	<model name='WALL_NORTH'>
+		<data file="data/models/wall_north.obj"/>
+	</model>
+	<model name='WALL_SOUTH'>
+		<data file="data/models/wall_south.obj"/>
+	</model>
+	<model name='WALL_NORTH_WEST'>
+		<data file="data/models/wall_north_west.obj"/>
+	</model>
+	<model name='WALL_NORTH_EAST'>
+		<data file="data/models/wall_north_east.obj"/>
+	</model>
+	<model name='WALL_SOUTH_WEST'>
+		<data file="data/models/wall_south_west.obj"/>
+	</model>
+	<model name='WALL_SOUTH_EAST'>
+		<data file="data/models/wall_south_east.obj"/>
+	</model>
 </models>
