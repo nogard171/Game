@@ -7,46 +7,24 @@
 			</items>
 		</material>
 	</item>
-	<item name="WALL_NORTH" model="WALL_VERTICAL">
-		<material name="WALL_BOTTOM">
-			<offset x="32" y="0" />
+	<item name="DOOR" model="DOOR_HORIZONTAL" type="DIRECTIONAL">
+		<material name="WOOD_DOOR">
+			<offset x="0" y="-64" />
 			<items>
 				<item name="WOOD_LOG_ITEM" count="3" />
 			</items>
 		</material>
-		<material name="WALL_TOP">
-			<offset x="32" y="-32" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
 	</item>
-	<item name="WALL_SOUTH" model="WALL_VERTICAL">
-		<material name="WALL_BOTTOM">
-			<offset x="0" y="16" />
-			<items inherit="WALL_BOTTOM" />
+	<item name="DOOR" model="DOOR_HORIZONTAL_CLOSED" type="INTERACTEBLE">
+		<material name="WOOD_DOOR">
+			<offset x="0" y="-64" />
+			<items>
+				<item name="WOOD_LOG_ITEM" count="3" />
+			</items>
 		</material>
-		<material name="WALL_TOP">
-			<offset x="0" y="-16" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
-	</item>
-	<item name="WALL_WEST" model="WALL_HORIZONTAL">
-		<material name="WALL_BOTTOM_SHADED">
-			<offset x="0" y="0" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
-		<material name="WALL_TOP_SHADED">
-			<offset x="0" y="-32" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
-	</item>
-	<item name="WALL_EAST" model="WALL_HORIZONTAL">
-		<material name="WALL_BOTTOM_SHADED">
-			<offset x="32" y="16" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
-		<material name="WALL_TOP_SHADED">
-			<offset x="32" y="-16" />
-			<items inherit="WALL_BOTTOM" />
-		</material>
+		<states>
+			<state name="OPEN" model="DOOR_HORIZONTAL_OPENED" />
+			<state name="CLOSE" model="DOOR_HORIZONTAL_CLOSED" />
+		</states>
 	</item>
 </buildingitems>

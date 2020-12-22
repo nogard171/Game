@@ -16,7 +16,8 @@ import utils.Renderer;
 
 public class Chunk {
 	public Index index;
-	public int displayListID = -1;
+	public int activeID = -1;
+	public int passiveID = -1;
 	private boolean needsUpdating = false;
 	public Size size = new Size(16, 16, 16);
 	public int[][] data;
@@ -173,8 +174,8 @@ public class Chunk {
 	}
 
 	private void build() {
-		displayListID = GL11.glGenLists(1);
-		GL11.glNewList(displayListID, GL11.GL_COMPILE);
+		passiveID = GL11.glGenLists(1);
+		GL11.glNewList(passiveID, GL11.GL_COMPILE);
 		GL11.glColor3f(1, 1, 1);
 		GL11.glBegin(GL11.GL_TRIANGLES);
 		for (int x = 0; x < size.getWidth(); x++) {
@@ -236,37 +237,139 @@ public class Chunk {
 		}
 		GL11.glEnd();
 		GL11.glEndList();
+
+		activeID = GL11.glGenLists(1);
+		GL11.glNewList(activeID, GL11.GL_COMPILE);
+		GL11.glColor3f(1, 1, 1);
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		for (int x = 0; x < size.getWidth(); x++) {
+			for (int z = 0; z < size.getDepth(); z++) {
+				Object itemObj = groundItems[x][z];
+				if (itemObj != null) {
+					if (itemObj.getMaterial() != "AIR") {
+						Renderer.renderModel(this, x, z, itemObj);
+					}
+				}
+
+				Object entityObj = entityObjects[x][z];
+				if (entityObj != null) {
+					Renderer.renderModel(this, x, z, entityObj);
+				}
+
+				Object maskObj = maskObjects[x][z];
+				if (maskObj != null) {
+					if (maskObj.type.equals(ObjectType.BUILDING)) {
+						String buildingName = maskObj.name;
+						BuildingData data = UIData.buildingData.get(buildingName);
+						if (data != null) {
+							for (int b = 0; b < data.materials.size(); b++) {
+								BuildingMaterial mat = data.materials.get(b);
+								if (mat != null) {
+									int carX = (index.getX() * 32) * 16;
+									int carY = (index.getY() * 32) * 16;
+									int isoX = carX - carY;
+									int isoY = (carY + carX) / 2;
+
+									int selfX = isoX;
+									int selfY = isoY;
+									int objX = (x * 32) - (z * 32);
+									int objY = ((z * 32) + (x * 32)) / 2;
+									System.out.println("dir: " + data.type);
+									if (data.type.equals("DIRECTIONAL")) {
+										String model = modifyModel(buildingName, x, z);
+										System.out.println("Wall: " + model);
+										Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
+												model, mat.name, maskObj.getColor());
+									} else {
+										Renderer.renderModel(objX + selfX + mat.offset.x, objY + selfY + mat.offset.y,
+												data.model, mat.name, maskObj.getColor());
+									}
+								}
+							}
+						}
+					} else {
+						Renderer.renderModel(this, x, z, maskObj);
+					}
+				}
+
+			}
+		}
+		GL11.glEnd();
+		GL11.glEndList();
+	}
+
+	public boolean isObjectBuilding(Object obj) {
+		boolean isBuilding = false;
+
+		if (obj.type == ObjectType.BUILDING) {
+			String buildingName = obj.name;
+			BuildingData data = UIData.buildingData.get(buildingName);
+			if (data != null && data.type.equals("DIRECTIONAL")) {
+				isBuilding = true;
+			}
+		}
+
+		return isBuilding;
 	}
 
 	public String modifyModel(String name, int x, int z) {
 		String newModel = name + "_CENTER";
-
 		if (x > 0 && z > 0 && x < this.size.getWidth() - 1 && z < this.size.getDepth() - 1) {
 			Object westObj = maskObjects[x - 1][z];
 			Object eastObj = maskObjects[x + 1][z];
 			Object northObj = maskObjects[x][z - 1];
 			Object southObj = maskObjects[x][z + 1];
-			if (westObj != null && westObj.name.equals(name) && northObj != null && northObj.name.equals(name)) {
-				newModel = name + "_NORTH_WEST";
-			} else if (eastObj != null && eastObj.name.equals(name) && northObj != null && northObj.name.equals(name)) {
-				newModel = name + "_NORTH_EAST";
-			} else if (eastObj != null && eastObj.name.equals(name) && southObj != null && southObj.name.equals(name)) {
-				newModel = name + "_SOUTH_EAST";
-			} else if (westObj != null && westObj.name.equals(name) && southObj != null && southObj.name.equals(name)) {
-				newModel = name + "_SOUTH_WEST";
-			} else if (westObj != null && westObj.name.equals(name) && eastObj != null && eastObj.name.equals(name)) {
-				newModel = name + "_HOR";
-			} else if (westObj != null && westObj.name.equals(name)) {
-				newModel = name + "_WEST";
-			} else if (eastObj != null && eastObj.name.equals(name)) {
-				newModel = name + "_EAST";
-			} else if (northObj != null && northObj.name.equals(name) && southObj != null
-					&& southObj.name.equals(name)) {
-				newModel = name + "_VER";
-			} else if (northObj != null && northObj.name.equals(name)) {
-				newModel = name + "_NORTH";
-			} else if (southObj != null && southObj.name.equals(name)) {
-				newModel = name + "_SOUTH";
+			if (westObj != null && isObjectBuilding(westObj) && northObj != null && isObjectBuilding(northObj)) {
+				String tempName = name + "_NORTH_WEST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (eastObj != null && isObjectBuilding(eastObj) && northObj != null && isObjectBuilding(northObj)) {
+				String tempName = name + "_NORTH_EAST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (eastObj != null && isObjectBuilding(eastObj) && southObj != null && isObjectBuilding(southObj)) {
+				String tempName = name + "_SOUTH_EAST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (westObj != null && isObjectBuilding(westObj) && southObj != null && isObjectBuilding(southObj)) {
+				String tempName = name + "_SOUTH_WEST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (westObj != null && isObjectBuilding(westObj) && eastObj != null && isObjectBuilding(eastObj)) {
+				String tempName = name + "_HORIZONTAL";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (westObj != null && isObjectBuilding(westObj)) {
+				String tempName = name + "_WEST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (eastObj != null && isObjectBuilding(eastObj)) {
+				String tempName = name + "_EAST";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (northObj != null && isObjectBuilding(northObj) && southObj != null
+					&& isObjectBuilding(southObj)) {
+				String tempName = name + "_VERTICAL";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (northObj != null && isObjectBuilding(northObj)) {
+				String tempName = name + "_NORTH";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
+			} else if (southObj != null && isObjectBuilding(southObj)) {
+				String tempName = name + "_SOUTH";
+				if (UIData.modelData.containsKey(tempName)) {
+					newModel = tempName;
+				}
 			}
 		}
 		return newModel;
@@ -280,9 +383,15 @@ public class Chunk {
 		}
 	}
 
-	public void render() {
-		if (displayListID != -1) {
-			GL11.glCallList(displayListID);
+	public void renderPassive() {
+		if (passiveID != -1) {
+			GL11.glCallList(passiveID);
+		}
+	}
+
+	public void renderActive() {
+		if (activeID != -1) {
+			GL11.glCallList(activeID);
 		}
 	}
 

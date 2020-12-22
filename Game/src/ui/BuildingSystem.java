@@ -11,6 +11,7 @@ import org.newdawn.slick.Color;
 
 import classes.Building;
 import classes.BuildingData;
+import classes.BuildingItem;
 import classes.BuildingMaterial;
 import classes.Chunk;
 import classes.CraftingTable;
@@ -150,51 +151,71 @@ public class BuildingSystem extends BaseSystem {
 
 	public void handleBuild(int x, int y) {
 
-		Event move = new Event();
-		move.eventName = "MOVE";
-		move.end = new Point(x, y);
+		BuildingData data = UIData.buildingData.get(selectedBuilding);
+		boolean canBuild = false;
+		int c = 0;
+		int itemCount = 0;
+		for (BuildingItem item : data.items) {
+			InventoryItem invItem = new InventoryItem();
+			invItem.name = item.itemName;
+			invItem.count = item.itemCount;
 
-		Event secondary = new Event();
-		secondary.eventName = "BUILD";
-		if (BuildingSystem.selectedBuilding.equals("DECONSTRUCT")) {
-			secondary.eventName = "DECONSTRUCT";
-		} else {
-			int hoverX = x;
-			int hoverY = y;
-			int chunkX = hoverX / 16;
-			int chunkY = hoverY / 16;
-
-			Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
-			if (chunk != null) {
-				int objX = x % 16;
-				int objY = y % 16;
-				Object constructObject = new Object();
-				
-				int carX = objX * 32;
-				int carY = objY * 32;
-				int isoX = carX - carY;
-				int isoY = (carY + carX) / 2;
-
-				constructObject.setX(isoX);
-				constructObject.setY(isoY);
-
-				constructObject.setMaterial("CONSTRUCTION");
-				constructObject.setModel("TALL_CUBE");
-
-				chunk.maskObjects[objX][objY] = constructObject;
-				chunk.needsUpdating();
+			if (InventorySystem.hasItems(invItem)) {
+				c++;
 			}
+			itemCount += item.itemCount;
 		}
-		secondary.end = new Point(x, y);
 
-		Event buildItem = new Event();
-		buildItem.eventName = selectedBuilding;
-		secondary.followUpEvent = buildItem;
+		if (c >= itemCount) {
+			canBuild = true;
+		}
 
-		move.followUpEvent = secondary;
+		if (canBuild) {
+			Event move = new Event();
+			move.eventName = "MOVE";
+			move.end = new Point(x, y);
 
-		EventManager.addEvent(move);
+			Event secondary = new Event();
+			secondary.eventName = "BUILD";
+			if (BuildingSystem.selectedBuilding.equals("DECONSTRUCT")) {
+				secondary.eventName = "DECONSTRUCT";
+			} else {
+				int hoverX = x;
+				int hoverY = y;
+				int chunkX = hoverX / 16;
+				int chunkY = hoverY / 16;
 
+				Chunk chunk = WorldData.chunks.get(chunkX + "," + chunkY);
+				if (chunk != null) {
+					int objX = x % 16;
+					int objY = y % 16;
+					Object constructObject = new Object();
+
+					int carX = objX * 32;
+					int carY = objY * 32;
+					int isoX = carX - carY;
+					int isoY = (carY + carX) / 2;
+
+					constructObject.setX(isoX);
+					constructObject.setY(isoY);
+
+					constructObject.setMaterial("CONSTRUCTION");
+					constructObject.setModel("TALL_CUBE");
+
+					chunk.maskObjects[objX][objY] = constructObject;
+					chunk.needsUpdating();
+				}
+			}
+			secondary.end = new Point(x, y);
+
+			Event buildItem = new Event();
+			buildItem.eventName = selectedBuilding;
+			secondary.followUpEvent = buildItem;
+
+			move.followUpEvent = secondary;
+
+			EventManager.addEvent(move);
+		}
 	}
 
 	public void renderOnMap() {

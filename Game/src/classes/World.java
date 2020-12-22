@@ -52,7 +52,20 @@ public class World {
 							+ WorldGenerator.chunkRenderSize.getHeight(); z++) {
 				Chunk chunk = WorldData.chunks.get(x + "," + z);
 				if (chunk != null) {
-					chunk.render();
+					chunk.renderPassive();
+				}
+			}
+		}
+		
+		for (int x = WorldGenerator.chunkIndex.getX()
+				- WorldGenerator.chunkRenderSize.getWidth(); x < WorldGenerator.chunkIndex.getX()
+						+ WorldGenerator.chunkRenderSize.getWidth(); x++) {
+			for (int z = WorldGenerator.chunkIndex.getY()
+					- WorldGenerator.chunkRenderSize.getHeight(); z < WorldGenerator.chunkIndex.getY()
+							+ WorldGenerator.chunkRenderSize.getHeight(); z++) {
+				Chunk chunk = WorldData.chunks.get(x + "," + z);
+				if (chunk != null) {
+					chunk.renderActive();
 				}
 			}
 		}

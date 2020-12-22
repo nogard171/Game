@@ -60,6 +60,12 @@
 	<material name="WOOD_WALL">
 		<data file="data/materials/wood_wall.mat" />
 	</material>
+	<material name="STONE_WALL">
+		<data file="data/materials/stone_wall.mat" />
+	</material>
+	<material name="WOOD_DOOR">
+		<data file="data/materials/wood_door.mat" />
+	</material>
 	<material name="CONSTRUCTION">
 		<data file="data/materials/construction.mat" />
 		<offset x="0" y="-64" />
