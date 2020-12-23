@@ -8,7 +8,6 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 
-import com.sun.scenario.effect.Color4f;
 
 import data.UIData;
 import data.WorldData;
