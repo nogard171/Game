@@ -245,6 +245,22 @@ public class Chunk {
 	}
 
 	public Object getData(int x, int y, int z) {
-		return objects.get(x + "," + y + "," + z);
+		
+		Object obj = objects.get(x + "," + y + "," + z);
+		if(x<0||y<0||z<0) {
+			obj = new Object(new Vector3f(x,y,z));
+			obj.setSprite("VOID");
+		}
+		if(x>ChunkManager.size.x||z>ChunkManager.size.y||z>ChunkManager.size.z){
+			obj = new Object(new Vector3f(x,y,z));
+			obj.setSprite("VOID");
+		}
+		
+		if(obj ==null)
+		{
+			obj = new Object(new Vector3f(x,y,z));
+			obj.setSprite("AIR");
+		}
+		return obj; 
 	}
 }

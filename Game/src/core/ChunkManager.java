@@ -13,7 +13,7 @@ import game.Base;
 
 public class ChunkManager {
 
-	public static Vector3f size = new Vector3f(16, 16, 16);
+	public static Vector3f size = new Vector3f(100, 16, 100);
 	public static LinkedHashMap<String, Chunk> chunks = new LinkedHashMap<String, Chunk>();
 
 	public static ArrayList<Chunk> chunksInView = new ArrayList<Chunk>();
@@ -65,13 +65,31 @@ public class ChunkManager {
 					+ (int) Base.hoveredObjects.get(0).getIndex().y + ","
 					+ (int) Base.hoveredObjects.get(0).getIndex().z);
 
-			List test = pathFinder.find(new Vector3f(0, 0, 0),
-					new Vector3f((int) Base.hoveredObjects.get(0).getIndex().x,
-							(int) Base.hoveredObjects.get(0).getIndex().y,
+			List test = pathFinder.find(new ANode(0, 0, 0),
+					new ANode((int) Base.hoveredObjects.get(0).getIndex().x, (int) 0, // Base.hoveredObjects.get(0).getIndex().y,
 							(int) Base.hoveredObjects.get(0).getIndex().z));
-			System.out.println("LIST: " + test);
 			if (test != null) {
-				System.out.println("Count: " + test.size());
+				Chunk chunk = ChunkManager.chunks.get("0,0,0");
+				if (chunk != null) {
+					for (int i = 0; i < test.size(); i++) {
+						ANode pIndex = (ANode) test.get(i);
+						if (pIndex != null) {
+
+							Object obj = chunk.objects
+									.get((int) pIndex.x + "," + (int) pIndex.y + "," + (int) pIndex.z);
+
+							if (obj != null) {
+
+								obj.setSprite("dirt");
+							}
+						}
+					}
+					chunk.build();
+				}
+				System.out.println("LIST: " + test);
+				if (test != null) {
+					System.out.println("Count: " + test.size());
+				}
 			}
 			leftCount++;
 		} else if (!Mouse.isButtonDown(0)) {
