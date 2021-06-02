@@ -88,6 +88,35 @@ public class Renderer {
 		dirt.texture = dirtTexture;
 
 		sprites.put("dirt", dirt);
+
+		Sprite hover = new Sprite();
+		Polygon hoverShape = new Polygon();
+		hoverShape.addPoint(0, 0);
+		hoverShape.addPoint(64, 0);
+		hoverShape.addPoint(64, 32);
+		hoverShape.addPoint(0, 32);
+		hover.shape = hoverShape;
+
+		Polygon hoverTexture = new Polygon();
+		hoverTexture.addPoint(0, 191);
+		hoverTexture.addPoint(64, 191);
+		hoverTexture.addPoint(64, 223);
+		hoverTexture.addPoint(0, 223);
+		hover.texture = hoverTexture;
+
+		sprites.put("hover", hover);
+
+		Sprite hover3d = new Sprite();
+		hover3d.shape = newShape;
+
+		Polygon hover3dTexture = new Polygon();
+		hover3dTexture.addPoint(128, 192);
+		hover3dTexture.addPoint(192, 192);
+		hover3dTexture.addPoint(192, 256);
+		hover3dTexture.addPoint(128, 256);
+		hover3d.texture = hover3dTexture;
+
+		sprites.put("hover3d", hover3d);
 	}
 
 	public static void renderSprite(String name, int x, int y) {

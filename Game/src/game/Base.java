@@ -14,11 +14,14 @@ import org.newdawn.slick.Color;
 import core.Chunk;
 import core.ChunkManager;
 import core.Renderer;
+import core.TaskManager;
 import core.Window;
 import utils.FPS;
 import core.Object;
 
 public class Base {
+
+	TaskManager taskManager;
 
 	boolean isRunning = true;
 	public static Point mousePosition;
@@ -36,6 +39,7 @@ public class Base {
 	}
 
 	public void setup() {
+
 		Window.start();
 		Window.setup();
 		Renderer.load();
@@ -45,6 +49,8 @@ public class Base {
 		chunkManager.setup();
 
 		FPS.setup();
+		taskManager = new TaskManager();
+		taskManager.start();
 	}
 
 	public void update() {
@@ -81,13 +87,22 @@ public class Base {
 			view.y += speed;
 
 		}
+		if (!view.equals(previousView)) {
+			viewChanged = true;
+			previousView = view;
+		}
 		chunkManager.update();
 
+		if (view.equals(previousView)) {
+			viewChanged = false;
+		}
 	}
 
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
 
 	public static Rectangle view = new Rectangle(0, 0, 0, 0);
+	public Rectangle previousView = new Rectangle(0, 0, 0, 0);
+	public static boolean viewChanged = true;
 	ChunkManager chunkManager = new ChunkManager();
 
 	public void render() {
@@ -109,21 +124,22 @@ public class Base {
 
 		Renderer.renderText(new Vector2f(0, 48), "Chunk Count: " + ChunkManager.chunksInView.size(), 12, Color.white);
 
-		Renderer.renderQuad(new Rectangle(200, 0, 300, hoveredObjects.size() * 16), new Color(0, 0, 0, 0.5f));
-		int i = 0;
-		for (Object obj : hoveredObjects) {
-			String sprite = obj.getSprite();
-			if (!obj.known) {
-				sprite = "unknown";
-			}
-			Renderer.renderText(new Vector2f(200, i * 16), "index: " + obj.getIndex() + "(" + sprite + ")", 12,
-					Color.white);
-			i++;
+		if (ChunkManager.hover != null) {
+
+			Renderer.renderQuad(new Rectangle(200, 0, 300, 16), new Color(0, 0, 0, 0.5f));
+			Renderer.renderText(new Vector2f(200, 0), "index: " + ChunkManager.hover, 12, Color.white);
 		}
+		/*
+		 * int i = 0; for (Object obj : hoveredObjects) { String sprite =
+		 * obj.getSprite(); if (!obj.known) { sprite = "unknown"; }
+		 * Renderer.renderText(new Vector2f(200, i * 16), "index: " + obj.getIndex() +
+		 * "(" + sprite + ")", 12, Color.white); i++; }
+		 */
 
 	}
 
 	public void destroy() {
+		taskManager.destroy();
 		Window.destroy();
 	}
 }

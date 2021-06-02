@@ -2,19 +2,22 @@ package core;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.UUID;
 
 import org.lwjgl.util.vector.Vector3f;
 
 public class Object {
+	public UUID uuid;
 	private String sprite;
 	public Polygon bounds;
-	public Point offset = new Point(0,0);
+	public Point offset = new Point(0, 0);
 	public boolean updated = false;
 	private Vector3f index;
-	
+
 	public boolean known = false;
 
 	public Object(Vector3f newIndex) {
+		uuid = UUID.randomUUID();
 		index = newIndex;
 	}
 
