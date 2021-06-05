@@ -1,6 +1,7 @@
 package core;
 
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class Renderer {
 		characterTexture.addPoint(45, 191);
 		characterTexture.addPoint(0, 191);
 		character.texture = characterTexture;
+		character.offset = new Point(10, 32);
 
 		sprites.put("character", character);
 
@@ -89,6 +91,18 @@ public class Renderer {
 
 		sprites.put("dirt", dirt);
 
+		Sprite stone = new Sprite();
+		stone.shape = newShape;
+
+		Polygon stoneTexture = new Polygon();
+		stoneTexture.addPoint(0, 64);
+		stoneTexture.addPoint(64, 64);
+		stoneTexture.addPoint(64, 128);
+		stoneTexture.addPoint(0, 128);
+		stone.texture = stoneTexture;
+
+		sprites.put("stone", stone);
+		
 		Sprite hover = new Sprite();
 		Polygon hoverShape = new Polygon();
 		hoverShape.addPoint(0, 0);
@@ -117,6 +131,26 @@ public class Renderer {
 		hover3d.texture = hover3dTexture;
 
 		sprites.put("hover3d", hover3d);
+		
+		
+
+		Sprite tree = new Sprite();
+		Polygon treeShape = new Polygon();
+		treeShape.addPoint(0, 0);
+		treeShape.addPoint(64, 0);
+		treeShape.addPoint(64, 148);
+		treeShape.addPoint(0, 148);
+		tree.shape = treeShape;
+
+		Polygon treeTexture = new Polygon();
+		treeTexture.addPoint(64,64);
+		treeTexture.addPoint(128, 64);
+		treeTexture.addPoint(128, 212);
+		treeTexture.addPoint(64, 212);
+		tree.texture = treeTexture;
+		tree.offset = new Point(0, -96);
+
+		sprites.put("tree", tree);
 	}
 
 	public static void renderSprite(String name, int x, int y) {
@@ -125,7 +159,7 @@ public class Renderer {
 			for (int i = 0; i < sprite.shape.npoints; i++) {
 				GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float) texture.getImageWidth(),
 						(float) sprite.texture.ypoints[i] / (float) texture.getImageHeight());
-				GL11.glVertex2i(x + sprite.shape.xpoints[i], y + sprite.shape.ypoints[i]);
+				GL11.glVertex2i(x + sprite.shape.xpoints[i]+sprite.offset.x, y + sprite.shape.ypoints[i]+sprite.offset.y);
 			}
 		}
 	}

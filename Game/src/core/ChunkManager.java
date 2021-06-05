@@ -18,7 +18,7 @@ import game.Base;
 
 public class ChunkManager {
 
-	public static Vector3f size = new Vector3f(16, 16, 16);
+	public static Vector3f size = new Vector3f(16, 32, 16);
 	public static LinkedHashMap<String, Chunk> chunks = new LinkedHashMap<String, Chunk>();
 	// public static LinkedList<ANode> characters = new LinkedList<ANode>();
 	public static LinkedList<ANode> avaliableCharacters = new LinkedList<ANode>();
@@ -31,13 +31,15 @@ public class ChunkManager {
 	public void setup() {
 		pathFinder = new APathFinder();
 
-		for (int x = 0; x < 2; x++) {
-			for (int z = 0; z < 2; z++) {
+		for (int x = 0; x < 15; x++) {
+			for (int z = 0; z < 15; z++) {
 				Chunk chunk = new Chunk(new Vector3f(x, 0, z));
 				chunk.load();
 				chunks.put(chunk.getIndex(), chunk);
+				chunksInView.add(chunk);
 			}
 		}
+
 	}
 
 	public static Object getObjectAt(int x, int y, int z) {
@@ -70,8 +72,8 @@ public class ChunkManager {
 	}
 
 	private void pollHover() {
-		int cartX = (Mouse.getX() + Base.view.x) - (32);
-		int cartY = ((Window.height - Mouse.getY()) + Base.view.y) - (32 * layer);
+		int cartX = (Mouse.getX() + Base.viewTest.x) - (32);
+		int cartY = ((Window.height - Mouse.getY()) + Base.viewTest.y) - (32 * layer);
 		int isoX = (int) ((float) cartX / (float) 2 + ((float) cartY));
 		int isoZ = (int) ((float) cartY - (float) cartX / (float) 2);
 		int indexX = (int) Math.floor((float) isoX / (float) 32);
@@ -131,6 +133,8 @@ public class ChunkManager {
 
 	public static MouseIndex hover;
 	int leftCount = 0;
+	int startId = 0;
+	int endId = 0;
 	UUID test;
 
 	public void update() {
@@ -144,24 +148,22 @@ public class ChunkManager {
 				layer++;
 			}
 		}
+		
 		pollHover();
-		if (Base.viewChanged) {
+		if (Base.viewTest.moved&&true==false) {
+			System.out.println("Chunk in view check");
 			chunksInView.clear();
 			for (Chunk chunk : chunks.values()) {
-				if (chunk.chunkBounds.intersects(Base.view)) {
+				if (chunk.chunkBounds.intersects(Base.viewTest.getRect())) {
+					//chunk.build();
 					chunksInView.add(chunk);
 				}
 			}
 		}
 		Base.hoveredObjects.clear();
 		for (Chunk chunk : chunks.values()) {
-
 			chunk.setLayer(layer);
 			chunk.update();
-			/*
-			if (chunk.chunkBounds.contains(Base.mousePosition)) {
-				// chunk.handleHover();
-			}*/
 		}
 		Task task = TaskManager.removeTaskByUUID(test);
 		if (task != null) {
@@ -171,7 +173,7 @@ public class ChunkManager {
 					for (int i = 0; i < task.data.path.size(); i++) {
 						ANode node = (ANode) task.data.path.get(i);
 						if (node != null) {
-							setObjectAt(node.x, node.y+1, node.z, "dirt");
+							setObjectAt(node.x, node.y + 1, node.z, "dirt");
 						}
 					}
 				}
@@ -182,7 +184,6 @@ public class ChunkManager {
 					new TaskData(new ANode(hover.getX(), hover.getObjectIndex() - 2, hover.getY())));
 			test = moveTask.uuid;
 			TaskManager.addTask(moveTask);
-
 			leftCount++;
 		} else if (!Mouse.isButtonDown(0)) {
 			leftCount = 0;

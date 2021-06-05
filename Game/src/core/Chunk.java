@@ -3,15 +3,20 @@ package core;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import game.Base;
+import core.ChunkManager;
 
 public class Chunk {
 	private int id = -1;
+	private int[] idLayers;
 	public boolean updateID = false;
 	public boolean knownUpdate = false;
 	public Polygon chunkBounds;
@@ -22,6 +27,8 @@ public class Chunk {
 
 	private Point position = new Point(0, 0);
 	private Vector3f index;
+
+	int lowestVisibleLevel = 0;
 
 	public Chunk(Vector3f newIndex) {
 		index = newIndex;
@@ -63,6 +70,9 @@ public class Chunk {
 		if (index.x != 0 || index.y != 0 || index.z != 0) {
 			offset = 1;
 		}
+		if (index.x == 1 && index.y == 0 && index.z == 0) {
+			offset = 2;
+		}
 		for (int y = (int) (ChunkManager.size.y) - 1; y >= 0; y--) {
 			for (int x = 0; x < ChunkManager.size.x; x++) {
 				for (int z = 0; z < ChunkManager.size.z; z++) {
@@ -89,46 +99,52 @@ public class Chunk {
 					obj.setBounds(newBounds);
 
 					obj.setSprite("grass");
-
 					if (index.x == 0 && index.y == 0 && index.z == 0 && x == 0 && y == 0 && z == 0) {
 
 						obj.setSprite("character");
-						obj.offset = new Point(10, 32);
 						objects.put(x + "," + y + "," + z, obj);
 						ChunkManager.avaliableCharacters.add(new ANode(x, y, z));
 					}
+					if (index.x == 0 && index.y == 0 && index.z == 0 && x == 3 && y == 0 && z == 3) {
 
+						obj.setSprite("tree");
+						objects.put(x + "," + y + "," + z, obj);
+					}
 					if (y > offset) {
 						objects.put(x + "," + y + "," + z, obj);
 					}
 				}
 			}
 		}
-
+		// build();
+		buildLayers();
+		this.updateID = true;
 	}
 
 	public boolean isKnown(int x, int y, int z) {
 		boolean known = false;
-		if (y - 1 >= 0) {
-			Object testObj = objects.get(x + "," + (y - 1) + "," + z);
-			if (testObj == null) {
+		Object topObj = objects.get(x + "," + (y - 1) + "," + z);
+		if (topObj == null) {
+			known = true;
+		}
+		if (topObj != null) {
+			Object currentObj = objects.get(x + "," + y + "," + z);
+			if (currentObj != null) {
+				known = currentObj.known;
+			}
+			if (topObj.getSprite() == "tree") {
 				known = true;
 			}
-			if (testObj != null) {
-				// known = testObj.known;
-			}
-		} else {
-			known = true;
 		}
 		return known;
 	}
 
 	public void build() {
-
 		renderedObjects.clear();
 		id = GL11.glGenLists(1);
 		GL11.glNewList(id, GL11.GL_COMPILE_AND_EXECUTE);
 		GL11.glBegin(GL11.GL_QUADS);
+
 		for (int y = (int) ChunkManager.size.y - 1; y >= layer; y--) {
 			for (int x = 0; x < ChunkManager.size.x; x++) {
 				for (int z = 0; z < ChunkManager.size.z; z++) {
@@ -137,9 +153,7 @@ public class Chunk {
 
 						boolean visible = isVisible(x, y, z);
 						if (visible) {
-							if (!obj.known) {
-								obj.known = isKnown(x, y, z);
-							}
+							obj.known = isKnown(x, y, z);
 							String sprite = obj.getSprite();
 							if (sprite != null) {
 								int posX = position.x + ((x - z) * 32);
@@ -161,6 +175,51 @@ public class Chunk {
 		GL11.glEndList();
 	}
 
+	public void buildLayers() {
+		renderedObjects.clear();
+		idLayers = new int[(int) ChunkManager.size.y];
+		int maxUnknown = (int) ChunkManager.size.x * (int) ChunkManager.size.z;
+		for (int y = 0; y < idLayers.length; y++) {
+
+			idLayers[y] = GL11.glGenLists(1);
+			GL11.glNewList(idLayers[y], GL11.GL_COMPILE_AND_EXECUTE);
+			GL11.glBegin(GL11.GL_QUADS);
+			int unknownCount = 0;
+			for (int x = 0; x < ChunkManager.size.x; x++) {
+				for (int z = 0; z < ChunkManager.size.z; z++) {
+					Object obj = objects.get(x + "," + y + "," + z);
+					if (obj != null) {
+
+						boolean visible = isVisible(x, y, z);
+						if (visible) {
+							obj.known = isKnown(x, y, z);
+							String sprite = obj.getSprite();
+							if (sprite != null) {
+								int posX = position.x + ((x - z) * 32);
+								int posY = ((0 - y) * 32);
+								int posZ = position.y + (((z + x) * 16) - posY);
+								if (!obj.known) {
+									obj.setSprite("unknown");
+									unknownCount++;
+								}
+								Renderer.renderSprite(sprite, posX + obj.offset.x, posZ + obj.offset.y);
+								renderedObjects.add(obj);
+
+							}
+						}
+					}
+				}
+			}
+			if (unknownCount < maxUnknown) {
+				System.out.println("Lowest: " + y + "/" + unknownCount + ">=" + maxUnknown);
+				lowestVisibleLevel = y;
+			}
+
+			GL11.glEnd();
+			GL11.glEndList();
+		}
+	}
+
 	ArrayList<Vector3f> directions = new ArrayList<Vector3f>();
 
 	public boolean isVisible(int x, int y, int z) {
@@ -179,7 +238,7 @@ public class Chunk {
 		int visibleCount = 0;
 		for (Vector3f vec : directions) {
 			Object testObj = objects.get((int) (x + vec.x) + "," + (int) (y + vec.y) + "," + (int) (z + vec.z));
-			if (testObj != null && testObj.getSprite() != "character") {
+			if (testObj != null && isTransparentSprite(testObj.getSprite())) {
 				visibleCount++;
 			}
 		}
@@ -187,7 +246,22 @@ public class Chunk {
 			isVisible = true;
 		}
 
+		if (y == layer) {
+			isVisible = true;
+		}
+
 		return isVisible;
+	}
+
+	public boolean isTransparentSprite(String name) {
+		boolean transparent = false;
+		List<String> transparentSprites = Arrays.asList("character", "tree");
+
+		if (transparentSprites.contains(name)) {
+			transparent = true;
+		}
+
+		return transparent;
 	}
 
 	public void update() {
@@ -205,12 +279,20 @@ public class Chunk {
 	}
 
 	public void render() {
-		if (id == -1 || updateID) {
-			build();
+		if (idLayers.length == 0 || updateID) {
+			// build();
+			buildLayers();
 			updateID = false;
 		} else {
 			GL11.glColor3f(1, 1, 1);
-			GL11.glCallList(id);
+			// GL11.glCallList(id);
+			int lowest = this.lowestVisibleLevel;
+			if (lowest < layer) {
+				lowest = layer;
+			}
+			for (int y = lowest; y >= layer; y--) {
+				GL11.glCallList(idLayers[y]);
+			}
 
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -226,18 +308,12 @@ public class Chunk {
 		}
 
 	}
-
+//231
 	int layer = 0;
 
 	public void setLayer(int newLayer) {
 		if (layer != newLayer) {
-			/*
-			 * for (int x = 0; x < ChunkManager.size.x; x++) { for (int z = 0; z <
-			 * ChunkManager.size.x; z++) { Object obj = objects.get(x + "," + newLayer + ","
-			 * + z); if (obj != null) { System.out.println("Build"); updateID = true; } if
-			 * (updateID) { break; } } if (updateID) { break; } }
-			 */
-			updateID = true;
+			// updateID = true;
 			layer = newLayer;
 		}
 	}
@@ -267,12 +343,14 @@ public class Chunk {
 			if (sprite == "air") {
 				objects.put(x + "," + y + "," + z, null);
 				knownUpdate = true;
-				build();
+				// build();
+				updateID = true;
 			} else {
 				obj.setSprite(sprite);
 				obj.known = true;
 				knownUpdate = true;
-				build();
+				// build();
+				updateID = true;
 			}
 		} else if (sprite != "air") {
 			obj = new Object(new Vector3f(x, y, z));
@@ -280,7 +358,8 @@ public class Chunk {
 			obj.setSprite(sprite);
 			objects.put(x + "," + y + "," + z, obj);
 			knownUpdate = true;
-			build();
+			// build();
+			updateID = true;
 		}
 	}
 }

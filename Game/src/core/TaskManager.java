@@ -56,7 +56,6 @@ public class TaskManager extends Thread {
 				completedTasks.add(task);
 			}
 		}
-		System.out.println("Task Count: " + tempCompletedTasks.size());
 		if (tempCompletedTasks.size() > 0) {
 			startedTasks.removeAll(tempCompletedTasks);
 			tempCompletedTasks.clear();
@@ -83,7 +82,6 @@ public class TaskManager extends Thread {
 				if (obj != null) {
 					task.characterIndex = characterIndex;
 					task.characteruuid = obj.uuid;
-					System.out.println("Move Setup: " + task.data.endIndex);
 					task.isSetup = true;
 				}
 				break;
@@ -97,10 +95,13 @@ public class TaskManager extends Thread {
 		case "MOVE":
 			if (task.characterIndex != null) {
 				Object obj = ChunkManager.getObjectByUUID(task.characteruuid);
-				System.out.println("Move Process: " + obj.getSprite());
+				if (obj != null) {
+					System.out.println("Move Process: " + obj.getSprite());
 
-				List test = APathFinder.find(task.characterIndex, task.data.endIndex);
-				task.data.path = test;
+					List test = APathFinder.find(task.characterIndex, task.data.endIndex);
+					task.data.path = test;
+
+				}
 				ChunkManager.avaliableCharacters.add(task.characterIndex);
 				task.isComplete = true;
 			}
@@ -117,6 +118,18 @@ public class TaskManager extends Thread {
 		Task task = null;
 		for (Task tempTask : completedTasks) {
 			if (tempTask.uuid.equals(test)) {
+				task = tempTask;
+				break;
+			}
+		}
+		completedTasks.remove(task);
+		return task;
+	}
+
+	public static Task removeCompletedTask() {
+		Task task = null;
+		for (Task tempTask : completedTasks) {
+			if (tempTask.isComplete) {
 				task = tempTask;
 				break;
 			}

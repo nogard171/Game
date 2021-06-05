@@ -52,17 +52,22 @@ public class APathFinder {
 				int chunkZ = (int) (neighborIndex.z / ChunkManager.size.z);
 				Chunk chunk = ChunkManager.chunks.get(chunkX + ",0," + chunkZ);
 				if (chunk != null) {
+
 					int objX = (int) (neighborIndex.x % 16);
 					int objY = (int) (neighborIndex.y % 16);
 					int objZ = (int) (neighborIndex.z % 16);
 					Object data = chunk.getData(objX, objY, objZ);
 
 					if (data != null) {
-						System.out.println("task assigned: " +neighborIndex+"/"+openList.size());
 						if (data.getSprite() == "air") {
-							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
-								parentList.put(neighborIndex, current);
-								openList.add(neighborIndex);
+							Object lower = chunk.getData(objX, objY + 1, objZ);
+							System.out.println("task assigned: " + neighborIndex + "/" + lower.getIndex() + "="
+									+ data.getSprite() + "/" + lower.getSprite());
+							if (lower.getSprite() != "air") {
+								if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
+									parentList.put(neighborIndex, current);
+									openList.add(neighborIndex);
+								}
 							}
 						}
 					}
