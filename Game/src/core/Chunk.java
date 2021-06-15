@@ -160,7 +160,8 @@ public class Chunk {
 								int posY = ((0 - y) * 32);
 								int posZ = position.y + (((z + x) * 16) - posY);
 								if (!obj.known) {
-									obj.setSprite("unknown");
+									sprite = "unknown";
+									// obj.setSprite("unknown");
 								}
 								Renderer.renderSprite(sprite, posX + obj.offset.x, posZ + obj.offset.y);
 								renderedObjects.add(obj);
@@ -193,18 +194,19 @@ public class Chunk {
 						boolean visible = isVisible(x, y, z);
 						if (visible) {
 							obj.known = isKnown(x, y, z);
+							boolean known = isKnown(x, y, z);
 							String sprite = obj.getSprite();
 							if (sprite != null) {
 								int posX = position.x + ((x - z) * 32);
 								int posY = ((0 - y) * 32);
 								int posZ = position.y + (((z + x) * 16) - posY);
-								if (!obj.known) {
-									obj.setSprite("unknown");
+								if (!known) {
+									// obj.setSprite("unknown");
+									sprite = "unknown";
 									unknownCount++;
 								}
 								Renderer.renderSprite(sprite, posX + obj.offset.x, posZ + obj.offset.y);
 								renderedObjects.add(obj);
-
 							}
 						}
 					}
@@ -284,12 +286,13 @@ public class Chunk {
 			buildLayers();
 			updateID = false;
 		} else {
-			GL11.glColor3f(1, 1, 1);
 			// GL11.glCallList(id);
 			int lowest = this.lowestVisibleLevel;
 			if (lowest < layer) {
 				lowest = layer;
 			}
+
+			GL11.glColor3f(1, 1, 1);
 			for (int y = lowest; y >= layer; y--) {
 				GL11.glCallList(idLayers[y]);
 			}
@@ -308,6 +311,7 @@ public class Chunk {
 		}
 
 	}
+
 //231
 	int layer = 0;
 
@@ -319,7 +323,6 @@ public class Chunk {
 	}
 
 	public Object getData(int x, int y, int z) {
-
 		Object obj = objects.get(x + "," + y + "," + z);
 		if (x < 0 || y < 0 || z < 0) {
 			obj = new Object(new Vector3f(x, y, z));
@@ -334,6 +337,7 @@ public class Chunk {
 			obj = new Object(new Vector3f(x, y, z));
 			obj.setSprite("air");
 		}
+
 		return obj;
 	}
 

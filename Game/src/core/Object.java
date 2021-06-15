@@ -39,6 +39,10 @@ public class Object {
 		return sprite;
 	}
 
+	public String getName() {
+		return (this.known ? sprite :(this.sprite=="air"?"air": "unknown"));
+	}
+
 	public Polygon getBounds() {
 		return bounds;
 	}

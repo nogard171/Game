@@ -194,4 +194,18 @@ public class Renderer {
 			font.drawString(position.x, position.y, text, color);
 		}
 	}
+
+	public static void renderText(int x, int y, String text, int fontSize, Color color) {
+
+		TrueTypeFont font = fonts.get(fontSize);
+
+		if (font == null) {
+			Font awtFont = new Font("Courier", Font.PLAIN, fontSize);
+			fonts.put(fontSize, new TrueTypeFont(awtFont, false));
+		}
+		if (font != null) {
+			TextureImpl.bindNone();
+			font.drawString(x, y, text, color);
+		}
+	}
 }

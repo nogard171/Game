@@ -61,8 +61,6 @@ public class APathFinder {
 					if (data != null) {
 						if (data.getSprite() == "air") {
 							Object lower = chunk.getData(objX, objY + 1, objZ);
-							System.out.println("task assigned: " + neighborIndex + "/" + lower.getIndex() + "="
-									+ data.getSprite() + "/" + lower.getSprite());
 							if (lower.getSprite() != "air") {
 								if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
 									parentList.put(neighborIndex, current);

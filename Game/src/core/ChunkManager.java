@@ -25,21 +25,21 @@ public class ChunkManager {
 
 	public static ArrayList<Chunk> chunksInView = new ArrayList<Chunk>();
 
-	int layer = 0;
+	public static int layer = 0;
 	APathFinder pathFinder;
 
 	public void setup() {
 		pathFinder = new APathFinder();
 
-		for (int x = 0; x < 15; x++) {
-			for (int z = 0; z < 15; z++) {
+		for (int x = 0; x < 3; x++) {
+			for (int z = 0; z < 3; z++) {
 				Chunk chunk = new Chunk(new Vector3f(x, 0, z));
 				chunk.load();
 				chunks.put(chunk.getIndex(), chunk);
 				chunksInView.add(chunk);
 			}
 		}
-
+		Input.setup();
 	}
 
 	public static Object getObjectAt(int x, int y, int z) {
@@ -69,53 +69,6 @@ public class ChunkManager {
 			}
 		}
 		return obj;
-	}
-
-	private void pollHover() {
-		int cartX = (Mouse.getX() + Base.viewTest.x) - (32);
-		int cartY = ((Window.height - Mouse.getY()) + Base.viewTest.y) - (32 * layer);
-		int isoX = (int) ((float) cartX / (float) 2 + ((float) cartY));
-		int isoZ = (int) ((float) cartY - (float) cartX / (float) 2);
-		int indexX = (int) Math.floor((float) isoX / (float) 32);
-		int indexZ = (int) Math.floor((float) isoZ / (float) 32);
-
-		float chunkRawX = (float) indexX / (float) size.x;
-		float chunkRawZ = (float) indexZ / (float) size.z;
-
-		int chunkX = (int) Math.floor(chunkRawX);
-		int chunkZ = (int) Math.floor(chunkRawZ);
-		if (indexX < 0) {
-			chunkX--;
-		}
-		if (indexZ < 0) {
-			chunkZ--;
-		}
-		Chunk chunkTest = chunks.get(chunkX + ",0," + chunkZ);
-		Object obj = null;
-		if (chunkTest != null) {
-			int tempLayer = 0;
-			obj = getObjectAt(indexX, tempLayer, indexZ);
-			int loopCount = 0;
-			boolean isAir = true;
-			while (isAir) {
-				if (obj != null) {
-					if (!obj.getSprite().equals("air")) {
-						isAir = false;
-					}
-				}
-				tempLayer++;
-				obj = getObjectAt(indexX, tempLayer, indexZ);
-				loopCount++;
-				if (loopCount > size.y) {
-					break;
-				}
-			}
-			Vector3f tempIndex = obj.getIndex();
-			float newY = tempIndex.y - (layer + 1);
-		}
-		if (obj != null) {
-			hover = new MouseIndex(indexX, indexZ, chunkX, chunkZ, (int) obj.getIndex().getY());
-		}
 	}
 
 	public static void setObjectAt(int x, int y, int z, String type) {
@@ -148,18 +101,6 @@ public class ChunkManager {
 				layer++;
 			}
 		}
-		
-		pollHover();
-		if (Base.viewTest.moved&&true==false) {
-			System.out.println("Chunk in view check");
-			chunksInView.clear();
-			for (Chunk chunk : chunks.values()) {
-				if (chunk.chunkBounds.intersects(Base.viewTest.getRect())) {
-					//chunk.build();
-					chunksInView.add(chunk);
-				}
-			}
-		}
 		Base.hoveredObjects.clear();
 		for (Chunk chunk : chunks.values()) {
 			chunk.setLayer(layer);
@@ -179,19 +120,23 @@ public class ChunkManager {
 				}
 			}
 		}
-		if (hover != null && Mouse.isButtonDown(0) && leftCount == 0) {
+		if (hover != null && Input.isMousePressed(0)) {
 			Task moveTask = new Task("MOVE",
 					new TaskData(new ANode(hover.getX(), hover.getObjectIndex() - 2, hover.getY())));
 			test = moveTask.uuid;
 			TaskManager.addTask(moveTask);
-			leftCount++;
-		} else if (!Mouse.isButtonDown(0)) {
-			leftCount = 0;
+		}
+
+		if (hover != null && Input.isMousePressed(1)) {
+			System.out.println("Mouse pressed");
+
 		}
 	}
 
 	public void render() {
 		for (Chunk chunk : chunksInView) {
+			// chunk.setLayer(layer);
+			// chunk.update();
 			chunk.render();
 		}
 		if (hover != null) {
