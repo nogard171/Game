@@ -33,4 +33,9 @@ public class UIMenuItem {
 			onClickAction.onClick(menu, this);
 		}
 	}
+	public void onClick() {
+		if (onClickAction != null) {
+			onClickAction.onClick(this);
+		}
+	}
 }

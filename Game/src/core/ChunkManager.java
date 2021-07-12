@@ -61,6 +61,7 @@ public class ChunkManager {
 	public static Object getObjectByUUID(UUID uuid) {
 		Object obj = null;
 		for (Chunk chunk : chunksInView) {
+			System.out.println("test3"+uuid+"="+chunk.renderedObjects.size());
 			for (Object object : chunk.renderedObjects) {
 				if (object.uuid.equals(uuid)) {
 					obj = object;
@@ -81,6 +82,7 @@ public class ChunkManager {
 			int objZ = (int) (z % size.z);
 
 			chunk.setDataSprite(objX, objY, objZ, type);
+			chunk.updateID = true;
 		}
 	}
 
@@ -121,10 +123,10 @@ public class ChunkManager {
 			}
 		}
 		if (hover != null && Input.isMousePressed(0)) {
-			Task moveTask = new Task("MOVE",
+			/*Task moveTask = new Task("MOVE",
 					new TaskData(new ANode(hover.getX(), hover.getObjectIndex() - 2, hover.getY())));
 			test = moveTask.uuid;
-			TaskManager.addTask(moveTask);
+			TaskManager.addTask(moveTask);*/
 		}
 
 		if (hover != null && Input.isMousePressed(1)) {
@@ -167,5 +169,14 @@ public class ChunkManager {
 			count += chunk.renderedObjects.size();
 		}
 		return count;
+	}
+
+	public static void moveObject(ANode characterIndex, ANode node) {
+		Object character = ChunkManager.getObjectAt(characterIndex.x, characterIndex.y, characterIndex.z);
+
+		
+
+		ChunkManager.setObjectAt(node.x, node.y, node.z, character.getSprite());
+		ChunkManager.setObjectAt(characterIndex.x, characterIndex.y, characterIndex.z, "AIR");
 	}
 }

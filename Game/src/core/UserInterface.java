@@ -15,6 +15,7 @@ public class UserInterface {
 
 	public void setup() {
 		menu = new UIMenu("tesT", new Rectangle(200, 200, 100, 0), new UIAction() {
+			@Override
 			public void onClick(UIMenu menu) {
 				Object obj = ChunkManager.getObjectAt(hover.getX(), hover.getObjectIndex() - 1, hover.getY());
 				if (obj != null) {
@@ -27,14 +28,21 @@ public class UserInterface {
 		});
 		UIMenuItem item = new UIMenuItem("Chop", false);
 		item.onClickAction = new UIAction() {
+			@Override
 			public void onClick(UIMenuItem item) {
-				System.out.println("chop");
+				System.out.println("chop:" + (hover.getObjectIndex() - 1));
+
+				TaskData dat = new TaskData(new ANode(hover.getX()-1, hover.getObjectIndex() - 1, hover.getY()));
+				Task task = new Task("MOVE", dat);
+				TaskManager.addTask(task);
 			}
 		};
 		menu.addItem(item);
 		UIMenuItem citem = new UIMenuItem("cancel");
 		citem.onClickAction = new UIAction() {
+			@Override
 			public void onClick(UIMenu menu, UIMenuItem item) {
+				System.out.println("cancel");
 				menu.isVisible = false;
 			}
 		};
@@ -93,10 +101,13 @@ public class UserInterface {
 		pollHover();
 
 		if (hover != null && Input.isMousePressed(0)) {
-			Task moveTask = new Task("MOVE",
-					new TaskData(new ANode(hover.getX(), hover.getObjectIndex() - 2, hover.getY())));
-			UUID test = moveTask.uuid;
-			TaskManager.addTask(moveTask);
+			/*
+			 * System.out.println("Move: " + (hover.getObjectIndex() - 2)); Task moveTask =
+			 * new Task("MOVE", new TaskData(new ANode(hover.getX(), hover.getObjectIndex()
+			 * - 2, hover.getY()))); UUID test = moveTask.uuid;
+			 * TaskManager.addTask(moveTask);
+			 */
+
 		}
 
 		if (Input.isMousePressed(1)) {
@@ -125,7 +136,8 @@ public class UserInterface {
 
 			Object hoverObj = ChunkManager.getObjectAt(hover.getX(), ChunkManager.layer, hover.getY());
 			if (hoverObj != null) {
-				Renderer.renderText(posX, posZ + (32 * (ChunkManager.layer - 1))-16, hoverObj.getName(), 12, Color.white);
+				Renderer.renderText(posX, posZ + (32 * (ChunkManager.layer - 1)) - 16, hoverObj.getName(), 12,
+						Color.white);
 			}
 
 		}

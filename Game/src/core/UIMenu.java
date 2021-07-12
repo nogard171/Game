@@ -35,7 +35,7 @@ public class UIMenu {
 		if (item != null) {
 			if (item.isVisible != isVisible) {
 				item.isVisible = isVisible;
-				//bounds.height += 16 + padding.y + padding.height;
+				// bounds.height += 16 + padding.y + padding.height;
 			}
 		}
 	}
@@ -62,6 +62,7 @@ public class UIMenu {
 					item.hovered = item.bounds.contains(Input.getMousePoint());
 					if (item.hovered && Input.isMousePressed(0)) {
 						item.onClick(this);
+						item.onClick();
 					}
 					y++;
 					itemsVisible++;
@@ -80,8 +81,7 @@ public class UIMenu {
 
 	public void render() {
 		if (isVisible) {
-			bounds = new Rectangle(bounds.x, bounds.y, bounds.width,
-					(this.itemsVisible * 16));
+			bounds = new Rectangle(bounds.x, bounds.y, bounds.width, (this.itemsVisible * 16));
 			Renderer.renderQuad(bounds, new Color(0, 0, 0, 0.5f));
 			int y = 0;
 			for (UIMenuItem item : menuItems.values()) {

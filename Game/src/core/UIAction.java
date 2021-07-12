@@ -10,6 +10,5 @@ public interface UIAction {
 	}
 
 	public default void onClick(UIMenu menu, UIMenuItem item) {
-
 	}
 }

@@ -127,6 +127,8 @@ public class Base {
 
 		Renderer.renderText(new Vector2f(0, 64), "Layer: " + ChunkManager.layer, 12, Color.white);
 
+		Renderer.renderText(new Vector2f(0, 80), "Task: " + taskManager.startedTasks.size()+"/"+ taskManager.tasks.size(), 12, Color.white);
+
 		if ((ChunkManager.hover == null ? UserInterface.hover : ChunkManager.hover) != null) {
 
 			Renderer.renderQuad(new Rectangle(200, 0, 300, 16), new Color(0, 0, 0, 0.5f));

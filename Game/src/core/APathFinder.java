@@ -17,7 +17,7 @@ public class APathFinder {
 
 			new ANode(-1, -1, 0), new ANode(1, -1, 0), new ANode(0, -1, -1), new ANode(0, -1, 1)));
 
-	public static List<ANode> constructPath(ANode index) {
+	public static LinkedList<ANode> constructPath(ANode index) {
 		LinkedList<ANode> path = new LinkedList<ANode>();
 		while (parentList.get(index) != null) {
 
@@ -28,7 +28,7 @@ public class APathFinder {
 		return path;
 	}
 
-	public static List<ANode> find(ANode startIndex, ANode endIndex) {
+	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
 		parentList.clear();
 
 		LinkedList<ANode> openList = new LinkedList<ANode>();
@@ -63,6 +63,7 @@ public class APathFinder {
 							Object lower = chunk.getData(objX, objY + 1, objZ);
 							if (lower.getSprite() != "air") {
 								if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
+									System.out.println("Current: " + current);
 									parentList.put(neighborIndex, current);
 									openList.add(neighborIndex);
 								}
