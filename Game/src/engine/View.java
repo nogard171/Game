@@ -1,11 +1,13 @@
-package core;
+package engine;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import java.awt.Point;
+
 public class View {
-	public int x = 0;
-	public int y = 0;
+	public static int x = 0;
+	public static int y = 0;
 	public int w = 0;
 	public int h = 0;
 	public boolean moved = false;
@@ -36,6 +38,13 @@ public class View {
 
 	public Rectangle getRect() {
 		// TODO Auto-generated method stub
-		return new Rectangle(x,y,w,h);
+		return new Rectangle(x, y, w, h);
+	}
+
+	public static Point getIndexInWorld() {
+		int indexX = (int) Math.floor(((float) Input.getMousePoint().x + (float) x) / (float) 32);
+		int indexY = (int) Math.floor(((float) Input.getMousePoint().y + (float) y) / (float) 32);
+
+		return new Point(indexX, indexY);
 	}
 }

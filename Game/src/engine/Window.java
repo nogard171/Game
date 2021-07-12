@@ -1,4 +1,4 @@
-package core;
+package engine;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -9,17 +9,31 @@ public class Window {
 
 	public static int width = 800;
 	public static int height = 600;
+	public static boolean fullscreen = false;
 
 	public static void start() {
 		try {
-			// DisplayMode dm = new DisplayMode(width, height);
-			Display.setDisplayMode(new DisplayMode(width, height));
+			DisplayMode dm = buildMode();
+			Display.setDisplayMode(dm);
+			Display.setFullscreen(fullscreen);
 			Display.setResizable(true);
 			Display.create();
 
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static DisplayMode buildMode() {
+		DisplayMode mode = new DisplayMode(width, height);
+		try {
+			for (DisplayMode dMode : Display.getAvailableDisplayModes()) {
+				mode = (dMode.getWidth() == width && dMode.getHeight() == height && dMode.isFullscreenCapable() ? dMode
+						: mode);
+			}
+		} catch (LWJGLException e) {
+		}
+		return mode;
 	}
 
 	public static boolean close() {
@@ -56,13 +70,12 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		// Display.sync(999);
+		Display.sync(999);
 	}
 
 	public static void render() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
-
 	}
 
 	public static void destroy() {

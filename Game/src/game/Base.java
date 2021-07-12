@@ -11,24 +11,21 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
-import core.Chunk;
-import core.ChunkManager;
-import core.Input;
-import core.Renderer;
-import core.TaskManager;
-import core.UserInterface;
-import core.View;
-import core.Window;
-import utils.FPS;
-import core.Object;
+import engine.Chunk;
+import engine.ChunkManager;
+import engine.Entity;
+import engine.FPS;
+import engine.Input;
+import engine.Renderer;
+import engine.View;
+import engine.Window;
 
 public class Base {
 
-	TaskManager taskManager;
-	UserInterface ui;
-
 	boolean isRunning = true;
 	public static Point mousePosition;
+
+	ChunkManager chunkManager;
 
 	public void start() {
 		this.setup();
@@ -41,35 +38,37 @@ public class Base {
 
 	}
 
+	Entity player;
+
 	public void setup() {
 
 		Window.start();
 		Window.setup();
-		Renderer.load();
-
-		chunkManager.setup();
+		ResourceDatabase.load();
+		Input.setup();
 
 		FPS.setup();
-		taskManager = new TaskManager();
-		taskManager.start();
-		ui = new UserInterface();
-		ui.setup();
 
-		viewTest = new View(0, 0, Window.width, Window.height);
+		view = new View(0, -200, Window.width, Window.height);
+
+		chunkManager = new ChunkManager();
+		chunkManager.setup();
+
+		player = new Entity(64, -64);
 	}
 
 	public void update() {
 		Window.update();
 
-		mousePosition = new Point(Mouse.getX() + viewTest.x, (Window.height - Mouse.getY()) + viewTest.y);
+		mousePosition = new Point(Mouse.getX() + view.x, (Window.height - Mouse.getY()) + view.y);
 
 		if (Window.close()) {
 			this.isRunning = false;
 		}
 
 		if (Window.wasResized) {
-			viewTest.w = Window.width;
-			viewTest.h = Window.height;
+			view.w = Window.width;
+			view.h = Window.height;
 			Window.wasResized = false;
 		}
 
@@ -91,57 +90,44 @@ public class Base {
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			forceY = (int) speed;
 		}
-		viewTest.move(forceX, forceY);
+		view.move(forceX, forceY);
 
+		view.finalizeMove();
 		chunkManager.update();
-
-		viewTest.finalizeMove();
-
-		ui.update();
 	}
 
-	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
-	public static View viewTest;
-	ChunkManager chunkManager = new ChunkManager();
+	public static View view;
 
 	public void render() {
 		Window.render();
 		Input.poll();
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, Renderer.texture.getTextureID());
+		Renderer.bindTexture();
+
 		GL11.glPushMatrix();
-		GL11.glTranslatef(-viewTest.x, -viewTest.y, 0);
+		GL11.glTranslatef(-view.x, -view.y, 0);
 
 		chunkManager.render();
+
+		Point index = View.getIndexInWorld();
+
+		GL11.glBegin(GL11.GL_QUADS);
+		Renderer.renderSprite("character", player.position.x,player.position.y);
+
+		GL11.glEnd();
+		Renderer.renderQuad(new Rectangle(index.x * 32, index.y * 32, 32, 32), new Color(0, 0, 0, 0.5f));
+
 		GL11.glPopMatrix();
-		ui.render();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 16), "Hover Count: " + hoveredObjects.size(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 32), "Render Count: " + ChunkManager.getRenderCount(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 48), "Chunk Count: " + ChunkManager.chunksInView.size(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 64), "Layer: " + ChunkManager.layer, 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 80), "Task: " + taskManager.startedTasks.size()+"/"+ taskManager.tasks.size(), 12, Color.white);
-
-		if ((ChunkManager.hover == null ? UserInterface.hover : ChunkManager.hover) != null) {
-
-			Renderer.renderQuad(new Rectangle(200, 0, 300, 16), new Color(0, 0, 0, 0.5f));
-			Renderer.renderText(new Vector2f(200, 0),
-					"index: " + (ChunkManager.hover == null ? UserInterface.hover : ChunkManager.hover), 12,
-					Color.white);
-		}
-
+		Renderer.renderText(0, 0, "FPS: " + FPS.getFPS(), 12, Color.white);
+		Renderer.renderText(0, 16, "Chunks: " + ChunkManager.chunksInView.size(), 12, Color.white);
 
 	}
 
 	public void destroy() {
-		taskManager.destroy();
+		chunkManager.destroy();
+		ResourceDatabase.clean();
 		Window.destroy();
 	}
 }
