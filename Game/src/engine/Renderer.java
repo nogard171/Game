@@ -20,14 +20,15 @@ import game.ResourceDatabase;
 
 public class Renderer {
 
-	public static void renderSprite(String name, int x, int y) {
+	public static void renderSprite(String name, float x, float y) {
+		GL11.glColor3f(1, 1, 1);
 		Sprite sprite = ResourceDatabase.getSprite(name);
 		if (sprite != null) {
 			Texture texture = ResourceDatabase.getTexture();
 			for (int i = 0; i < sprite.shape.npoints; i++) {
 				GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float) texture.getImageWidth(),
 						(float) sprite.texture.ypoints[i] / (float) texture.getImageHeight());
-				GL11.glVertex2i(x + sprite.shape.xpoints[i] + sprite.offset.x,
+				GL11.glVertex2f(x + sprite.shape.xpoints[i] + sprite.offset.x,
 						y + sprite.shape.ypoints[i] + sprite.offset.y);
 			}
 		}

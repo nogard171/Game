@@ -3,6 +3,8 @@ package engine;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import org.lwjgl.util.vector.Vector2f;
+
 import java.awt.Point;
 
 public class View {
@@ -37,7 +39,7 @@ public class View {
 	}
 
 	public Rectangle getRect() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stubdd
 		return new Rectangle(x, y, w, h);
 	}
 
@@ -46,5 +48,20 @@ public class View {
 		int indexY = (int) Math.floor(((float) Input.getMousePoint().y + (float) y) / (float) 32);
 
 		return new Point(indexX, indexY);
+	}
+
+	public void follow(Vector2f position) {
+		if (x + (w / 2) > position.x + 16) {
+			move(-1, 0);
+		}
+		if ((x + w) - (w / 2) < position.x + 16) {
+			move(1, 0);
+		}
+		if (y + (h / 2) > position.y + 16) {
+			move(0, -1);
+		}
+		if ((y + h) - (h / 2) < position.y + 16) {
+			move(0, 1);
+		}
 	}
 }

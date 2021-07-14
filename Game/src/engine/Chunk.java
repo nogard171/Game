@@ -83,6 +83,8 @@ public class Chunk {
 			GL11.glColor3f(1, 1, 1);
 			GL11.glCallList(displayList);
 
+			
+
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glColor3f(1, 0, 0);

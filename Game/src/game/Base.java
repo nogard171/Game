@@ -74,25 +74,26 @@ public class Base {
 
 		FPS.updateFPS();
 
-		float speed = FPS.getDelta();
-		int forceX = 0;
-		int forceY = 0;
+		float speed = 0.5f;// FPS.getDelta();
+		float forceX = 0;
+		float forceY = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			forceX = (int) -speed;
+			forceX =  -speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			forceX = (int) speed;
+			forceX =  speed;
 
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			forceY = (int) -speed;
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			player.jump();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			forceY = (int) speed;
-		}
-		view.move(forceX, forceY);
+		// view.move(forceX, forceY);
+		player.move(forceX, forceY);
+		view.follow(player.position);
 
 		view.finalizeMove();
+		player.finalizeMove();
 		chunkManager.update();
 	}
 
@@ -110,10 +111,8 @@ public class Base {
 		chunkManager.render();
 
 		Point index = View.getIndexInWorld();
-
 		GL11.glBegin(GL11.GL_QUADS);
-		Renderer.renderSprite("character", player.position.x,player.position.y);
-
+		Renderer.renderSprite("character", player.position.x, player.position.y);
 		GL11.glEnd();
 		Renderer.renderQuad(new Rectangle(index.x * 32, index.y * 32, 32, 32), new Color(0, 0, 0, 0.5f));
 
