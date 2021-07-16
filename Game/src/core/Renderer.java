@@ -30,44 +30,31 @@ public class Renderer {
 		}
 	}
 
-	public static void renderSprite(String name, int x, int y, int[] heights) {
-		// if (heights.length == 4) {
-		int posX = ((x - y) * 32);
-		int posY = ((0 - heights[0]) * 32);
-		int posZ = (((y + x) * 16) - posY);
+	public static void renderSprite(TextureType type, int x, int y, float[] heights, Color[] colors) {
+		Vector2f[] vectors = { new Vector2f(0.5f, 0), new Vector2f(1f, 0.25f), new Vector2f(0.5f, 0.5f),
+				new Vector2f(0f, 0.25f) };
+		// Vector2f textureVec = new Vector2f(type.x, type.y);
+		Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + 1, type.y),
+				new Vector2f(type.x + 1, type.y + 1), new Vector2f(type.x, type.y + 1)
 
-		GL11.glVertex2f(posX, posZ);
+		};
+		float carX = (x * 1f);
+		float carY = (y * 1f);
+		float isoX = carX;// - carY;
+		float isoY = (carY);// + carX) / 2;
+		int i = 0;
+		for (Vector2f vec : vectors) {
+			Vector2f textureVec = textureVectors[i];
+			float height = heights[i];
+			vec.y -=height;
 
-		posX = (((x + 1) - y) * 32);
-		posY = ((0 - heights[1]) * 32);
-		posZ = (((y + (x + 1)) * 16) - posY);
-		GL11.glVertex2f(posX, posZ);
+			GL11.glTexCoord2f((textureVec.x * 32) / ResourceDatabase.texture.getImageWidth(),
+					(textureVec.y * 32) / ResourceDatabase.texture.getImageHeight());
+			System.out.println("Vec: " + vec);
+			GL11.glVertex2f((vec.x * 64) + isoX, (vec.y * 64) + isoY);
+			i++;
+		}
 
-		posX = (((x + 1) - (y + 1)) * 32);
-		posY = ((0 - heights[2]) * 32);
-		posZ = ((((y + 1) + (x + 1)) * 16) - posY);
-		GL11.glVertex2f(posX, posZ);
-
-		posX = ((x - (y + 1)) * 32);
-		posY = ((0 - heights[3]) * 32);
-		posZ = ((((y + 1) + x) * 16) - posY);
-		GL11.glVertex2f(posX, posZ);
-
-		/*
-		 * GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float)
-		 * ResourceDatabase.texture.getImageWidth(), (float) sprite.texture.ypoints[i] /
-		 * (float) ResourceDatabase.texture.getImageHeight());
-		 */
-		// }
-		/*
-		 * Sprite sprite = ResourceDatabase.sprites.get(name); if (sprite != null) { for
-		 * (int i = 0; i < sprite.shape.npoints; i++) { GL11.glTexCoord2f((float)
-		 * sprite.texture.xpoints[i] / (float) ResourceDatabase.texture.getImageWidth(),
-		 * (float) sprite.texture.ypoints[i] / (float)
-		 * ResourceDatabase.texture.getImageHeight()); GL11.glVertex2i(x +
-		 * sprite.shape.xpoints[i] + sprite.offset.x, y + sprite.shape.ypoints[i] +
-		 * sprite.offset.y); } }
-		 */
 	}
 
 	public static void renderQuad(Rectangle bound, Color color) {

@@ -52,7 +52,6 @@ public class FPS {
 	}
 
 	public static int getFPS() {
-		// TODO Auto-generated method stub
 		return fps;
 	}
 }

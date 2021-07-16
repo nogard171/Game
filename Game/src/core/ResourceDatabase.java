@@ -5,6 +5,7 @@ import java.awt.Polygon;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -12,6 +13,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class ResourceDatabase {
 	public static Texture texture;
+	public static Vector2f textureSize;
 
 	public static HashMap<String, Sprite> sprites = new HashMap<String, Sprite>();
 	public static HashMap<Integer, TrueTypeFont> fonts = new HashMap<Integer, TrueTypeFont>();
@@ -20,6 +22,7 @@ public class ResourceDatabase {
 		try {
 			texture = TextureLoader.getTexture("PNG",
 					ResourceLoader.getResourceAsStream("assets/textures/tileset.png"));
+			textureSize = new Vector2f(texture.getImageHeight() / 32, texture.getImageHeight() / 32);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

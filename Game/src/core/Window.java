@@ -9,6 +9,7 @@ public class Window {
 
 	public static int width = 800;
 	public static int height = 600;
+	public static boolean wasResized = false;
 
 	public static void start() {
 		try {
@@ -25,8 +26,6 @@ public class Window {
 	public static boolean close() {
 		return Display.isCloseRequested();
 	}
-
-	public static boolean wasResized = false;
 
 	public static void resize() {
 		if (Display.wasResized()) {
@@ -56,7 +55,7 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		// Display.sync(999);
+		Display.sync(999);
 	}
 
 	public static void render() {

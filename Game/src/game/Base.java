@@ -11,6 +11,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
+import core.Chunk;
+import core.ChunkManager;
 import core.Input;
 import core.Renderer;
 import core.ResourceDatabase;
@@ -34,6 +36,8 @@ public class Base {
 
 	}
 
+	ChunkManager chunkMgr;
+
 	public void setup() {
 
 		Window.start();
@@ -41,10 +45,14 @@ public class Base {
 
 		view = new View(0, 0, Window.width, Window.height);
 
+		FPS.setup();
+
 		ResourceDatabase.load();
 
 		TextureType type = TextureType.GRASS;
 		System.out.println("Type: " + type.toString());
+		chunkMgr = new ChunkManager();
+		chunkMgr.setup();
 	}
 
 	public void update() {
@@ -61,7 +69,22 @@ public class Base {
 		}
 
 		FPS.updateFPS();
+		int forceX = 0;
+		int forceY = 0;
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			forceY = -1;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			forceY = 1;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			forceX = -1;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			forceX = 1;
+		}
+		view.move(forceX, forceY);
 	}
 
 	public static View view;
@@ -70,19 +93,12 @@ public class Base {
 		Window.render();
 		Input.poll();
 
-		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, ResourceDatabase.texture.getTextureID());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, ResourceDatabase.texture.getTextureID());
+		
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
-
+		chunkMgr.render();
 		GL11.glPopMatrix();
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		int[] heights = { 0, 0, 0, 0 };
-		GL11.glColor3f(1, 0, 0);
-		GL11.glBegin(GL11.GL_QUADS);
-
-		Renderer.renderSprite("test",5,5, heights);
-
-		GL11.glEnd();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
