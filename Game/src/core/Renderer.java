@@ -32,24 +32,26 @@ public class Renderer {
 
 	public static void renderSprite(String name, int x, int y, int[] heights) {
 		// if (heights.length == 4) {
-		int carX = x * 32;
-		int carY = y * 32;
-		int isoX = carX - carY;
-		int isoY = (carY + carX) / 2;
+		int posX = ((x - y) * 32);
+		int posY = ((0 - heights[0]) * 32);
+		int posZ = (((y + x) * 16) - posY);
 
-		GL11.glVertex2f(isoX, isoY);
+		GL11.glVertex2f(posX, posZ);
 
-		carX = (x + 1) * 32;
-		isoX = carX - carY;
-		GL11.glVertex2f(isoX, isoY);
+		posX = (((x + 1) - y) * 32);
+		posY = ((0 - heights[1]) * 32);
+		posZ = (((y + (x + 1)) * 16) - posY);
+		GL11.glVertex2f(posX, posZ);
 
-		carY = (y + 1) * 32;
-		isoY = (carY + carX) / 2;
-		GL11.glVertex2f(isoX, isoY);
+		posX = (((x + 1) - (y + 1)) * 32);
+		posY = ((0 - heights[2]) * 32);
+		posZ = ((((y + 1) + (x + 1)) * 16) - posY);
+		GL11.glVertex2f(posX, posZ);
 
-		carX = x * 32;
-		isoX = carX - carY;
-		GL11.glVertex2f(isoX, isoY);
+		posX = ((x - (y + 1)) * 32);
+		posY = ((0 - heights[3]) * 32);
+		posZ = ((((y + 1) + x) * 16) - posY);
+		GL11.glVertex2f(posX, posZ);
 
 		/*
 		 * GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float)

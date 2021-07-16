@@ -80,7 +80,7 @@ public class Base {
 		GL11.glColor3f(1, 0, 0);
 		GL11.glBegin(GL11.GL_QUADS);
 
-		Renderer.renderSprite("test", 0,0, heights);
+		Renderer.renderSprite("test",5,5, heights);
 
 		GL11.glEnd();
 
