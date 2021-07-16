@@ -9,5 +9,5 @@ public class Sprite {
 
 	public Polygon shape;
 	public Polygon texture;
-	public Point offset = new Point(0,0);
+	public Point offset = new Point(0, 0);
 }

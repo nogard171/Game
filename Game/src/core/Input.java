@@ -24,6 +24,10 @@ public class Input {
 	}
 
 	public static void poll() {
+
+		if (buttons == null) {
+			setup();
+		}
 		for (int b = 0; b < buttons.length; b++) {
 			buttonCount[b] = (buttonDown[b] == true ? 1 : 0);
 			buttonDown[b] = Mouse.isButtonDown(buttons[b]);
@@ -40,6 +44,6 @@ public class Input {
 	}
 
 	public static Point getMousePoint() {
-		return new Point(Mouse.getX(), Window.height-Mouse.getY());
+		return new Point(Mouse.getX(), Window.height - Mouse.getY());
 	}
 }

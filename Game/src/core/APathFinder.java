@@ -27,7 +27,7 @@ public class APathFinder {
 		parentList.clear();
 		return path;
 	}
-
+/*
 	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
 		parentList.clear();
 
@@ -74,5 +74,5 @@ public class APathFinder {
 			}
 		}
 		return null;
-	}
+	}*/
 }
