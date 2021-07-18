@@ -2,7 +2,9 @@ package core;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -12,6 +14,7 @@ public class Chunk {
 
 	int id = -1;
 	Point index;
+	Rectangle bounds;
 
 	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
 	Dimension size = new Dimension(16, 16);
@@ -26,13 +29,20 @@ public class Chunk {
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
 
-				float chunkPosX = ((index.x - index.y) * 32) * size.width;
-				float chunkPosY = ((index.y + index.x) * 16) * size.height;
+				float chunkPosX = (((index.x - index.y) * 32) * size.width);
+				float chunkPosY = (((index.y + index.x) * 16) * size.height);
 
 				float posX = chunkPosX + ((x - y) * 32);
 				float posY = chunkPosY + ((y + x) * 16);
 
 				Tile tile = new Tile(TextureType.GRASS);
+
+				Random r = new Random();
+				float t = r.nextFloat();
+				if (t < 0.5f) {
+					tile.setType(TextureType.GRASS0);
+				}
+
 				tile.setPosition(new Vector2f(posX, posY));
 				float height = heightMap[x][y];
 				float height1 = (x + 1 < size.width ? heightMap[x + 1][y] : height);
@@ -64,7 +74,7 @@ public class Chunk {
 				Tile tile = tiles.get(new Point(x, y));
 				if (tile != null) {
 
-					Renderer.renderSprite(TextureType.GRASS, (int)tile.getPosition().x, (int)tile.getPosition().y,
+					Renderer.renderSprite(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y,
 							tile.getHeights(), tile.getColors());
 				}
 			}

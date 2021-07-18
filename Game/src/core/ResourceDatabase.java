@@ -3,6 +3,7 @@ package core;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -20,8 +21,10 @@ public class ResourceDatabase {
 
 	public static void load() {
 		try {
+			InputStream input  =ResourceLoader.getResourceAsStream("assets/textures/tileset.png");
 			texture = TextureLoader.getTexture("PNG",
-					ResourceLoader.getResourceAsStream("assets/textures/tileset.png"));
+					input);
+			input.close();
 			textureSize = new Vector2f(texture.getImageHeight() / 32, texture.getImageHeight() / 32);
 		} catch (IOException e) {
 			e.printStackTrace();

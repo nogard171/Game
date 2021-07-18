@@ -1,7 +1,7 @@
 package core;
 
 public enum TextureType {
-	AIR(0, 0), GRASS(1, 0);
+	AIR(0, 0), GRASS(1, 0), GRASS0(1, 1);
 
 	int x;
 	int y;

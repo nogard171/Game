@@ -10,7 +10,7 @@ public class Generator {
 
 		for (int x = 0; x < width ; x++) {
 			for (int y = 0; y < height ; y++) {
-				map[x][y] =  r.nextFloat();
+				map[x][y] = 0;// r.nextFloat();
 
 				if (x == 2 && y == 7) {
 					// map[x][y] = 0.5f;

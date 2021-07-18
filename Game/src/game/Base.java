@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
@@ -36,6 +38,18 @@ public class Base {
 
 	}
 
+	private void pollHover() {
+		int cartX = (Input.getMousePoint().x) + view.x;
+		int cartY = (Input.getMousePoint().y) + view.y;
+		int isoX = (cartX / 2 + (cartY));
+		int isoY = (cartY - cartX / 2);
+
+		int indexX = (int) Math.floor((float) isoX / (float) 32);
+		int indexY = (int) Math.floor((float) isoY / (float) 32);
+
+		test = new Vector2f(indexX, indexY);
+	}
+
 	ChunkManager chunkMgr;
 
 	public void setup() {
@@ -57,7 +71,7 @@ public class Base {
 
 	public void update() {
 		Window.update();
-
+		pollHover();
 		if (Window.close()) {
 			this.isRunning = false;
 		}
@@ -87,6 +101,7 @@ public class Base {
 		view.move(forceX, forceY);
 	}
 
+	Vector2f test;
 	public static View view;
 
 	public void render() {
@@ -94,14 +109,22 @@ public class Base {
 		Input.poll();
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, ResourceDatabase.texture.getTextureID());
-		
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
 		chunkMgr.render();
+		Renderer.renderGrid(test.x, test.y);
 		GL11.glPopMatrix();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 16), "Hover: " + test, 12, Color.white);
 
 	}
 

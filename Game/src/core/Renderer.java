@@ -31,27 +31,21 @@ public class Renderer {
 	}
 
 	public static void renderSprite(TextureType type, int x, int y, float[] heights, Color[] colors) {
-		Vector2f[] vectors = { new Vector2f(0.5f, 0), new Vector2f(1f, 0.25f), new Vector2f(0.5f, 0.5f),
-				new Vector2f(0f, 0.25f) };
-		// Vector2f textureVec = new Vector2f(type.x, type.y);
+		Point[] vectors = { new Point(0, 0), new Point(32, 16), new Point(0, 32), new Point(-32, 16) };
 		Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + 1, type.y),
 				new Vector2f(type.x + 1, type.y + 1), new Vector2f(type.x, type.y + 1)
 
 		};
-		float carX = (x * 1f);
-		float carY = (y * 1f);
-		float isoX = carX;// - carY;
-		float isoY = (carY);// + carX) / 2;
 		int i = 0;
-		for (Vector2f vec : vectors) {
+		for (Point vec : vectors) {
 			Vector2f textureVec = textureVectors[i];
 			float height = heights[i];
-			vec.y -=height;
+			//vec.y -= height;
 
 			GL11.glTexCoord2f((textureVec.x * 32) / ResourceDatabase.texture.getImageWidth(),
 					(textureVec.y * 32) / ResourceDatabase.texture.getImageHeight());
 			System.out.println("Vec: " + vec);
-			GL11.glVertex2f((vec.x * 64) + isoX, (vec.y * 64) + isoY);
+			GL11.glVertex2i((vec.x) + x, (vec.y) + y);
 			i++;
 		}
 
@@ -91,5 +85,35 @@ public class Renderer {
 			TextureImpl.bindNone();
 			font.drawString(x, y, text, color);
 		}
+	}
+
+	public static void renderGrid(float x, float y) {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+		GL11.glColor4f(0,0,0,0.5f);
+
+		GL11.glBegin(GL11.GL_QUADS);
+		float cartX = x * 32;
+		float cartZ = y * 32;
+
+		float isoX = cartX - cartZ;
+		float isoZ = (cartX + cartZ) / 2;
+
+		GL11.glVertex2f(isoX, isoZ);
+		isoX = (cartX + 32) - cartZ;
+		isoZ = ((cartX + 32) + cartZ) / 2;
+		GL11.glVertex2f(isoX, isoZ);
+
+		isoX = (cartX + 32) - (cartZ + 32);
+		isoZ = ((cartX + 32) + (cartZ + 32)) / 2;
+		GL11.glVertex2f(isoX, isoZ);
+
+		isoX = (cartX) - (cartZ + 32);
+		isoZ = ((cartX) + (cartZ + 32)) / 2;
+		GL11.glVertex2f(isoX, isoZ);
+		
+		GL11.glEnd();
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 }
