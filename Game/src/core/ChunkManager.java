@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 public class ChunkManager {
-	HashMap<Point, Chunk> chunks = new HashMap<Point, Chunk>();
+	public static HashMap<Point, Chunk> chunks = new HashMap<Point, Chunk>();
 
 	public void setup() {
 		for (int x = 0; x < 1; x++) {

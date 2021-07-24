@@ -3,12 +3,10 @@ package core;
 public class ANode {
 	public int x = 0;
 	public int y = 0;
-	public int z = 0;
 
-	public ANode(int newX, int newY, int newZ) {
+	public ANode(int newX, int newY) {
 		x = newX;
 		y = newY;
-		z = newZ;
 	}
 
 	@Override
@@ -17,7 +15,6 @@ public class ANode {
 		int result = 1;
 		result = prime * result + (int) x;
 		result = prime * result + (int) y;
-		result = prime * result + (int) z;
 		return result;
 	}
 
@@ -36,7 +33,7 @@ public class ANode {
 			return false;
 		}
 		ANode other = (ANode) obj;
-		if (x == other.x && y == other.y && z == other.z)
+		if (x == other.x && y == other.y)
 		{
 			return true;
 		}
@@ -45,6 +42,6 @@ public class ANode {
 
 	@Override
 	public String toString() {
-		return "ANode(" + x + "," + y + "," + z + ")";
+		return "ANode(" + x + "," + y + ")";
 	}
 }

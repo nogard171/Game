@@ -67,6 +67,7 @@ public class Base {
 		System.out.println("Type: " + type.toString());
 		chunkMgr = new ChunkManager();
 		chunkMgr.setup();
+
 	}
 
 	public void update() {

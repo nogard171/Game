@@ -17,10 +17,19 @@ public class Chunk {
 	Rectangle bounds;
 
 	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
-	Dimension size = new Dimension(16, 16);
+	HashMap<Point, Object> objects = new HashMap<Point, Object>();
+	public static Dimension size = new Dimension(16, 16);
 
 	public Chunk(int x, int y) {
 		index = new Point(x, y);
+	}
+
+	public Tile getTile(Point index) {
+		return tiles.get(index);
+	}
+
+	public Object getObject(Point index) {
+		return objects.get(index);
 	}
 
 	public void setup() {
@@ -32,7 +41,7 @@ public class Chunk {
 				float chunkPosX = (((index.x - index.y) * 32) * size.width);
 				float chunkPosY = (((index.y + index.x) * 16) * size.height);
 
-				float posX = chunkPosX + ((x - y) * 32);
+				float posX = chunkPosX + ((x - y) * 32) - 32;
 				float posY = chunkPosY + ((y + x) * 16);
 
 				Tile tile = new Tile(TextureType.GRASS);
@@ -44,22 +53,14 @@ public class Chunk {
 				}
 
 				tile.setPosition(new Vector2f(posX, posY));
-				float height = heightMap[x][y];
-				float height1 = (x + 1 < size.width ? heightMap[x + 1][y] : height);
-				float height2 = (x + 1 < size.width && y + 1 < size.height ? heightMap[x + 1][y + 1] : height);
-				float height3 = (y + 1 < size.height ? heightMap[x][y + 1] : height);
-
-				float[] heights = { height, height1, height2, height3 };
-				tile.setHeights(heights);
-
-				Color c = new Color(255, 255, 255);
-				Color c1 = new Color(255, 255, 255);
-				Color c2 = new Color(255, 255, 255);
-				Color c3 = new Color(255, 255, 255);
-
-				Color[] colors = { c, c1, c2, c3 };
-				tile.setColors(colors);
 				tiles.put(new Point(x, y), tile);
+
+				if (x == 5 && y == 5) {
+					Object test = new Object(TextureType.TREE);
+
+					test.setPosition(new Vector2f(posX, posY));
+					objects.put(new Point(x, y), test);
+				}
 			}
 		}
 	}
@@ -74,8 +75,13 @@ public class Chunk {
 				Tile tile = tiles.get(new Point(x, y));
 				if (tile != null) {
 
-					Renderer.renderSprite(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y,
-							tile.getHeights(), tile.getColors());
+					Renderer.renderSprite(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
+				}
+
+				Object obj = objects.get(new Point(x, y));
+				if (obj != null) {
+					System.out.println("index: " + x + "," + y);
+					Renderer.renderSprite(obj.getType(), (int) obj.getPosition().x, (int) obj.getPosition().y);
 				}
 			}
 		}

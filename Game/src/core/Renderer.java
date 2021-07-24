@@ -18,37 +18,23 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Renderer {
 
-	public static void renderSprite(String name, int x, int y) {
-		Sprite sprite = ResourceDatabase.sprites.get(name);
-		if (sprite != null) {
-			for (int i = 0; i < sprite.shape.npoints; i++) {
-				GL11.glTexCoord2f((float) sprite.texture.xpoints[i] / (float) ResourceDatabase.texture.getImageWidth(),
-						(float) sprite.texture.ypoints[i] / (float) ResourceDatabase.texture.getImageHeight());
-				GL11.glVertex2i(x + sprite.shape.xpoints[i] + sprite.offset.x,
-						y + sprite.shape.ypoints[i] + sprite.offset.y);
-			}
-		}
-	}
-
-	public static void renderSprite(TextureType type, int x, int y, float[] heights, Color[] colors) {
-		Point[] vectors = { new Point(0, 0), new Point(32, 16), new Point(0, 32), new Point(-32, 16) };
-		Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + 1, type.y),
-				new Vector2f(type.x + 1, type.y + 1), new Vector2f(type.x, type.y + 1)
+	public static void renderSprite(TextureType type, int x, int y) {
+		Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(64 * type.w, 0), new Vector2f(64 * type.w, 64 * type.h),
+				new Vector2f(0, 64 * type.h) };
+		Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
+				new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
 
 		};
+		System.out.println("Vec: " + (64 * type.h));
 		int i = 0;
-		for (Point vec : vectors) {
+		for (Vector2f vec : vectors) {
 			Vector2f textureVec = textureVectors[i];
-			float height = heights[i];
-			//vec.y -= height;
-
-			GL11.glTexCoord2f((textureVec.x * 32) / ResourceDatabase.texture.getImageWidth(),
-					(textureVec.y * 32) / ResourceDatabase.texture.getImageHeight());
-			System.out.println("Vec: " + vec);
-			GL11.glVertex2i((vec.x) + x, (vec.y) + y);
+			GL11.glTexCoord2f((textureVec.x * 64) / ResourceDatabase.texture.getImageWidth(),
+					(textureVec.y * 64) / ResourceDatabase.texture.getImageHeight());
+			System.out.println("Vec: " + textureVec);
+			GL11.glVertex2f(((vec.x) + x) + (64 * type.xOffset), ((vec.y) + y) + (64 * type.yOffset));
 			i++;
 		}
-
 	}
 
 	public static void renderQuad(Rectangle bound, Color color) {
@@ -90,7 +76,7 @@ public class Renderer {
 	public static void renderGrid(float x, float y) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		GL11.glColor4f(0,0,0,0.5f);
+		GL11.glColor4f(0, 0, 0, 0.5f);
 
 		GL11.glBegin(GL11.GL_QUADS);
 		float cartX = x * 32;
@@ -111,7 +97,7 @@ public class Renderer {
 		isoX = (cartX) - (cartZ + 32);
 		isoZ = ((cartX) + (cartZ + 32)) / 2;
 		GL11.glVertex2f(isoX, isoZ);
-		
+
 		GL11.glEnd();
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
