@@ -52,20 +52,16 @@ public class APathFinder {
 				int chunkY = (int) (neighborIndex.y / Chunk.size.height);
 				Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
 				if (chunk != null) {
-
 					int objX = (int) (neighborIndex.x % 16);
 					int objY = (int) (neighborIndex.y % 16);
-					Tile data = chunk.getTile(new Point(objX, objY));
-
+					Tile data = chunk.getObjectAtIndex(new Point(objX, objY));
+					 System.out.println("Searching..."+objX+","+ objY);
+					 System.out.println("Current: " + data);
 					if (data != null) {
-						if (data.getType().name() != "water") {
-							Object objData = chunk.getObject(new Point(objX, objY));
-							if (objData != null) {
-								if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
-									System.out.println("Current: " + current);
-									parentList.put(neighborIndex, current);
-									openList.add(neighborIndex);
-								}
+						if (data.getType() == TextureType.AIR) {
+							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
+								parentList.put(neighborIndex, current);
+								openList.add(neighborIndex);
 							}
 						}
 					}

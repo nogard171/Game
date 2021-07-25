@@ -19,21 +19,21 @@ import org.newdawn.slick.util.ResourceLoader;
 public class Renderer {
 
 	public static void renderSprite(TextureType type, int x, int y) {
-		Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(64 * type.w, 0), new Vector2f(64 * type.w, 64 * type.h),
-				new Vector2f(0, 64 * type.h) };
-		Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
-				new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
+		if (type != TextureType.AIR) {
+			Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(64 * type.w, 0),
+					new Vector2f(64 * type.w, 64 * type.h), new Vector2f(0, 64 * type.h) };
+			Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
+					new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
 
-		};
-		System.out.println("Vec: " + (64 * type.h));
-		int i = 0;
-		for (Vector2f vec : vectors) {
-			Vector2f textureVec = textureVectors[i];
-			GL11.glTexCoord2f((textureVec.x * 64) / ResourceDatabase.texture.getImageWidth(),
-					(textureVec.y * 64) / ResourceDatabase.texture.getImageHeight());
-			System.out.println("Vec: " + textureVec);
-			GL11.glVertex2f(((vec.x) + x) + (64 * type.xOffset), ((vec.y) + y) + (64 * type.yOffset));
-			i++;
+			};
+			int i = 0;
+			for (Vector2f vec : vectors) {
+				Vector2f textureVec = textureVectors[i];
+				GL11.glTexCoord2f((textureVec.x * 64) / ResourceDatabase.texture.getImageWidth(),
+						(textureVec.y * 64) / ResourceDatabase.texture.getImageHeight());
+				GL11.glVertex2f(((vec.x) + x) + (64 * type.xOffset), ((vec.y) + y) + (64 * type.yOffset));
+				i++;
+			}
 		}
 	}
 

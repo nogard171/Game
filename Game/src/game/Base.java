@@ -3,6 +3,7 @@ package game;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -13,6 +14,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
+import core.ANode;
+import core.APathFinder;
 import core.Chunk;
 import core.ChunkManager;
 import core.Input;
@@ -47,7 +50,7 @@ public class Base {
 		int indexX = (int) Math.floor((float) isoX / (float) 32);
 		int indexY = (int) Math.floor((float) isoY / (float) 32);
 
-		test = new Vector2f(indexX, indexY);
+		test = new Point(indexX, indexY);
 	}
 
 	ChunkManager chunkMgr;
@@ -56,6 +59,8 @@ public class Base {
 
 		Window.start();
 		Window.setup();
+
+		Input.setup();
 
 		view = new View(0, 0, Window.width, Window.height);
 
@@ -83,6 +88,7 @@ public class Base {
 			Window.wasResized = false;
 		}
 
+		playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 		FPS.updateFPS();
 		int forceX = 0;
 		int forceY = 0;
@@ -99,10 +105,39 @@ public class Base {
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			forceX = 1;
 		}
+		if (Input.isMousePressed(0)) {
+			ChunkManager.removeType(TextureType.PATH_DURING);
+			ChunkManager.removeType(TextureType.PATH_FINISH);
+			LinkedList<ANode> path = APathFinder.find(new ANode(playerIndex), new ANode(test));
+
+			System.out.println("Path: " + path);
+			if (path != null) {
+				System.out.println("Path Size: " + path.size());
+
+				if (path.size() > 0) {
+					for (int i = 0; i < path.size() - 1; i++) {
+						ANode node = path.get(i);
+						if (node != null) {
+							ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+						}
+					}
+					ANode node = path.get(path.size() - 1);
+					ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+				}
+				// ChunkManager.move(playerIndex, test);
+			}
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_F1)) {
+			ResourceDatabase.load();
+		}
+		// view.x = x;
+		// view.y = y;
 		view.move(forceX, forceY);
+		// System.out.println("NEW Index: " + playerIndex);
 	}
 
-	Vector2f test;
+	Point playerIndex;
+	Point test;
 	public static View view;
 
 	public void render() {
@@ -125,7 +160,17 @@ public class Base {
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 16), "Hover: " + test, 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 16), "Player Index: " + playerIndex, 12, Color.white);
+
+		float posX = (((test.x - test.y) * 32) - 32);
+		float posY = ((test.y + test.x) * 16);
+		Renderer.renderText(new Vector2f(0, 32), "Hover: " + test, 12, Color.white);
+
+		TextureType type = ChunkManager.getTypeByIndexWithTiles(test);
+
+		if (type != null) {
+			Renderer.renderText(new Vector2f(0, 48), "Hover Type: " + type.toString(), 12, Color.white);
+		}
 
 	}
 
