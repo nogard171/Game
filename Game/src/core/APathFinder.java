@@ -55,10 +55,11 @@ public class APathFinder {
 					int objX = (int) (neighborIndex.x % 16);
 					int objY = (int) (neighborIndex.y % 16);
 					Tile data = chunk.getObjectAtIndex(new Point(objX, objY));
-					 System.out.println("Searching..."+objX+","+ objY);
-					 System.out.println("Current: " + data);
+					// System.out.println("Searching..."+objX+","+ objY);
+					// System.out.println("Current: " + data);
 					if (data != null) {
-						if (data.getType() == TextureType.AIR) {
+						if (data.getType() == TextureType.AIR || data.getType() == TextureType.PATH_DURING
+								|| data.getType() == TextureType.PATH_FINISH) {
 							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
 								parentList.put(neighborIndex, current);
 								openList.add(neighborIndex);

@@ -133,7 +133,6 @@ public class Chunk {
 	}
 
 	public void build() {
-		System.out.println("Build..." + index);
 		id = GL11.glGenLists(1);
 		GL11.glNewList(id, GL11.GL_COMPILE);
 
@@ -228,7 +227,6 @@ public class Chunk {
 				}
 				tile = (Tile) objects.get(index);
 				if (tile != null) {
-					System.out.println("Check:" + (tile.getType() == type));
 					if (tile.getType() == type) {
 						objects.put(index, new Object(TextureType.AIR));
 						rebuild = true;

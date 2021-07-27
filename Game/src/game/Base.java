@@ -21,19 +21,31 @@ import core.ChunkManager;
 import core.Input;
 import core.Renderer;
 import core.ResourceDatabase;
+import core.TaskType;
 import core.TextureType;
 import core.View;
 import core.Window;
+import core.Task;
 import utils.FPS;
+import utils.Ticker;
 
 public class Base {
 
 	boolean isRunning = true;
 
+	Point playerIndex;
+	Point test;
+	public static View view;
+
+	ChunkManager chunkMgr;
+
+	TaskManager taskMgr;
+
 	public void start() {
 		this.setup();
 
 		while (this.isRunning) {
+			Ticker.poll();
 			this.update();
 			this.render();
 		}
@@ -53,8 +65,6 @@ public class Base {
 		test = new Point(indexX, indexY);
 	}
 
-	ChunkManager chunkMgr;
-
 	public void setup() {
 
 		Window.start();
@@ -68,6 +78,9 @@ public class Base {
 
 		ResourceDatabase.load();
 
+		taskMgr = new TaskManager();
+		taskMgr.setup();
+
 		TextureType type = TextureType.GRASS;
 		System.out.println("Type: " + type.toString());
 		chunkMgr = new ChunkManager();
@@ -78,6 +91,9 @@ public class Base {
 	public void update() {
 		Window.update();
 		pollHover();
+		taskMgr.update();
+		chunkMgr.update();
+		
 		if (Window.close()) {
 			this.isRunning = false;
 		}
@@ -88,7 +104,7 @@ public class Base {
 			Window.wasResized = false;
 		}
 
-		playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+		playerIndex = TaskManager.getCurrentTaskEnd();//
 		FPS.updateFPS();
 		int forceX = 0;
 		int forceY = 0;
@@ -106,8 +122,8 @@ public class Base {
 			forceX = 1;
 		}
 		if (Input.isMousePressed(0)) {
-			ChunkManager.removeType(TextureType.PATH_DURING);
-			ChunkManager.removeType(TextureType.PATH_FINISH);
+			//ChunkManager.removeType(TextureType.PATH_DURING);
+			//ChunkManager.removeType(TextureType.PATH_FINISH);
 			LinkedList<ANode> path = APathFinder.find(new ANode(playerIndex), new ANode(test));
 
 			System.out.println("Path: " + path);
@@ -123,6 +139,8 @@ public class Base {
 					}
 					ANode node = path.get(path.size() - 1);
 					ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+					Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+					TaskManager.addTask(move);
 				}
 				// ChunkManager.move(playerIndex, test);
 			}
@@ -135,10 +153,6 @@ public class Base {
 		view.move(forceX, forceY);
 		// System.out.println("NEW Index: " + playerIndex);
 	}
-
-	Point playerIndex;
-	Point test;
-	public static View view;
 
 	public void render() {
 		Window.render();
@@ -171,10 +185,13 @@ public class Base {
 		if (type != null) {
 			Renderer.renderText(new Vector2f(0, 48), "Hover Type: " + type.toString(), 12, Color.white);
 		}
-
+		Renderer.renderText(new Vector2f(0, 64), "Ticks: " + Ticker.getTicks(), 12, Color.white);
+		
+		Renderer.renderText(new Vector2f(0, 80), "Task Count: " + taskMgr.getTaskCount(), 12, Color.white);
 	}
 
 	public void destroy() {
 		Window.destroy();
 	}
 }
+

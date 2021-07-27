@@ -3,6 +3,7 @@ package core;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -82,7 +83,15 @@ public class ChunkManager {
 	}
 
 	public void update() {
-
+		if (chunksToBuild.size() > 0) {
+			Point index = chunksToBuild.removeFirst();
+			if (index != null) {
+				Chunk chunk = chunks.get(index);
+				if (chunk != null) {
+					chunk.build();
+				}
+			}
+		}
 	}
 
 	public void render() {
@@ -95,6 +104,8 @@ public class ChunkManager {
 			}
 		}
 	}
+
+	private static LinkedList<Point> chunksToBuild = new LinkedList<Point>();
 
 	public static void move(Point index, Point newIndex) {
 		if (index != null && newIndex != null) {
@@ -113,9 +124,11 @@ public class ChunkManager {
 						int newObjX = (int) (newIndex.x % 16);
 						int newObjY = (int) (newIndex.y % 16);
 						newChunk.entities.put(new Point(newObjX, newObjY), ent);
-						newChunk.build();
-					}
 
+						//chunksToBuild.add(new Point(newChunkX, newChunkY));
+						 newChunk.build();
+					}
+					//chunksToBuild.add(new Point(chunkX, chunkY));
 					chunk.build();
 				}
 			}
@@ -132,7 +145,8 @@ public class ChunkManager {
 				int objY = (int) (index.y % 16);
 				Object obj = chunk.objects.get(new Point(objX, objY));
 				if (obj != null) {
-					if (obj.getType() == TextureType.AIR) {
+					if (obj.getType() == TextureType.AIR || obj.getType() == TextureType.PATH_DURING
+							|| obj.getType() == TextureType.PATH_FINISH) {
 						chunk.objects.put(new Point(objX, objY), new Object(type));
 						chunk.build();
 					}
