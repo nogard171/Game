@@ -16,23 +16,75 @@ import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import ui.UITextureType;
+
 public class Renderer {
 
-	public static void renderSprite(TextureType type, int x, int y) {
-		if (type != TextureType.AIR) {
-			Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(64 * type.w, 0),
-					new Vector2f(64 * type.w, 64 * type.h), new Vector2f(0, 64 * type.h) };
-			Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
-					new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
+	private static Texture previousTexture;
+	private static Texture currentTexture;
 
-			};
-			int i = 0;
-			for (Vector2f vec : vectors) {
-				Vector2f textureVec = textureVectors[i];
-				GL11.glTexCoord2f((textureVec.x * 64) / ResourceDatabase.texture.getImageWidth(),
-						(textureVec.y * 64) / ResourceDatabase.texture.getImageHeight());
-				GL11.glVertex2f(((vec.x) + x) + (64 * type.xOffset), ((vec.y) + y) + (64 * type.yOffset));
-				i++;
+	public static void bindTexture(Texture newTexture) {
+		if (newTexture != null) {
+			if (currentTexture != previousTexture) {
+				previousTexture = currentTexture;
+			}
+			currentTexture = newTexture;
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture.getTextureID());
+			GL11.glColor3f(1, 1, 1);
+
+		}
+	}
+
+	public static void rebind() {
+		if (previousTexture != null) {
+			currentTexture = previousTexture;
+			previousTexture = null;
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture.getTextureID());
+		}
+	}
+
+	public static void renderTexture(TextureType type, int x, int y) {
+		renderTexture(type, x, y, 64, 64);
+	}
+
+	public static void renderTexture(TextureType type, int x, int y, int width, int height) {
+		if (currentTexture != null) {
+			if (type != TextureType.AIR) {
+				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.w, 0),
+						new Vector2f(width * type.w, height * type.h), new Vector2f(0, height * type.h) };
+				Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
+						new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
+
+				};
+				int i = 0;
+				for (Vector2f vec : vectors) {
+					Vector2f textureVec = textureVectors[i];
+					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
+							(textureVec.y * height) / currentTexture.getImageHeight());
+					GL11.glVertex2f(((vec.x) + x) + (width * type.xOffset), ((vec.y) + y) + (height * type.yOffset));
+					i++;
+				}
+			}
+		}
+	}
+
+	public static void renderUITexture(UITextureType type, int x, int y, int width, int height) {
+		if (currentTexture != null) {
+			if (type != UITextureType.BLANK) {
+				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.w, 0),
+						new Vector2f(width * type.w, height * type.h), new Vector2f(0, height * type.h) };
+				Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
+						new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
+
+				};
+				int i = 0;
+				for (Vector2f vec : vectors) {
+					Vector2f textureVec = textureVectors[i];
+					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
+							(textureVec.y * height) / currentTexture.getImageHeight());
+					GL11.glVertex2f(((vec.x) + x) + (width * type.xOffset), ((vec.y) + y) + (height * type.yOffset));
+					i++;
+				}
 			}
 		}
 	}
@@ -59,18 +111,40 @@ public class Renderer {
 		renderText(position.x, position.y, text, fontSize, color);
 	}
 
+	public static void renderText(Vector2f position, String text, int fontSize, Color color, int fontType) {
+		System.out.println("test: " + (fontSize + "," + fontType));
+		renderText(position.x, position.y, text, fontSize, color, fontType);
+	}
+
+	public static int renderTextWithWidth(Vector2f position, String text, int fontSize, Color color, int fontType) {
+		int fontWidth = 0;
+		System.out.println("test: " + (fontSize + "," + fontType));
+		fontWidth = renderText(position.x, position.y, text, fontSize, color, fontType);
+		return fontWidth;
+	}
+
 	public static void renderText(float x, float y, String text, int fontSize, Color color) {
 
-		TrueTypeFont font = ResourceDatabase.fonts.get(fontSize);
+		renderText(x, y, text, fontSize, color, Font.PLAIN);
+	}
 
+	public static int renderText(float x, float y, String text, int fontSize, Color color, int fontType) {
+		int fontWidth = 0;
+		String key = fontSize+","+ fontType;
+		TrueTypeFont font = ResourceDatabase.fonts.get(key);
+
+		
 		if (font == null) {
-			Font awtFont = new Font("Courier", Font.PLAIN, fontSize);
-			ResourceDatabase.fonts.put(fontSize, new TrueTypeFont(awtFont, false));
+			// Fixedsys
+			Font awtFont = new Font("Fixedsys", fontType, fontSize);
+			ResourceDatabase.fonts.put((fontSize + "," + fontType), new TrueTypeFont(awtFont, false));
 		}
 		if (font != null) {
 			TextureImpl.bindNone();
 			font.drawString(x, y, text, color);
+			fontWidth = font.getWidth(text);
 		}
+		return fontWidth;
 	}
 
 	public static void renderGrid(float x, float y) {

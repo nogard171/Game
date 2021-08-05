@@ -12,8 +12,10 @@ public class ANode {
 	}
 
 	public ANode(Point index) {
-		x = index.x;
-		y = index.y;
+		if (index != null) {
+			x = index.x;
+			y = index.y;
+		}
 	}
 
 	@Override

@@ -110,17 +110,17 @@ public class Chunk {
 
 				tiles.put(tileIndex, tile);
 
-				Object obj = new Object(TextureType.AIR);
-				obj.setPosition(position);
-				if (x == 5 && y == 5) {
-					obj.setType(TextureType.TREE);
-
+				Resource res = new Resource(TextureType.AIR);
+				res.setPosition(position);
+				t = r.nextFloat();
+				if (t < 0.1f) {
+					res.setType(TextureType.TREE, 10);
 				}
-				if (y == 2 && index.x == 1 && index.y == 1) {
-					obj.setType(TextureType.TREE);
-
+				t = r.nextFloat();
+				if (t < 0.1f) {
+					res.setType(TextureType.ROCK, 10);
 				}
-				objects.put(tileIndex, obj);
+				objects.put(tileIndex, res);
 				Entity ent = new Entity(TextureType.AIR);
 				ent.setPosition(position);
 				if (x == 12 && y == 7 && index.x == 1 && index.y == 0) {
@@ -129,13 +129,13 @@ public class Chunk {
 				entities.put(tileIndex, ent);
 			}
 		}
-		build();
+		// build();
 	}
 
 	public void build() {
 		id = GL11.glGenLists(1);
 		GL11.glNewList(id, GL11.GL_COMPILE);
-
+		Renderer.bindTexture(ResourceDatabase.texture);
 		GL11.glBegin(GL11.GL_QUADS);
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
@@ -146,19 +146,19 @@ public class Chunk {
 				Tile tile = tiles.get(tempIndex);
 				if (tile != null) {
 					tile.setPosition(position);
-					Renderer.renderSprite(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
+					Renderer.renderTexture(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
 				}
 
 				Object obj = objects.get(tempIndex);
 				if (obj != null) {
 					obj.setPosition(position);
-					Renderer.renderSprite(obj.getType(), (int) obj.getPosition().x, (int) obj.getPosition().y);
+					Renderer.renderTexture(obj.getType(), (int) obj.getPosition().x, (int) obj.getPosition().y);
 				}
 
 				Entity ent = entities.get(tempIndex);
 				if (ent != null) {
 					ent.setPosition(position);
-					Renderer.renderSprite(ent.getType(), (int) ent.getPosition().x, (int) ent.getPosition().y);
+					Renderer.renderTexture(ent.getType(), (int) ent.getPosition().x, (int) ent.getPosition().y);
 				}
 			}
 		}
@@ -192,6 +192,10 @@ public class Chunk {
 
 	public Tile getObjectAtIndex(Point point) {
 		return getObjectAtIndex(point, false, true);
+	}
+
+	public Tile getObjectAtIndex(Point point, boolean removeAIR) {
+		return getObjectAtIndex(point, removeAIR, false);
 	}
 
 	public Tile getObjectAtIndex(Point point, boolean removeAIR, boolean removeTiles) {

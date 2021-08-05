@@ -42,6 +42,27 @@ public class ChunkManager {
 		return index;
 	}
 
+	public static Point findIndexAroundIndex(Point index) {
+		Point newIndex = null;
+		if (index != null) {
+			System.out.println("check..." + index);
+			for (int x = -1; x < 2; x++) {
+				for (int y = -1; y < 2; y++) {
+					Point tempIndex = new Point(index.x + x, index.y + y);
+					TextureType type = getTypeByIndexWithTiles(tempIndex);
+					if (type != null) {
+						System.out.println("looking..." + tempIndex + "->" + type);
+						if (type == TextureType.AIR || type == TextureType.GRASS || type == TextureType.GRASS0) {
+							newIndex = tempIndex;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return newIndex;
+	}
+
 	public static TextureType getTypeByIndexWithTiles(Point index) {
 		TextureType type = null;
 		/*
@@ -50,19 +71,19 @@ public class ChunkManager {
 		 * chunk.getObjectAtIndex(index, true,false); if (tile != null) { type =
 		 * tile.getType(); } } } }
 		 */
-
-		int chunkX = (int) (index.x / Chunk.size.width);
-		int chunkY = (int) (index.y / Chunk.size.height);
-		Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
-		if (chunk != null) {
-			int objX = (int) (index.x % 16);
-			int objY = (int) (index.y % 16);
-			Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true, false);
-			if (tile != null) {
-				type = tile.getType();
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true, false);
+				if (tile != null) {
+					type = tile.getType();
+				}
 			}
 		}
-
 		return type;
 	}
 
@@ -125,10 +146,10 @@ public class ChunkManager {
 						int newObjY = (int) (newIndex.y % 16);
 						newChunk.entities.put(new Point(newObjX, newObjY), ent);
 
-						//chunksToBuild.add(new Point(newChunkX, newChunkY));
-						 newChunk.build();
+						// chunksToBuild.add(new Point(newChunkX, newChunkY));
+						newChunk.build();
 					}
-					//chunksToBuild.add(new Point(chunkX, chunkY));
+					// chunksToBuild.add(new Point(chunkX, chunkY));
 					chunk.build();
 				}
 			}
@@ -145,11 +166,9 @@ public class ChunkManager {
 				int objY = (int) (index.y % 16);
 				Object obj = chunk.objects.get(new Point(objX, objY));
 				if (obj != null) {
-					if (obj.getType() == TextureType.AIR || obj.getType() == TextureType.PATH_DURING
-							|| obj.getType() == TextureType.PATH_FINISH) {
-						chunk.objects.put(new Point(objX, objY), new Object(type));
-						chunk.build();
-					}
+					chunk.objects.put(new Point(objX, objY), new Object(type));
+					chunk.build();
+
 				}
 			}
 		}
@@ -164,5 +183,45 @@ public class ChunkManager {
 				}
 			}
 		}
+	}
+
+	public static boolean isResource(Point index) {
+		boolean isRes = false;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true);
+				if (tile != null) {
+					isRes = (tile instanceof Resource);
+				}
+			}
+		}
+
+		return isRes;
+	}
+
+	public static Resource getResource(Point index) {
+		Resource res = null;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true);
+				if (tile != null) {
+					if (tile instanceof Resource) {
+						res = (Resource) tile;
+					}
+				}
+			}
+		}
+
+		return res;
 	}
 }

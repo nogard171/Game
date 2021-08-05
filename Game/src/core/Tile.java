@@ -28,4 +28,20 @@ public class Tile {
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}
+
+	public String toHoverString() {
+		String str = "";
+		switch (type) {
+		case TREE:
+			str = "Chop !%0,255,0%Tree";
+			break;
+		case ROCK:
+			str = "Mine !%128,128,128%Rock%255,0,0%(Lvl1)";
+			break;
+		case BUSH:
+			str = "Search !%0,224,0%Bush";
+			break;
+		}
+		return str;
+	}
 }

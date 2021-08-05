@@ -1,5 +1,5 @@
 package core;
 
 public enum TaskType {
-	NONE, WALK;
+	NONE, WALK,RESOURCE;
 }

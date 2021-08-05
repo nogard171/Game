@@ -8,12 +8,21 @@ public class Task {
 	private LinkedList<ANode> path;
 	private int ticks;
 	private boolean setup = false;
+	private LinkedList<Task> followUpTasks = new LinkedList<Task>();
+
+	public Task(TaskType newType, ANode current, LinkedList<ANode> newPath) {
+		this(newType, current, newPath, 1000);
+	}
 
 	public Task(TaskType newType, ANode current, LinkedList<ANode> newPath, int newTicks) {
 		type = newType;
 		currentNode = current;
 		path = newPath;
 		ticks = newTicks;
+	}
+
+	public void addFollowUp(Task followUpTask) {
+		followUpTasks.add(followUpTask);
 	}
 
 	public TaskType getType() {
@@ -38,5 +47,9 @@ public class Task {
 
 	public void setup() {
 		setup = true;
+	}
+
+	public Task getFirstFollowUpTask() {
+		return (followUpTasks != null ? (followUpTasks.size() > 0 ? followUpTasks.getFirst() : null) : null);
 	}
 }

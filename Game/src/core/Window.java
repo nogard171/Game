@@ -1,6 +1,11 @@
 package core;
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -18,6 +23,9 @@ public class Window {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setResizable(true);
 			Display.create();
+			
+//			Mouse.setGrabbed(true);
+			hideCursor();
 
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -70,4 +78,14 @@ public class Window {
 		Display.destroy();
 	}
 
+	private static void hideCursor() {
+	    Cursor emptyCursor;
+	    int min = org.lwjgl.input.Cursor.getMinCursorSize();
+	    IntBuffer tmp = BufferUtils.createIntBuffer(min * min);
+	    try {
+	        emptyCursor = new org.lwjgl.input.Cursor(min, min, min / 2, min / 2, 1, tmp, null);
+	        Mouse.setNativeCursor(emptyCursor);
+	    } catch (LWJGLException e) {
+	    }
+	}
 }

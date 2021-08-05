@@ -1,12 +1,20 @@
 package game;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import core.ANode;
 import core.ChunkManager;
+import core.GameDatabase;
+import core.ItemType;
+import core.Resource;
+import core.ResourceData;
+import core.ResourceItemDrop;
 import core.Task;
+import core.TaskType;
 import core.TextureType;
+import ui.Inventory;
 import utils.Ticker;
 
 public class TaskManager {
@@ -20,12 +28,16 @@ public class TaskManager {
 	public static Point getCurrentTaskEnd() {
 		Point endIndex = null;
 		if (startedTasks.size() > 0) {
-
 			Task task = startedTasks.getLast();
 			if (task != null) {
 				LinkedList<ANode> path = task.getPath();
 				if (path != null) {
-					endIndex = path.getLast().toPoint();
+					if (path.size() > 0) {
+						ANode node = path.getLast();
+						if (node != null) {
+							endIndex = node.toPoint();
+						}
+					}
 				}
 			}
 		} else {
@@ -33,9 +45,8 @@ public class TaskManager {
 		}
 		return endIndex;
 	}
-	
-	public int getTaskCount()
-	{
+
+	public int getTaskCount() {
 		return startedTasks.size();
 	}
 
@@ -54,7 +65,17 @@ public class TaskManager {
 
 			boolean done = processTask(task);
 			if (done) {
-				startedTasks.removeFirst();
+				Task followUpTask = task.getFirstFollowUpTask();
+				if (followUpTask != null) {
+					boolean followUpDone = processTask(followUpTask);
+
+					if (followUpDone) {
+						startedTasks.removeFirst();
+					}
+
+				} else {
+					startedTasks.removeFirst();
+				}
 			}
 		}
 	}
@@ -74,14 +95,35 @@ public class TaskManager {
 		if (path != null) {
 
 			if (path.size() > 0) {
-				ANode node = path.removeFirst();
-				Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
-				ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
-				ChunkManager.move(playerIndex, node.toPoint());
+				if (task.getType() == TaskType.WALK) {
+					ANode node = path.removeFirst();
+					Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
+					ChunkManager.move(playerIndex, node.toPoint());
+				}
+				if (task.getType() == TaskType.RESOURCE) {
+					ANode node = path.removeFirst();
+					if (path.size() == 0) {
+
+						Resource res = ChunkManager.getResource(node.toPoint());
+						if (res != null) {
+							ResourceData dat = GameDatabase.resources.get(res.getType());
+							if (dat != null) {
+								for (ResourceItemDrop drop : dat.itemDrops) {
+									ArrayList<ItemType> types = drop.getDroppedItems();
+									for (ItemType type : types) {
+										Inventory.addItem(type);
+									}
+								}
+							}
+						}
+
+						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
+					}
+
+				}
 			}
 			if (path.size() <= 0) {
-
-				System.out.println("Ticks to Complete: " + task.getTicks());
 				complete = true;
 			}
 		}
