@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import core.ANode;
 import core.ChunkManager;
 import core.GameDatabase;
+import core.GroundItem;
 import core.ItemType;
 import core.Resource;
 import core.ResourceData;
@@ -14,6 +15,7 @@ import core.ResourceItemDrop;
 import core.Task;
 import core.TaskType;
 import core.TextureType;
+import core.Tile;
 import ui.Inventory;
 import utils.Ticker;
 
@@ -104,7 +106,6 @@ public class TaskManager {
 				if (task.getType() == TaskType.RESOURCE) {
 					ANode node = path.removeFirst();
 					if (path.size() == 0) {
-
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
 							ResourceData dat = GameDatabase.resources.get(res.getType());
@@ -119,6 +120,22 @@ public class TaskManager {
 						}
 
 						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
+					}
+
+				} else if (task.getType() == TaskType.ITEM) {
+					ANode node = path.removeFirst();
+					if (path.size() == 0) {
+
+						GroundItem tile = ChunkManager.getItem(node.toPoint());
+						if (tile != null) {
+							if (tile instanceof GroundItem) {
+								boolean pickedUp = Inventory.addItem(tile.item);
+								if (pickedUp) {
+									ChunkManager.setItemAtIndex(node.toPoint(), TextureType.AIR);
+								}
+							}
+						}
+
 					}
 
 				}

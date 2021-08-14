@@ -4,12 +4,15 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import core.ChunkManager;
 import core.GameDatabase;
+import core.GroundItem;
 import core.Item;
 import core.ItemType;
+import core.TextureType;
 
 public class Inventory {
-	private static int slotCount = 35;
+	private static int slotCount = 30;
 
 	public static int getSlotCount() {
 		return slotCount;
@@ -25,22 +28,53 @@ public class Inventory {
 		}
 	}
 
-	public static void addItem(ItemType type) {
+	public static boolean addItem(ItemType type) {
+		return addItem(type, 1);
+	}
+
+	public static boolean addItem(ItemType type, int count) {
+		boolean pickedUp = false;
 		Item item = GameDatabase.getItem(type);
-		System.out.println("test" + type);
 		if (item != null) {
-			int index = findEmpty();
+			int index = (GameDatabase.isItemStackable(type)?findItemIndex(type):-1);
+			if (index < 0) {
+				index = findEmpty();
+			}
 			if (index >= 0) {
 				ItemSlot slot = itemSlots.get(index);
-				slot.item = item;
-
+				if (slot.item != null) {
+					slot.count += count;
+				} else {
+					slot.item = item;
+					slot.count = count;
+				}
+				pickedUp = true;
 				UIInventory.updateID = true;
-			}
-			else
-			{
-				//drop
+			} else {
+				GroundItem groundItem = new GroundItem(TextureType.ITEM);
+				groundItem.type = item.texture;
+				groundItem.item = type;
+				groundItem.count = count;
+				ChunkManager.dropItem(groundItem);
 			}
 		}
+		return pickedUp;
+	}
+
+	private static int findItemIndex(ItemType type) {
+		int index = -1;
+		for (int i = 0; i < slotCount; i++) {
+			ItemSlot slot = itemSlots.get(i);
+			if (slot != null) {
+				if (slot.item != null) {
+					if (slot.item.getType() == type) {
+						index = i;
+						break;
+					}
+				}
+			}
+		}
+		return index;
 	}
 
 	private static int findEmpty() {

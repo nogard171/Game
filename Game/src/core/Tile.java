@@ -36,10 +36,24 @@ public class Tile {
 			str = "Chop !%0,255,0%Tree";
 			break;
 		case ROCK:
-			str = "Mine !%128,128,128%Rock%255,0,0%(Lvl1)";
+			str = "Mine !%128,128,128%Rock";
+			break;
+		case COPPER_ORE:
+			Resource res = (Resource) this;
+			str = "Mine !%128,128,128%" + res.getType();
+			break;
+		case TIN_ORE:
+			res = (Resource) this;
+			str = "Mine !%128,128,128%" + res.getType();
 			break;
 		case BUSH:
 			str = "Search !%0,224,0%Bush";
+			break;
+		case ITEM:
+			GroundItem groundItem = (GroundItem) this;
+			str = "Pickup !%66,135,245%" + groundItem.type;
+			break;
+		default:
 			break;
 		}
 		return str;

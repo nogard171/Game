@@ -9,15 +9,21 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import game.Base;
+
 public class ChunkManager {
 	public static HashMap<Point, Chunk> chunks = new HashMap<Point, Chunk>();
 	public static ArrayList<Chunk> chunksInView = new ArrayList<Chunk>();
 
+	static Point chunkDim = new Point(3, 3);
+	public static Point viewRange = new Point(3, 3);
+
 	public void setup() {
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
+		for (int x = 0; x < chunkDim.x; x++) {
+			for (int y = 0; y < chunkDim.y; y++) {
 				Chunk chunk = new Chunk(x, y);
 				chunk.setup();
+				chunk.build();
 				chunks.put(new Point(x, y), chunk);
 			}
 		}
@@ -25,21 +31,49 @@ public class ChunkManager {
 
 	public static Point getIndexByType(TextureType type) {
 		Point index = null;
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
-				Chunk chunk = chunks.get(new Point(x, y));
-				if (chunk != null) {
-					index = chunk.getIndexByType(type);
-				}
-				if (index != null) {
-					break;
-				}
+
+		for (Chunk chunk : chunksInView) {
+			if (chunk != null) {
+				index = chunk.getIndexByType(type);
 			}
 			if (index != null) {
 				break;
 			}
 		}
+		if (index == null) {
+
+			for (int x = 0; x < chunkDim.x; x++) {
+				for (int y = 0; y < chunkDim.y; y++) {
+					Chunk chunk = chunks.get(new Point(x, y));
+					if (chunk != null) {
+						index = chunk.getIndexByType(type);
+					}
+					if (index != null) {
+						break;
+					}
+				}
+				if (index != null) {
+					break;
+				}
+			}
+		}
 		return index;
+	}
+
+	public static void dropItem(GroundItem item) {
+		Point test = ChunkManager.getIndexByType(TextureType.CHARACTER);
+		if (test != null) {
+			int chunkX = (int) (test.x / Chunk.size.width);
+			int chunkY = (int) (test.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (test.x % 16);
+				int objY = (int) (test.y % 16);
+
+				chunk.droppedItems.put(new Point(objX, objY), item);
+				chunk.build();
+			}
+		}
 	}
 
 	public static Point findIndexAroundIndex(Point index) {
@@ -104,29 +138,31 @@ public class ChunkManager {
 	}
 
 	public void update() {
-		if (chunksToBuild.size() > 0) {
-			Point index = chunksToBuild.removeFirst();
-			if (index != null) {
-				Chunk chunk = chunks.get(index);
-				if (chunk != null) {
-					chunk.build();
+		chunksInView.clear();
+		Point center = Base.playerIndex;
+		//System.out.println("Key: " + center);
+		if (center != null) {
+			int chunkX = (int) (center.x / Chunk.size.width);
+			int chunkY = (int) (center.y / Chunk.size.height);
+			for (int x = (chunkX - viewRange.x); x < (chunkX + viewRange.x); x++) {
+				for (int y = (chunkY - viewRange.y); y < (chunkY + viewRange.y); y++) {
+					Point key = new Point(x, y);
+					Chunk chunk = chunks.get(key);
+					if (chunk != null) {
+						chunksInView.add(chunk);
+					}
 				}
 			}
 		}
 	}
 
 	public void render() {
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
-				Chunk chunk = chunks.get(new Point(x, y));
-				if (chunk != null) {
-					chunk.render();
-				}
-			}
+		for (Chunk chunk : chunksInView) {
+			chunk.render();
 		}
 	}
 
-	private static LinkedList<Point> chunksToBuild = new LinkedList<Point>();
+	public static LinkedList<Point> chunksToBuild = new LinkedList<Point>();
 
 	public static void move(Point index, Point newIndex) {
 		if (index != null && newIndex != null) {
@@ -156,6 +192,24 @@ public class ChunkManager {
 		}
 	}
 
+	public static void setItemAtIndex(Point index, TextureType type) {
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Object obj = chunk.objects.get(new Point(objX, objY));
+				if (obj != null) {
+					chunk.droppedItems.put(new Point(objX, objY), new GroundItem(type));
+					chunk.build();
+
+				}
+			}
+		}
+	}
+
 	public static void setObjectAtIndex(Point index, TextureType type) {
 		if (index != null) {
 			int chunkX = (int) (index.x / Chunk.size.width);
@@ -175,8 +229,8 @@ public class ChunkManager {
 	}
 
 	public static void removeType(TextureType type) {
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
+		for (int x = 0; x < chunkDim.x; x++) {
+			for (int y = 0; y < chunkDim.y; y++) {
 				Chunk chunk = chunks.get(new Point(x, y));
 				if (chunk != null) {
 					chunk.removeType(type);
@@ -204,6 +258,58 @@ public class ChunkManager {
 		return isRes;
 	}
 
+	public static boolean isItem(Point index) {
+		boolean isItem = false;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true);
+				if (tile != null) {
+					isItem = (tile instanceof GroundItem);
+				}
+			}
+		}
+
+		return isItem;
+	}
+
+	public static GroundItem getItem(Point index) {
+		GroundItem item = null;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				item = chunk.getItemAtIndex(new Point(objX, objY));
+			}
+		}
+
+		return item;
+	}
+
+	public static Tile getTile(Point index) {
+		
+		Tile tile = null;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				tile = chunk.getObjectAtIndex(new Point(objX, objY), true);
+			}
+		}
+
+		return tile;
+	}
+
 	public static Resource getResource(Point index) {
 		Resource res = null;
 		if (index != null) {
@@ -217,6 +323,8 @@ public class ChunkManager {
 				if (tile != null) {
 					if (tile instanceof Resource) {
 						res = (Resource) tile;
+					} else if (tile instanceof GroundItem) {
+
 					}
 				}
 			}

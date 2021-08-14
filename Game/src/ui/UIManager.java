@@ -42,6 +42,7 @@ public class UIManager {
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		uiInventory.render();
 
+		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		GL11.glBegin(GL11.GL_QUADS);
 		Renderer.renderUITexture(UITextureType.CURSOR, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
 		GL11.glEnd();

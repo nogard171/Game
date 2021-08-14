@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -25,6 +26,7 @@ import core.Chunk;
 import core.ChunkManager;
 import core.Entity;
 import core.GameDatabase;
+import core.GroundItem;
 import core.Input;
 import core.Renderer;
 import core.Resource;
@@ -44,8 +46,8 @@ public class Base {
 
 	boolean isRunning = true;
 
-	Point playerIndex;
-	Point test;
+	public static Point playerIndex;
+	public static Point test;
 	public static View view;
 
 	ChunkManager chunkMgr;
@@ -76,10 +78,13 @@ public class Base {
 		if (!UIInventory.isPanelHovered()) {
 			test = new Point(indexX, indexY);
 		}
+		else
+		{
+			test = null;			
+		}
 	}
 
 	public void setup() {
-
 		Window.start();
 		Window.setup();
 
@@ -96,7 +101,6 @@ public class Base {
 		taskMgr.setup();
 
 		TextureType type = TextureType.GRASS;
-		System.out.println("Type: " + type.toString());
 		chunkMgr = new ChunkManager();
 		chunkMgr.setup();
 
@@ -123,6 +127,9 @@ public class Base {
 		}
 
 		playerIndex = TaskManager.getCurrentTaskEnd();
+		if (playerIndex == null) {
+			playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+		}
 		FPS.updateFPS();
 		int forceX = 0;
 		int forceY = 0;
@@ -140,51 +147,70 @@ public class Base {
 			forceX = 1;
 		}
 		if (Input.isMousePressed(0) && !UIInventory.isPanelHovered()) {
-
-			ANode resourceIndex = new ANode(test.x, test.y);
-			boolean isRes = ChunkManager.isResource(test);
-			Resource resource = null;
-			if (isRes) {
-				resource = ChunkManager.getResource(test);
-				test = ChunkManager.findIndexAroundIndex(test);
-			}
-
-			LinkedList<ANode> path = APathFinder.find(new ANode(playerIndex), new ANode(test));
-
-			System.out.println("Path: " + path);
-			if (path != null) {
-				System.out.println("Path Size: " + path.size());
-
-				if (path.size() > 0) {
-					for (int i = 0; i < path.size() - 1; i++) {
-						ANode node = path.get(i);
-						if (node != null) {
-							ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
-						}
-					}
-					ANode node = path.get(path.size() - 1);
-					ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
-
-					Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
-
-					if (isRes) {
-						if (resource != null) {
-
-							System.out.println("added follow up" + isRes);
-
-							Task chop = new Task(TaskType.RESOURCE, resourceIndex, resource.getANode(resourceIndex));
-
-							test = ChunkManager.findIndexAroundIndex(test);
-							move.addFollowUp(chop);
-
-						}
-					}
-
-					TaskManager.addTask(move);
-
+			if (test.x > playerIndex.x - (ChunkManager.viewRange.x * 32)
+					&& test.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
+					&& test.y > playerIndex.y - (ChunkManager.viewRange.y * 32)
+					&& test.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
+				ANode resourceIndex = new ANode(test.x, test.y);
+				boolean isRes = ChunkManager.isResource(test);
+				Resource resource = null;
+				if (isRes) {
+					resource = ChunkManager.getResource(test);
+					test = ChunkManager.findIndexAroundIndex(test);
 				}
-			} else {
-				// handle failed path
+				boolean isItem = ChunkManager.isItem(test);
+
+				LinkedList<ANode> path = APathFinder.find(new ANode(playerIndex), new ANode(test));
+
+				if (path != null) {
+					if (path.size() > 0) {
+						for (int i = 0; i < path.size() - 1; i++) {
+							ANode node = path.get(i);
+							if (node != null) {
+								ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+							}
+						}
+						ANode node = path.get(path.size() - 1);
+						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+
+						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+
+						if (isRes) {
+
+							System.out.println("test");
+
+							if (resource != null) {
+
+								System.out.println("added follow up" + isRes);
+
+								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
+										resource.getANode(resourceIndex));
+
+								test = ChunkManager.findIndexAroundIndex(test);
+								move.addFollowUp(chop);
+
+							}
+						} else if (isItem) {
+							Tile item = null;
+							if (isItem) {
+								item = ChunkManager.getTile(test);
+							}
+							if (item != null) {
+
+								Task chop = new Task(TaskType.ITEM, resourceIndex);
+
+								test = ChunkManager.findIndexAroundIndex(test);
+								move.addFollowUp(chop);
+
+							}
+						}
+
+						TaskManager.addTask(move);
+
+					}
+				} else {
+					// handle failed path
+				}
 			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_F1)) {
@@ -195,6 +221,8 @@ public class Base {
 		view.move(forceX, forceY);
 		// System.out.println("NEW Index: " + playerIndex);
 	}
+	
+	
 
 	public void render() {
 		Window.render();
@@ -210,17 +238,19 @@ public class Base {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
 		chunkMgr.render();
-		if (test != null) {
 
-			Tile tile = ChunkManager.getResource(test);
+		if (test != null) {
+			
+			Tile tile = ChunkManager.getTile(test);
 			if (tile != null) {
-				float posX = (((test.x - test.y) * 32) - 32);
-				float posY = ((test.y + test.x) * 16);
-				GL11.glBegin(GL11.GL_QUADS);
-				GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
-				Renderer.renderTexture(tile.getType(), (int) posX, (int) posY);
-				GL11.glEnd();
-				System.out.println("test" + tile.getType());
+				if (tile instanceof Resource || tile instanceof GroundItem) {
+					float posX = (((test.x - test.y) * 32) - 32);
+					float posY = ((test.y + test.x) * 16);
+					GL11.glBegin(GL11.GL_QUADS);
+					GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
+					Renderer.renderTexture(tile.getType(), (int) posX, (int) posY);
+					GL11.glEnd();
+				}
 			}
 		}
 		GL11.glPopMatrix();
@@ -229,21 +259,18 @@ public class Base {
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 16), "Player Index: " + playerIndex, 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 32), "Hover: " + test, 12, Color.white);
 
 		TextureType type = ChunkManager.getTypeByIndexWithTiles(test);
 
 		if (type != null) {
-			Renderer.renderText(new Vector2f(0, 48), "Hover Type: " + type.toString(), 12, Color.white);
+			Renderer.renderText(new Vector2f(0, 16), "Hover Type: " + type.toString(), 12, Color.white);
 		}
-		Renderer.renderText(new Vector2f(0, 64), "Ticks: " + Ticker.getTicks(), 12, Color.white);
 
-		Renderer.renderText(new Vector2f(0, 80), "Task Count: " + taskMgr.getTaskCount(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 32), "Chunks In View: " + chunkMgr.chunksInView.size(), 12, Color.white);
 
 		if (test != null) {
 
-			Tile tile = ChunkManager.getResource(test);
+			Tile tile = ChunkManager.getTile(test);
 			if (tile != null) {
 				String text = tile.toHoverString();
 				int fontType = Font.PLAIN;

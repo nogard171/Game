@@ -112,13 +112,11 @@ public class Renderer {
 	}
 
 	public static void renderText(Vector2f position, String text, int fontSize, Color color, int fontType) {
-		System.out.println("test: " + (fontSize + "," + fontType));
 		renderText(position.x, position.y, text, fontSize, color, fontType);
 	}
 
 	public static int renderTextWithWidth(Vector2f position, String text, int fontSize, Color color, int fontType) {
 		int fontWidth = 0;
-		System.out.println("test: " + (fontSize + "," + fontType));
 		fontWidth = renderText(position.x, position.y, text, fontSize, color, fontType);
 		return fontWidth;
 	}

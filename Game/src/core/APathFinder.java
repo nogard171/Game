@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import game.Base;
+
 public class APathFinder {
 	public static HashMap<ANode, ANode> parentList = new HashMap<ANode, ANode>();
 	public static LinkedList<ANode> indexes = new LinkedList<>(Arrays.asList(new ANode(0, -1), new ANode(0, 1),
@@ -43,7 +45,7 @@ public class APathFinder {
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > 100 && current.y > 100) {
+			if (current.x > Base.playerIndex.x +( ChunkManager.viewRange.x*32) || current.y > Base.playerIndex.y + ( ChunkManager.viewRange.y*32)) {
 				return null;
 			}
 			for (ANode index : indexes) {
@@ -57,7 +59,7 @@ public class APathFinder {
 					Tile data = chunk.getObjectAtIndex(new Point(objX, objY));
 					if (data != null) {
 						if (data.getType() == TextureType.AIR || data.getType() == TextureType.PATH_DURING
-								|| data.getType() == TextureType.PATH_FINISH) {
+								|| data.getType() == TextureType.PATH_FINISH || data.getType() == TextureType.AIR) {
 							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
 								parentList.put(neighborIndex, current);
 								openList.add(neighborIndex);

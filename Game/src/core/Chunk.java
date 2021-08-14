@@ -12,10 +12,13 @@ import org.newdawn.slick.Color;
 
 public class Chunk {
 
-	private int id = -1;
+	private int tileID = -1;
+	private int itemID = -1;
+	private int otherID = -1;
 	Point index;
 
 	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
+	HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
 	HashMap<Point, Object> objects = new HashMap<Point, Object>();
 	HashMap<Point, Entity> entities = new HashMap<Point, Entity>();
 	public static Dimension size = new Dimension(16, 16);
@@ -120,6 +123,15 @@ public class Chunk {
 				if (t < 0.1f) {
 					res.setType(TextureType.ROCK, 10);
 				}
+				
+				t = r.nextFloat();
+				if (t < 0.1f) {
+					res.setType(TextureType.TIN_ORE, 10);
+				}
+				t = r.nextFloat();
+				if (t < 0.1f) {
+					res.setType(TextureType.COPPER_ORE, 10);
+				}
 				objects.put(tileIndex, res);
 				Entity ent = new Entity(TextureType.AIR);
 				ent.setPosition(position);
@@ -133,8 +145,8 @@ public class Chunk {
 	}
 
 	public void build() {
-		id = GL11.glGenLists(1);
-		GL11.glNewList(id, GL11.GL_COMPILE);
+		tileID = GL11.glGenLists(1);
+		GL11.glNewList(tileID, GL11.GL_COMPILE);
 		Renderer.bindTexture(ResourceDatabase.texture);
 		GL11.glBegin(GL11.GL_QUADS);
 		for (int x = 0; x < size.width; x++) {
@@ -148,6 +160,43 @@ public class Chunk {
 					tile.setPosition(position);
 					Renderer.renderTexture(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
 				}
+			}
+		}
+		GL11.glEnd();
+
+		GL11.glEndList();
+
+		itemID = GL11.glGenLists(1);
+		GL11.glNewList(itemID, GL11.GL_COMPILE);
+		Renderer.bindTexture(ResourceDatabase.uiTexture);
+		GL11.glBegin(GL11.GL_QUADS);
+		for (int x = 0; x < size.width; x++) {
+			for (int y = 0; y < size.height; y++) {
+
+				Vector2f position = getPosition(x, y);
+
+				Point tempIndex = new Point(x, y);
+				GroundItem tile = droppedItems.get(tempIndex);
+				if (tile != null) {
+					tile.setPosition(position);
+					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x+16, (int) tile.getPosition().y-6, 32,32);
+				}
+			}
+		}
+		GL11.glEnd();
+
+		GL11.glEndList();
+
+		otherID = GL11.glGenLists(1);
+		GL11.glNewList(otherID, GL11.GL_COMPILE);
+		Renderer.bindTexture(ResourceDatabase.texture);
+		GL11.glBegin(GL11.GL_QUADS);
+		for (int x = 0; x < size.width; x++) {
+			for (int y = 0; y < size.height; y++) {
+
+				Vector2f position = getPosition(x, y);
+
+				Point tempIndex = new Point(x, y);
 
 				Object obj = objects.get(tempIndex);
 				if (obj != null) {
@@ -160,11 +209,13 @@ public class Chunk {
 					ent.setPosition(position);
 					Renderer.renderTexture(ent.getType(), (int) ent.getPosition().x, (int) ent.getPosition().y);
 				}
+
 			}
 		}
 		GL11.glEnd();
 
 		GL11.glEndList();
+
 	}
 
 	public void update() {
@@ -172,10 +223,12 @@ public class Chunk {
 	}
 
 	public void render() {
-		if (id == -1) {
+		if (tileID == -1 || itemID == -1 || otherID == -1) {
 			build();
 		} else {
-			GL11.glCallList(id);
+			GL11.glCallList(tileID);
+			GL11.glCallList(itemID);
+			GL11.glCallList(otherID);
 		}
 	}
 
@@ -208,12 +261,29 @@ public class Chunk {
 		newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 				? (obj != null && ((removeAIR && obj.getType() != TextureType.AIR) || (!removeAIR)) ? obj : null)
 				: newTile);
+		
+		GroundItem item = droppedItems.get(point);
+		newTile = (newTile == null || (removeAIR &&newTile.getType() == TextureType.AIR)
+				? (item != null && ((removeAIR && item.getType() != TextureType.AIR) || (!removeAIR)) ? item : null)
+				: newTile);
+
+		//System.out.println("Dropped Item: " + newTile+"/"+ (item==null?"":item.getType()));
 		if (!removeTiles) {
 			Tile tile = tiles.get(point);
 			newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 					? (tile != null && ((removeAIR && tile.getType() != TextureType.AIR) || (!removeAIR)) ? tile : null)
 					: newTile);
 		}
+		
+		return newTile;
+	}
+
+	public GroundItem getItemAtIndex(Point point) {
+		GroundItem newTile = null;
+
+		GroundItem item = droppedItems.get(point);
+		newTile =(item != null ? item : null);
+
 		return newTile;
 	}
 

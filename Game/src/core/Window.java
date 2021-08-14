@@ -23,12 +23,13 @@ public class Window {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setResizable(true);
 			Display.create();
-			
+
 //			Mouse.setGrabbed(true);
 			hideCursor();
 
 		} catch (LWJGLException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			System.out.println("failed");
 		}
 	}
 
@@ -55,6 +56,7 @@ public class Window {
 	}
 
 	public static void setup() {
+
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -65,7 +67,12 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		Display.sync(999);
+		if (Display.isActive()) {
+			Display.sync(999);
+		} else {
+			Display.sync(30);
+		}
+
 	}
 
 	public static void render() {
@@ -79,13 +86,14 @@ public class Window {
 	}
 
 	private static void hideCursor() {
-	    Cursor emptyCursor;
-	    int min = org.lwjgl.input.Cursor.getMinCursorSize();
-	    IntBuffer tmp = BufferUtils.createIntBuffer(min * min);
-	    try {
-	        emptyCursor = new org.lwjgl.input.Cursor(min, min, min / 2, min / 2, 1, tmp, null);
-	        Mouse.setNativeCursor(emptyCursor);
-	    } catch (LWJGLException e) {
-	    }
+		Cursor emptyCursor;
+		int min = org.lwjgl.input.Cursor.getMinCursorSize();
+		IntBuffer tmp = BufferUtils.createIntBuffer(min * min);
+		try {
+			emptyCursor = new org.lwjgl.input.Cursor(min, min, min / 2, min / 2, 1, tmp, null);
+			Mouse.setNativeCursor(emptyCursor);
+		} catch (LWJGLException e) {
+			System.out.println("failed");
+		}
 	}
 }
