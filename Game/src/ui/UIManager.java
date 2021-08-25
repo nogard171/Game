@@ -6,6 +6,7 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -24,17 +25,34 @@ public class UIManager {
 		uiInventory = new UIInventory();
 		uiInventory.setup();
 		Inventory.setup();
+		Inventory.addItem(ItemType.COINS,9);
 		/*
-		 * Inventory.addItem(ItemType.ROCK); Inventory.addItem(ItemType.ROCK);
+		 *  Inventory.addItem(ItemType.ROCK);
 		 * Inventory.addItem(ItemType.ROCK); Inventory.addItem(ItemType.ROCK);
 		 * 
-		 * Inventory.putItem(7, ItemType.ROCK);
+		 * 
 		 * 
 		 * Inventory.printItems();
 		 */
 	}
 	public void update() {
 		uiInventory.update();
+		if(Input.isKeyPressed(Keyboard.KEY_1)) {
+
+			Inventory.addItem(ItemType.COINS,900);
+		}
+		if(Input.isKeyPressed(Keyboard.KEY_2)) {
+
+			Inventory.addItem(ItemType.COINS,900000);
+		}
+		if(Input.isKeyPressed(Keyboard.KEY_3)) {
+
+			Inventory.addItem(ItemType.COINS,900000000);
+		}
+		if(Input.isKeyDown(Keyboard.KEY_4)) {
+
+			Inventory.addItem(ItemType.COINS,90000000000000l);
+		}
 	}
 
 	public void render() {

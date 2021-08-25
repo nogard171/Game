@@ -126,12 +126,32 @@ public class Renderer {
 		renderText(x, y, text, fontSize, color, Font.PLAIN);
 	}
 
-	public static int renderText(float x, float y, String text, int fontSize, Color color, int fontType) {
+	public static int getTextWidth(String text, int fontSize) {
+
+		return getTextWidth(text, fontSize, Font.PLAIN);
+	}
+
+	public static int getTextWidth(String text, int fontSize, int fontType) {
 		int fontWidth = 0;
-		String key = fontSize+","+ fontType;
+		String key = fontSize + "," + fontType;
 		TrueTypeFont font = ResourceDatabase.fonts.get(key);
 
-		
+		if (font == null) {
+			// Fixedsys
+			Font awtFont = new Font("Fixedsys", fontType, fontSize);
+			ResourceDatabase.fonts.put((fontSize + "," + fontType), new TrueTypeFont(awtFont, false));
+		}
+		if (font != null) {
+			fontWidth = font.getWidth(text);
+		}
+		return fontWidth;
+	}
+
+	public static int renderText(float x, float y, String text, int fontSize, Color color, int fontType) {
+		int fontWidth = 0;
+		String key = fontSize + "," + fontType;
+		TrueTypeFont font = ResourceDatabase.fonts.get(key);
+
 		if (font == null) {
 			// Fixedsys
 			Font awtFont = new Font("Fixedsys", fontType, fontSize);

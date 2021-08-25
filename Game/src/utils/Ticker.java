@@ -3,17 +3,17 @@ package utils;
 import java.time.ZonedDateTime;
 
 public class Ticker {
-	private static long ticks = 0;
-	private static long previousTickMilli = -1;
-	private static long tickTime = 1000;
-	private static boolean ticked = false;
+	private long ticks = 0;
+	private long previousTickMilli = -1;
+	// private static long tickTime = 1000;
+	private boolean ticked = false;
 
-	private static long getMilli() {
+	private long getMilli() {
 		return ZonedDateTime.now().toInstant().toEpochMilli();
 	}
 
-	public static void poll() {
-		tickTime=100;
+	public void poll(int tickTime) {
+		// tickTime=100;
 		ticked = false;
 		long current = getMilli();
 
@@ -24,11 +24,11 @@ public class Ticker {
 		}
 	}
 
-	public static boolean ticked() {
+	public boolean ticked() {
 		return ticked;
 	}
 
-	public static long getTicks() {
+	public long getTicks() {
 		return ticks;
 	}
 }

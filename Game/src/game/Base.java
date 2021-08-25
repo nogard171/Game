@@ -59,7 +59,6 @@ public class Base {
 		this.setup();
 
 		while (this.isRunning) {
-			Ticker.poll();
 			this.update();
 			this.render();
 		}
@@ -77,10 +76,8 @@ public class Base {
 		int indexY = (int) Math.floor((float) isoY / (float) 32);
 		if (!UIInventory.isPanelHovered()) {
 			test = new Point(indexX, indexY);
-		}
-		else
-		{
-			test = null;			
+		} else {
+			test = null;
 		}
 	}
 
@@ -146,6 +143,7 @@ public class Base {
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			forceX = 1;
 		}
+		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIInventory.isPanelHovered()) {
 			if (test.x > playerIndex.x - (ChunkManager.viewRange.x * 32)
 					&& test.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
@@ -153,6 +151,7 @@ public class Base {
 					&& test.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
 				ANode resourceIndex = new ANode(test.x, test.y);
 				boolean isRes = ChunkManager.isResource(test);
+				boolean inRange = ChunkManager.resourceInRange(playerIndex, test);
 				Resource resource = null;
 				if (isRes) {
 					resource = ChunkManager.getResource(test);
@@ -160,7 +159,16 @@ public class Base {
 				}
 				boolean isItem = ChunkManager.isItem(test);
 
-				LinkedList<ANode> path = APathFinder.find(new ANode(playerIndex), new ANode(test));
+				LinkedList<ANode> path = null;
+
+				
+				System.out.println("In Range: " + inRange);
+				if (inRange) {
+					path = new LinkedList<ANode>();
+					path.add(new ANode(test));
+				} else {
+					path = APathFinder.find(new ANode(playerIndex), new ANode(test));
+				}
 
 				if (path != null) {
 					if (path.size() > 0) {
@@ -187,6 +195,7 @@ public class Base {
 										resource.getANode(resourceIndex));
 
 								test = ChunkManager.findIndexAroundIndex(test);
+
 								move.addFollowUp(chop);
 
 							}
@@ -198,13 +207,11 @@ public class Base {
 							if (item != null) {
 
 								Task chop = new Task(TaskType.ITEM, resourceIndex);
-
 								test = ChunkManager.findIndexAroundIndex(test);
 								move.addFollowUp(chop);
 
 							}
 						}
-
 						TaskManager.addTask(move);
 
 					}
@@ -221,8 +228,6 @@ public class Base {
 		view.move(forceX, forceY);
 		// System.out.println("NEW Index: " + playerIndex);
 	}
-	
-	
 
 	public void render() {
 		Window.render();
@@ -238,21 +243,14 @@ public class Base {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
 		chunkMgr.render();
-
-		if (test != null) {
-			
-			Tile tile = ChunkManager.getTile(test);
-			if (tile != null) {
-				if (tile instanceof Resource || tile instanceof GroundItem) {
-					float posX = (((test.x - test.y) * 32) - 32);
-					float posY = ((test.y + test.x) * 16);
-					GL11.glBegin(GL11.GL_QUADS);
-					GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
-					Renderer.renderTexture(tile.getType(), (int) posX, (int) posY);
-					GL11.glEnd();
-				}
-			}
-		}
+		/*
+		 * if (test != null) { Tile tile = ChunkManager.getTile(test); if (tile != null)
+		 * { if (tile instanceof Resource || tile instanceof GroundItem) { float posX =
+		 * (((test.x - test.y) * 32) - 32); float posY = ((test.y + test.x) * 16);
+		 * GL11.glBegin(GL11.GL_QUADS); GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
+		 * Renderer.renderTexture(tile.getType(), (int) posX, (int) posY); GL11.glEnd();
+		 * } } }
+		 */
 		GL11.glPopMatrix();
 
 		uiMgr.render();

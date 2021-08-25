@@ -32,11 +32,12 @@ public class Inventory {
 		return addItem(type, 1);
 	}
 
-	public static boolean addItem(ItemType type, int count) {
+	public static boolean addItem(ItemType type, long count) {
 		boolean pickedUp = false;
 		Item item = GameDatabase.getItem(type);
 		if (item != null) {
-			int index = (GameDatabase.isItemStackable(type)?findItemIndex(type):-1);
+			int index = (GameDatabase.isItemStackable(type) ? findItemIndex(type) : -1);
+
 			if (index < 0) {
 				index = findEmpty();
 			}
@@ -68,8 +69,10 @@ public class Inventory {
 			if (slot != null) {
 				if (slot.item != null) {
 					if (slot.item.getType() == type) {
-						index = i;
-						break;
+						if (slot.count < 1000000000000000000l) {
+							index = i;
+							break;
+						}
 					}
 				}
 			}

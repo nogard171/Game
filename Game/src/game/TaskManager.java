@@ -3,6 +3,7 @@ package game;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 import core.ANode;
 import core.ChunkManager;
@@ -22,6 +23,7 @@ import utils.Ticker;
 public class TaskManager {
 	private static LinkedList<Task> tasks = new LinkedList<Task>();
 	private static LinkedList<Task> startedTasks = new LinkedList<Task>();
+	Ticker tickerUtil;
 
 	public static void addTask(Task newTask) {
 		tasks.add(newTask);
@@ -53,7 +55,7 @@ public class TaskManager {
 	}
 
 	public void setup() {
-
+		tickerUtil = new Ticker();
 	}
 
 	public void tickedUpdate() {
@@ -91,6 +93,8 @@ public class TaskManager {
 		return isSetup;
 	}
 
+	Random r = new Random();
+
 	private boolean processTask(Task task) {
 		boolean complete = false;
 		LinkedList<ANode> path = task.getPath();
@@ -108,20 +112,40 @@ public class TaskManager {
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
-							ResourceData dat = GameDatabase.resources.get(res.getType());
+							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
+							System.out.println("test");
 							if (dat != null) {
-								for (ResourceItemDrop drop : dat.itemDrops) {
-									ArrayList<ItemType> types = drop.getDroppedItems();
-									for (ItemType type : types) {
-										Inventory.addItem(type);
+								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
+								System.out.println("genR: " + genR);
+								if (genR == 1) {
+									for (ResourceItemDrop drop : dat.itemDrops) {
+										ArrayList<ItemType> types = drop.getDroppedItems();
+										for (ItemType type : types) {
+											Inventory.addItem(type);
+										}
+									}
+									if (!dat.isRenewable) {
+										ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
+									}
+									else
+									{
+										//generate new renewable resources in near by location,
+										//fishing spots should generate on the end of the water
+										//so it can be reached.
+										
+										//rocks can generate outside of view or add generating
+										// infinite cave on rock/ore break
+										// or generate on game load.
+									}
+								} else {
+									for (int t = 0; t < 10; t++) {
+										path.add(node);
 									}
 								}
 							}
 						}
 
-						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
 					}
-
 				} else if (task.getType() == TaskType.ITEM) {
 					ANode node = path.removeFirst();
 					if (path.size() == 0) {
@@ -148,7 +172,8 @@ public class TaskManager {
 	}
 
 	public void update() {
-		if (Ticker.ticked()) {
+		tickerUtil.poll(100);
+		if (tickerUtil.ticked()) {
 			tickedUpdate();
 		}
 	}

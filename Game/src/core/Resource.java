@@ -5,20 +5,37 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Resource extends Object {
-	private ArrayList<Item> drops = new ArrayList<Item>(Arrays.asList(new Item(ItemType.LOG, 1, 5)));
 	private int health;
+	private int animationIndex = 0;
+	private TextureType baseType = TextureType.AIR;
 
 	public Resource(TextureType newType) {
 		super(newType);
 		health = 1;
+		baseType = newType;
+		System.out.println("type: " + baseType);
 	}
 
 	public Resource(TextureType newType, int newHealth) {
 		super(newType);
 		health = newHealth;
+		baseType = newType;
+	}
+
+	@Override
+	public void setType(TextureType newType) {
+		this.type = newType;
+		if (baseType == TextureType.AIR) {
+			baseType = newType;
+		}
+	}
+
+	public void setRawType(TextureType newType) {
+		this.type = newType;
 	}
 
 	public void setType(TextureType newType, int newHealth) {
+
 		setType(newType);
 		health = newHealth;
 	}
@@ -36,5 +53,31 @@ public class Resource extends Object {
 		}
 
 		return nodePath;
+	}
+
+	public int getAnimationIndex() {
+		return animationIndex;
+	}
+
+	public void setAnimationIndex(int animationIndex) {
+		this.animationIndex = animationIndex;
+	}
+
+	public void cycleAnimation() {
+		ResourceData data = GameDatabase.resources.get(baseType);
+		int index = animationIndex;
+		if (data != null) {
+			if (index < data.animationTypes.length - 1) {
+				index++;
+			} else {
+				index = 0;
+			}
+		}
+		animationIndex = index;
+
+	}
+
+	public java.lang.Object getBaseType() {
+		return baseType;
 	}
 }

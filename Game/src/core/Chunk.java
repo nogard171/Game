@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import utils.Ticker;
+
 public class Chunk {
 
 	private int tileID = -1;
@@ -99,7 +101,7 @@ public class Chunk {
 			for (int y = 0; y < size.height; y++) {
 
 				Vector2f position = getPosition(x, y);
-
+				boolean isSolid = true;
 				Tile tile = new Tile(TextureType.GRASS);
 				tile.setPosition(position);
 
@@ -111,26 +113,39 @@ public class Chunk {
 					tile.setType(TextureType.GRASS0);
 				}
 
+				if (x < 5 && x < 9 && y > 5 && y < 9) {
+					tile.setType(TextureType.SHALLOW_WATER);
+					isSolid = false;
+				}
+
 				tiles.put(tileIndex, tile);
 
 				Resource res = new Resource(TextureType.AIR);
 				res.setPosition(position);
-				t = r.nextFloat();
-				if (t < 0.1f) {
-					res.setType(TextureType.TREE, 10);
+
+				if (x == 3 && y == 6) {
+					res.setType(TextureType.FISHING_SPOT);
 				}
-				t = r.nextFloat();
-				if (t < 0.1f) {
-					res.setType(TextureType.ROCK, 10);
-				}
-				
-				t = r.nextFloat();
-				if (t < 0.1f) {
-					res.setType(TextureType.TIN_ORE, 10);
-				}
-				t = r.nextFloat();
-				if (t < 0.1f) {
-					res.setType(TextureType.COPPER_ORE, 10);
+
+				if (isSolid) {
+
+					t = r.nextFloat();
+					if (t < 0.1f) {
+						// res.setType(TextureType.TREE, 10);
+					}
+					t = r.nextFloat();
+					if (t < 0.1f) {
+						// res.setType(TextureType.ROCK, 10);
+					}
+
+					t = r.nextFloat();
+					if (t < 0.1f) {
+						// res.setType(TextureType.TIN_ORE, 10);
+					}
+					t = r.nextFloat();
+					if (t < 0.1f) {
+						// res.setType(TextureType.COPPER_ORE, 10);
+					}
 				}
 				objects.put(tileIndex, res);
 				Entity ent = new Entity(TextureType.AIR);
@@ -179,7 +194,8 @@ public class Chunk {
 				GroundItem tile = droppedItems.get(tempIndex);
 				if (tile != null) {
 					tile.setPosition(position);
-					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x+16, (int) tile.getPosition().y-6, 32,32);
+					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x + 16, (int) tile.getPosition().y - 6,
+							32, 32);
 				}
 			}
 		}
@@ -218,8 +234,34 @@ public class Chunk {
 
 	}
 
-	public void update() {
+	public void update(boolean ticked) {
+		if (ticked) {
+			for (int x = 0; x < size.width; x++) {
+				for (int y = 0; y < size.height; y++) {
+					Point tempIndex = new Point(x, y);
 
+					Object obj = objects.get(tempIndex);
+					if (obj != null) {
+						if (obj.getType() != TextureType.AIR) {
+							if (obj instanceof Resource) {
+								Resource res = (Resource) obj;
+								if (res != null) {
+									ResourceData dat = GameDatabase.resources.get(res.getBaseType());
+									if (dat != null) {
+										res.cycleAnimation();
+										TextureType newType = dat.animationTypes[res.getAnimationIndex()];
+										
+										res.setRawType(newType);
+										build();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
 	}
 
 	public void render() {
@@ -261,20 +303,21 @@ public class Chunk {
 		newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 				? (obj != null && ((removeAIR && obj.getType() != TextureType.AIR) || (!removeAIR)) ? obj : null)
 				: newTile);
-		
+
 		GroundItem item = droppedItems.get(point);
-		newTile = (newTile == null || (removeAIR &&newTile.getType() == TextureType.AIR)
+		newTile = (newTile == null || (removeAIR && newTile.getType() == TextureType.AIR)
 				? (item != null && ((removeAIR && item.getType() != TextureType.AIR) || (!removeAIR)) ? item : null)
 				: newTile);
 
-		//System.out.println("Dropped Item: " + newTile+"/"+ (item==null?"":item.getType()));
+		// System.out.println("Dropped Item: " + newTile+"/"+
+		// (item==null?"":item.getType()));
 		if (!removeTiles) {
 			Tile tile = tiles.get(point);
 			newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 					? (tile != null && ((removeAIR && tile.getType() != TextureType.AIR) || (!removeAIR)) ? tile : null)
 					: newTile);
 		}
-		
+
 		return newTile;
 	}
 
@@ -282,7 +325,7 @@ public class Chunk {
 		GroundItem newTile = null;
 
 		GroundItem item = droppedItems.get(point);
-		newTile =(item != null ? item : null);
+		newTile = (item != null ? item : null);
 
 		return newTile;
 	}

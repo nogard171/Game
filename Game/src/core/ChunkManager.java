@@ -1,6 +1,7 @@
 package core;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import game.Base;
+import utils.Ticker;
 
 public class ChunkManager {
 	public static HashMap<Point, Chunk> chunks = new HashMap<Point, Chunk>();
@@ -17,8 +19,10 @@ public class ChunkManager {
 
 	static Point chunkDim = new Point(3, 3);
 	public static Point viewRange = new Point(3, 3);
+	Ticker tickerUtil;
 
 	public void setup() {
+		tickerUtil = new Ticker();
 		for (int x = 0; x < chunkDim.x; x++) {
 			for (int y = 0; y < chunkDim.y; y++) {
 				Chunk chunk = new Chunk(x, y);
@@ -79,13 +83,11 @@ public class ChunkManager {
 	public static Point findIndexAroundIndex(Point index) {
 		Point newIndex = null;
 		if (index != null) {
-			System.out.println("check..." + index);
 			for (int x = -1; x < 2; x++) {
 				for (int y = -1; y < 2; y++) {
 					Point tempIndex = new Point(index.x + x, index.y + y);
 					TextureType type = getTypeByIndexWithTiles(tempIndex);
 					if (type != null) {
-						System.out.println("looking..." + tempIndex + "->" + type);
 						if (type == TextureType.AIR || type == TextureType.GRASS || type == TextureType.GRASS0) {
 							newIndex = tempIndex;
 							break;
@@ -138,9 +140,10 @@ public class ChunkManager {
 	}
 
 	public void update() {
+		tickerUtil.poll(200);
 		chunksInView.clear();
 		Point center = Base.playerIndex;
-		//System.out.println("Key: " + center);
+		// System.out.println("Key: " + center);
 		if (center != null) {
 			int chunkX = (int) (center.x / Chunk.size.width);
 			int chunkY = (int) (center.y / Chunk.size.height);
@@ -149,6 +152,7 @@ public class ChunkManager {
 					Point key = new Point(x, y);
 					Chunk chunk = chunks.get(key);
 					if (chunk != null) {
+						chunk.update(tickerUtil.ticked());
 						chunksInView.add(chunk);
 					}
 				}
@@ -294,7 +298,7 @@ public class ChunkManager {
 	}
 
 	public static Tile getTile(Point index) {
-		
+
 		Tile tile = null;
 		if (index != null) {
 			int chunkX = (int) (index.x / Chunk.size.width);
@@ -308,6 +312,16 @@ public class ChunkManager {
 		}
 
 		return tile;
+	}
+
+	public static boolean resourceInRange(Point index, Point resourceIndex) {
+		boolean inRange = false;
+		Rectangle rec = new Rectangle(resourceIndex.x - 1, resourceIndex.y - 1, 3, 3);
+		System.out.println("rec:" + rec);
+		if (rec.contains(index)) {
+			inRange = true;
+		}
+		return inRange;
 	}
 
 	public static Resource getResource(Point index) {

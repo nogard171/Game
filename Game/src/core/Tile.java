@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 public class Tile {
-	private TextureType type = TextureType.AIR;
+	protected TextureType type = TextureType.AIR;
 	private Vector2f position;
 
 	public Tile(TextureType newType) {
@@ -28,6 +28,7 @@ public class Tile {
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}
+
 
 	public String toHoverString() {
 		String str = "";
@@ -52,6 +53,14 @@ public class Tile {
 		case ITEM:
 			GroundItem groundItem = (GroundItem) this;
 			str = "Pickup !%66,135,245%" + groundItem.type;
+			break;
+		case FISHING_SPOT:
+		case FISHING_SPOT1:
+		case FISHING_SPOT2:
+		case FISHING_SPOT3:
+		case FISHING_SPOT4:
+			
+			str = "Fish !%0,224,0%Fishing Spot";
 			break;
 		default:
 			break;

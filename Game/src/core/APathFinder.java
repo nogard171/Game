@@ -32,6 +32,7 @@ public class APathFinder {
 
 	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
 		parentList.clear();
+		System.out.println("Path Finding...");
 
 		LinkedList<ANode> openList = new LinkedList<ANode>();
 		LinkedList<ANode> closedList = new LinkedList<ANode>();
@@ -45,7 +46,8 @@ public class APathFinder {
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > Base.playerIndex.x +( ChunkManager.viewRange.x*32) || current.y > Base.playerIndex.y + ( ChunkManager.viewRange.y*32)) {
+			if (current.x > Base.playerIndex.x + (ChunkManager.viewRange.x * 32)
+					|| current.y > Base.playerIndex.y + (ChunkManager.viewRange.y * 32)) {
 				return null;
 			}
 			for (ANode index : indexes) {
@@ -56,10 +58,9 @@ public class APathFinder {
 				if (chunk != null) {
 					int objX = (int) (neighborIndex.x % 16);
 					int objY = (int) (neighborIndex.y % 16);
-					Tile data = chunk.getObjectAtIndex(new Point(objX, objY));
+					Tile data = chunk.getObjectAtIndex(new Point(objX, objY), false, false);
 					if (data != null) {
-						if (data.getType() == TextureType.AIR || data.getType() == TextureType.PATH_DURING
-								|| data.getType() == TextureType.PATH_FINISH || data.getType() == TextureType.AIR) {
+						if (data.getType().isPassable()) {
 							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
 								parentList.put(neighborIndex, current);
 								openList.add(neighborIndex);

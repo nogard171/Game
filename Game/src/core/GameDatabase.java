@@ -32,26 +32,48 @@ public class GameDatabase {
 		dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.LOG));
 		resources.put(TextureType.TREE, dat);
+
+		dat = new ResourceData();
+		dat.addDrop(new ResourceItemDrop(ItemType.FISH));
+		dat.rarity = 3;
+		dat.isRenewable = true;
+		TextureType[] types = { TextureType.FISHING_SPOT, TextureType.FISHING_SPOT1, TextureType.FISHING_SPOT2,
+				TextureType.FISHING_SPOT3, TextureType.FISHING_SPOT4 };
+		dat.animationTypes = types;
+		resources.put(TextureType.FISHING_SPOT, dat);
 	}
 
 	private static void loadItems() {
-		ItemData newItem = new ItemData(ItemType.ROCK,"This is one solid piece of Rock.");
+		ItemData newItem = new ItemData(ItemType.ROCK, "This is one solid piece of Rock.");
 		newItem.setTexture(UITextureType.ROCK_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.COPPER_ORE,"It has a orangy ting.");
+		newItem = new ItemData(ItemType.COINS, "Chan Ching, looks good in the hand.");
+		newItem.setTexture(UITextureType.COINS_ITEM);
+		newItem.stackable = true;
+		items.put(newItem.type, newItem);
+
+		newItem = new ItemData(ItemType.COPPER_ORE, "It has a orangy ting.");
 		newItem.setTexture(UITextureType.COPPER_ORE_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.TIN_ORE,"This looks simular to Rock.");
+		newItem = new ItemData(ItemType.TIN_ORE, "This looks simular to Rock.");
 		newItem.setTexture(UITextureType.TIN_ORE_ITEM);
 		items.put(newItem.type, newItem);
 
 		newItem = new ItemData(ItemType.LOG, "Long sturdy piece of Wood.");
 		newItem.setTexture(UITextureType.LOG_ITEM);
 		items.put(newItem.type, newItem);
-	}
 
+		newItem = new ItemData(ItemType.FISH, "Floppy fish.");
+		newItem.setTexture(UITextureType.FISH_ITEM);
+		items.put(newItem.type, newItem);
+	}
+	public static ItemData getItemData(ItemType type) {
+		ItemData data = items.get(type);
+		
+		return data;
+	}
 	public static Item getItem(ItemType type) {
 		ItemData data = items.get(type);
 		Item item = null;
