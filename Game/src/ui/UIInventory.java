@@ -19,6 +19,7 @@ import core.ResourceDatabase;
 import core.TextureType;
 import game.TaskManager;
 import utils.FPS;
+import utils.Ticker;
 
 public class UIInventory {
 	private int id = -1;
@@ -27,8 +28,14 @@ public class UIInventory {
 	public ItemSlot dragSlot;
 	private static Point slotMargin = new Point(37, 37);
 
-	public void setup() {
+	public Rectangle eatBound = null;
+	public ItemSlot eatSlot;
+	private Ticker eatTicker;
+	public Rectangle dropBound = null;
+	public Rectangle inspectBound = null;
 
+	public void setup() {
+		eatTicker = new Ticker();
 	}
 
 	public static boolean isPanelHovered() {
@@ -79,6 +86,23 @@ public class UIInventory {
 			}
 		}
 
+		Point pos = new Point((int) position.x + 5 + (5 * slotMargin.x) - 10,
+				(int) position.y + 5 + (0 * slotMargin.y));
+		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y, 32, 32);
+		Renderer.renderUITexture(UITextureType.MOUTH_ICON, pos.x, pos.y, 32, 32);
+
+		eatBound = new Rectangle(pos.x, pos.y, 32, 32);
+
+		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y + (42 * 5), 32, 32);
+		Renderer.renderUITexture(UITextureType.DROP_ICON, pos.x, pos.y + (42 * 5), 32, 32);
+
+		dropBound = new Rectangle(pos.x, pos.y + (42 * 5), 32, 32);
+
+		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y + (42 * 4), 32, 32);
+		Renderer.renderUITexture(UITextureType.INSPECT_ICON, pos.x, pos.y + (42 * 4), 32, 32);
+
+		inspectBound = new Rectangle(pos.x, pos.y + (42 * 4), 32, 32);
+
 		GL11.glEnd();
 
 		x = 0;
@@ -101,7 +125,7 @@ public class UIInventory {
 																: slot.count + "")))));
 
 						int l = Renderer.getTextWidth(s, 12);
-						Point pos = new Point((int) position.x + 36 - (l) + (x * slotMargin.x),
+						pos = new Point((int) position.x + 36 - (l) + (x * slotMargin.x),
 								(int) position.y + 32 + (y * slotMargin.y));
 
 						Renderer.renderText(new Vector2f(pos.x, pos.y), s, 12, Color.white);
@@ -160,6 +184,7 @@ public class UIInventory {
 			if (slotIndexHovered < Inventory.getSlotCount()) {
 				ItemSlot tempSlot = Inventory.itemSlots.remove(slotIndexHovered);
 				System.out.println("Index: " + slotIndexHovered + "=>" + tempSlot.item);
+
 				if (tempSlot.item != null && dragSlot == null) {
 					dragSlot = tempSlot;
 					System.out.println("test123: " + dragSlot.item);
@@ -193,17 +218,36 @@ public class UIInventory {
 		if (Input.isMousePressed(1) && slotPointHovered != null) {
 			showContext = true;
 		}
-		/*
-		 * int slotCount = Inventory.getSlotCount(); int slotWidth =
-		 * Inventory.getSlotWidth(); int x = 0; int y = 0; for (int index = 0; index <
-		 * slotCount; index++) { ItemSlot slot = Inventory.itemSlots.get(index); if
-		 * (slot != null) { Point pos = new Point((int) position.x + 5 + (x * 38), (int)
-		 * position.y + 5 + (y * 36)); Rectangle rec = new Rectangle(pos.x,pos.y,32,32);
-		 * 
-		 * if(rec.contains(Input.getMousePoint())) { if(slot.item!=null) {
-		 * System.out.println("Item: " + slot.item.getTexture()); //break; } } if (x >=
-		 * slotWidth - 1) { y++; x = 0; } else { x++; } } }
-		 */
+
+		if (Input.isMousePressed(0)) {
+			if (dragSlot != null) {
+				if (dragSlot.item != null) {
+					if (eatBound.contains(Input.getMousePoint())) {
+						ItemData dat = GameDatabase.getItemData(dragSlot.item.getType());
+						if (dat != null) {
+							if (dat.attr.contains("EDIBLE")) {
+								if (eatSlot != null) {
+									if (eatSlot.item == null) {
+										System.out.println("Eat:" + dragSlot.item.getType());
+										eatSlot = new ItemSlot();
+										eatSlot.item = dragSlot.item;
+										eatSlot.count = dragSlot.count;
+
+										dragSlot = null;
+									}
+								}
+							}
+						}
+					}
+					if (inspectBound.contains(Input.getMousePoint())) {
+						System.out.println("Inspect:" + dragSlot.item.getType());
+					}
+					if (dropBound.contains(Input.getMousePoint())) {
+						System.out.println("Drop: " + dragSlot.item.getType());
+					}
+				}
+			}
+		}
 
 	}
 
@@ -221,19 +265,8 @@ public class UIInventory {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			Renderer.renderQuad(new Rectangle(tempPos.x, tempPos.y, 32, 32), new Color(255, 255, 255));
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-
 		}
-		Renderer.bindTexture(ResourceDatabase.uiTexture);
-		GL11.glBegin(GL11.GL_QUADS);
-		Point pos = new Point((int) position.x + 5 + (5 * slotMargin.x)-10,
-				(int) position.y + 5 + (0 * slotMargin.y));
-		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x,pos.y,
-				32, 32);
-		Renderer.renderUITexture(UITextureType.MOUTH_ICON, pos.x,pos.y,
-				32, 32);
-		GL11.glEnd();
-		
-		
+
 		if (dragSlot != null) {
 			if (dragSlot.item != null) {
 				Renderer.bindTexture(ResourceDatabase.uiTexture);
@@ -244,8 +277,26 @@ public class UIInventory {
 			}
 		}
 
+		if (eatSlot != null) {
+			if (eatSlot.item != null) {
+				eatTicker.poll(500);
+				Renderer.bindTexture(ResourceDatabase.uiTexture);
+				GL11.glBegin(GL11.GL_QUADS);
+				Renderer.renderUITexture(eatSlot.item.getTexture(), eatBound.x, eatBound.y, 32, 32, eatCount, 0);
+				GL11.glEnd();
+				if (eatTicker.ticked()) {
+					eatCount--;
+				}
+				if (eatCount <= 0) {
+					eatCount = 32;
+					eatSlot.item = null;
+				}
+			}
+		}
+
 	}
 
+	int eatCount = 32;
 	boolean showContext = false;
 
 	public void destroy() {

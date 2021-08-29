@@ -89,6 +89,34 @@ public class Renderer {
 		}
 	}
 
+	public static void renderUITexture(UITextureType type, int x, int y, int width, int height, int top, int left) {
+		if (currentTexture != null) {
+			if (type != UITextureType.BLANK) {
+				float topTexture = (type.h/((float)32/((float)32-top+1)));
+				Vector2f[] vectors = { 
+						new Vector2f(0, 32-top), 
+						new Vector2f(width * type.w,32-top),
+						new Vector2f(width * type.w, height * type.h), 
+						new Vector2f(0, height * type.h) };
+				Vector2f[] textureVectors = { 
+						new Vector2f(type.x, type.y+topTexture), 
+						new Vector2f(type.x + type.w, type.y+topTexture),
+						new Vector2f(type.x + type.w, type.y + type.h), 
+						new Vector2f(type.x, type.y + type.h)
+
+				};
+				int i = 0;
+				for (Vector2f vec : vectors) {
+					Vector2f textureVec = textureVectors[i];
+					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
+							(textureVec.y * height) / currentTexture.getImageHeight());
+					GL11.glVertex2f(((vec.x) + x) + (width * type.xOffset), ((vec.y) + y) + (height * type.yOffset));
+					i++;
+				}
+			}
+		}
+	}
+	
 	public static void renderQuad(Rectangle bound, Color color) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 

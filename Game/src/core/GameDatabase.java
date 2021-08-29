@@ -35,6 +35,7 @@ public class GameDatabase {
 
 		dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.FISH));
+		
 		dat.rarity = 3;
 		dat.isRenewable = true;
 		TextureType[] types = { TextureType.FISHING_SPOT, TextureType.FISHING_SPOT1, TextureType.FISHING_SPOT2,
@@ -67,6 +68,7 @@ public class GameDatabase {
 
 		newItem = new ItemData(ItemType.FISH, "Floppy fish.");
 		newItem.setTexture(UITextureType.FISH_ITEM);
+		newItem.attr.add("EDIBLE");
 		items.put(newItem.type, newItem);
 	}
 	public static ItemData getItemData(ItemType type) {

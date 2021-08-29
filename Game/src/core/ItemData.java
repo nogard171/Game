@@ -1,5 +1,7 @@
 package core;
 
+import java.util.LinkedList;
+
 import ui.UITextureType;
 
 public class ItemData {
@@ -8,8 +10,10 @@ public class ItemData {
 	public UITextureType texture = UITextureType.BLANK;
 	public boolean stackable = false;
 	public String description = "";
+	public LinkedList<String> attr = new LinkedList<String>();
 
 	public String getDescription() {
+		
 		return description;
 	}
 

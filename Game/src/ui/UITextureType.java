@@ -9,6 +9,8 @@ public enum UITextureType {
 	LOG_ITEM(1, 3, 1, 1), COPPER_ORE_ITEM(0, 5, 1, 1), TIN_ORE_ITEM(1, 5, 1, 1), FISH_ITEM(3, 4, 1, 1),
 
 	MOUTH_ICON(5,2,1,1),
+	DROP_ICON(5,3,1,1),
+	INSPECT_ICON(6,3,1,1),
 	
 	PANEL_TL(0, 0, 1, 1), PANEL_TC(1, 0, 1, 1), PANEL_TR(2, 0, 1, 1), PANEL_ML(0, 1, 1, 1), PANEL_MC(1, 1, 1, 1),
 	PANEL_MR(2, 1, 1, 1), PANEL_BL(0, 2, 1, 1), PANEL_BC(1, 2, 1, 1), PANEL_BR(2, 2, 1, 1);
