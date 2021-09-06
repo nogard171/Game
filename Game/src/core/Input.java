@@ -32,7 +32,7 @@ public class Input {
 	}
 
 	public static void poll() {
-
+		moved = (previousMousePoint.x != mousePoint.x && previousMousePoint.y != mousePoint.y);
 		if (buttons == null || keysDown == null) {
 			setup();
 		}
@@ -64,7 +64,16 @@ public class Input {
 		return buttonDown[index];
 	}
 
+	public static Point mousePoint;
+	public static boolean moved = false;
+	private static Point previousMousePoint = new Point(-1, -1);
+
 	public static Point getMousePoint() {
-		return new Point(Mouse.getX(), Window.height - Mouse.getY());
+		mousePoint = new Point(Mouse.getX(), Window.height - Mouse.getY());
+		if (moved) {
+
+			previousMousePoint = mousePoint;
+		}
+		return mousePoint;
 	}
 }

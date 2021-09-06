@@ -9,7 +9,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import core.ChunkManager;
 import core.GameDatabase;
+import core.GroundItem;
 import core.Input;
 import core.Item;
 import core.ItemData;
@@ -32,10 +34,11 @@ public class UIInventory {
 	public ItemSlot eatSlot;
 	private Ticker eatTicker;
 	public Rectangle dropBound = null;
-	public Rectangle inspectBound = null;
+	public Ticker hoverTicker;
 
 	public void setup() {
 		eatTicker = new Ticker();
+		hoverTicker = new Ticker();
 	}
 
 	public static boolean isPanelHovered() {
@@ -98,11 +101,6 @@ public class UIInventory {
 
 		dropBound = new Rectangle(pos.x, pos.y + (42 * 5), 32, 32);
 
-		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y + (42 * 4), 32, 32);
-		Renderer.renderUITexture(UITextureType.INSPECT_ICON, pos.x, pos.y + (42 * 4), 32, 32);
-
-		inspectBound = new Rectangle(pos.x, pos.y + (42 * 4), 32, 32);
-
 		GL11.glEnd();
 
 		x = 0;
@@ -150,6 +148,8 @@ public class UIInventory {
 	Point slotPointHovered = new Point(-1, -1);
 
 	public void update() {
+		hoverTicker.poll(1000);
+
 		previousSlotIndexHovered = slotIndexHovered;
 		slotIndexHovered = -1;
 		int offsetMouseX = (int) (Input.getMousePoint().x - position.x);
@@ -226,30 +226,38 @@ public class UIInventory {
 						ItemData dat = GameDatabase.getItemData(dragSlot.item.getType());
 						if (dat != null) {
 							if (dat.attr.contains("EDIBLE")) {
-								if (eatSlot != null) {
-									if (eatSlot.item == null) {
-										System.out.println("Eat:" + dragSlot.item.getType());
-										eatSlot = new ItemSlot();
-										eatSlot.item = dragSlot.item;
-										eatSlot.count = dragSlot.count;
-
-										dragSlot = null;
-									}
+								System.out.println("test");
+								if (eatSlot == null) {
+									eatSlot = new ItemSlot();
 								}
+								if (eatSlot.item == null) {
+									System.out.println("Eat:" + dragSlot.item.getType());
+									eatSlot = new ItemSlot();
+									eatSlot.item = dragSlot.item;
+									eatSlot.count = dragSlot.count;
+
+									dragSlot = null;
+								}
+
 							}
 						}
 					}
-					if (inspectBound.contains(Input.getMousePoint())) {
-						System.out.println("Inspect:" + dragSlot.item.getType());
-					}
 					if (dropBound.contains(Input.getMousePoint())) {
 						System.out.println("Drop: " + dragSlot.item.getType());
+						GroundItem droppedItem = new GroundItem(TextureType.AIR);
+						droppedItem.count = dragSlot.count;
+						droppedItem.item = dragSlot.item.getType();
+						droppedItem.type = dragSlot.item.getTexture();
+						ChunkManager.dropItem(droppedItem);
+
+						dragSlot.item = null;
 					}
 				}
 			}
 		}
-
 	}
+
+	long startTicks = 0;
 
 	public void render() {
 
@@ -262,9 +270,44 @@ public class UIInventory {
 		if (slotIndexHovered != -1) {
 			Point tempPos = new Point((int) position.x + 6 + (slotPointHovered.x * slotMargin.x),
 					(int) position.y + 6 + (slotPointHovered.y * slotMargin.y));
+
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			Renderer.renderQuad(new Rectangle(tempPos.x, tempPos.y, 32, 32), new Color(255, 255, 255));
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+			if (startTicks == 0 && !Input.moved) {
+				startTicks = hoverTicker.getTicks();
+			} else if (Input.moved) {
+				startTicks = 0;
+			}
+
+			if (startTicks + 1 < hoverTicker.getTicks() && !Input.moved) {
+				ItemSlot tempSlot = Inventory.itemSlots.get(slotIndexHovered);
+				if (tempSlot != null) {
+					if (tempSlot.item != null) {
+						ItemData data = GameDatabase.getItemData(tempSlot.item.getType());
+						if (data != null) {
+							//Renderer.renderQuad(new Rectangle(tempPos.x + 32, tempPos.y, 200, 50),								new Color(0, 0, 0, 224));
+							String tempString = data.description;
+							if (tempString.length() > 35) {
+								tempString = tempString.substring(0, 35) + "...";
+							}
+							Renderer.bindTexture(ResourceDatabase.uiTexture);
+							GL11.glBegin(GL11.GL_QUADS);
+							UIPanel.renderPanel(tempPos.x + 32, tempPos.y,7,2);
+							GL11.glEnd();
+							String tempName = data.type.name();
+							tempName=  tempName.substring(0,1).toUpperCase()+ tempName.substring(1,tempName.length()).toLowerCase();
+							
+							Renderer.renderText(tempPos.x + 32+4, tempPos.y + 4, tempName, 12, Color.white);
+							Renderer.renderText(tempPos.x + 32+4, tempPos.y + 18, tempString, 12, Color.white);
+							Renderer.renderText(tempPos.x + 32+4, tempPos.y + 44, "Value: " + (data.value*tempSlot.count), 12,
+									Color.white);
+						}
+					}
+				}
+			}
+		} else {
+			startTicks = 0;
 		}
 
 		if (dragSlot != null) {

@@ -17,6 +17,7 @@ import core.ItemType;
 import core.Renderer;
 import core.ResourceDatabase;
 import core.TextureType;
+import core.Window;
 
 public class UIManager {
 	UIInventory uiInventory;
@@ -62,6 +63,16 @@ public class UIManager {
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		GL11.glBegin(GL11.GL_QUADS);
+	
+		Renderer.renderUITexture(UITextureType.PANEL_TL, 0,Window.height-32, 32, 32);
+		int w= 5;
+		for(int c=0;c<w;c++)
+		{
+			Renderer.renderUITexture(UITextureType.PANEL_TC, 32+(c*32),Window.height-32, 32, 32);
+		}
+		Renderer.renderUITexture(UITextureType.PANEL_TR,32+((w)*32),Window.height-32, 32, 32);
+		
+
 		Renderer.renderUITexture(UITextureType.CURSOR, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
 		GL11.glEnd();
 	}

@@ -13,7 +13,6 @@ public class Resource extends Object {
 		super(newType);
 		health = 1;
 		baseType = newType;
-		System.out.println("type: " + baseType);
 	}
 
 	public Resource(TextureType newType, int newHealth) {

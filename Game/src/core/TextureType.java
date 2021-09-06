@@ -63,7 +63,7 @@ public enum TextureType implements Comparable<TextureType> {
 			break;
 		}
 		if (this != AIR) {
-			System.out.println("Type: " + this.toString() + "=>" + passable);
+			//System.out.println("Type: " + this.toString() + "=>" + passable);
 		}
 		return passable;
 	}

@@ -266,6 +266,8 @@ public class Base {
 
 		Renderer.renderText(new Vector2f(0, 32), "Chunks In View: " + chunkMgr.chunksInView.size(), 12, Color.white);
 
+		Renderer.renderText(new Vector2f(0, 48), "Input Moved: " + ""+Input.moved, 12, Color.white);
+
 		if (test != null) {
 
 			Tile tile = ChunkManager.getTile(test);

@@ -45,28 +45,28 @@ public class GameDatabase {
 	}
 
 	private static void loadItems() {
-		ItemData newItem = new ItemData(ItemType.ROCK, "This is one solid piece of Rock.");
+		ItemData newItem = new ItemData(ItemType.ROCK, "This is one solid piece of Rock.",1);
 		newItem.setTexture(UITextureType.ROCK_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.COINS, "Chan Ching, looks good in the hand.");
+		newItem = new ItemData(ItemType.COINS, "Chan Ching, looks good in the hand.",1);
 		newItem.setTexture(UITextureType.COINS_ITEM);
 		newItem.stackable = true;
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.COPPER_ORE, "It has a orangy ting.");
+		newItem = new ItemData(ItemType.COPPER_ORE, "It has a orangy ting.",10);
 		newItem.setTexture(UITextureType.COPPER_ORE_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.TIN_ORE, "This looks simular to Rock.");
+		newItem = new ItemData(ItemType.TIN_ORE, "This looks simular to Rock.",10);
 		newItem.setTexture(UITextureType.TIN_ORE_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.LOG, "Long sturdy piece of Wood.");
+		newItem = new ItemData(ItemType.LOG, "Long sturdy piece of Wood.",5);
 		newItem.setTexture(UITextureType.LOG_ITEM);
 		items.put(newItem.type, newItem);
 
-		newItem = new ItemData(ItemType.FISH, "Floppy fish.");
+		newItem = new ItemData(ItemType.FISH, "Floppy fish.",20);
 		newItem.setTexture(UITextureType.FISH_ITEM);
 		newItem.attr.add("EDIBLE");
 		items.put(newItem.type, newItem);

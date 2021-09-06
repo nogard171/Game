@@ -9,6 +9,7 @@ public class ItemData {
 	public ItemType type = ItemType.NONE;
 	public UITextureType texture = UITextureType.BLANK;
 	public boolean stackable = false;
+	public int value = 0;
 	public String description = "";
 	public LinkedList<String> attr = new LinkedList<String>();
 
@@ -32,6 +33,11 @@ public class ItemData {
 	public ItemData(ItemType newType, String newDescription) {
 		type = newType;
 		description = newDescription;
+	}
+	public ItemData(ItemType newType, String newDescription, int newValue) {
+		type = newType;
+		description = newDescription;
+		value = newValue;
 	}
 
 	public ItemData(ItemType newType, boolean isStackable) {
