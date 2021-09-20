@@ -8,6 +8,11 @@ public class Resource extends Object {
 	private int health;
 	private int animationIndex = 0;
 	private TextureType baseType = TextureType.AIR;
+	private boolean animated = false;
+
+	public boolean isAnimated() {
+		return animated;
+	}
 
 	public Resource(TextureType newType) {
 		super(newType);

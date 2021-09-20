@@ -162,6 +162,9 @@ public class ChunkManager {
 
 	public void render() {
 		for (Chunk chunk : chunksInView) {
+			chunk.renderTiles();
+		}
+		for (Chunk chunk : chunksInView) {
 			chunk.render();
 		}
 	}

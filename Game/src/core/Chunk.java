@@ -113,8 +113,13 @@ public class Chunk {
 					tile.setType(TextureType.GRASS0);
 				}
 
+				t = r.nextFloat();
+				if (t < 0.1f) {
+					tile.setType(TextureType.DIRT);
+				}
+
 				if (x < 5 && x < 9 && y > 5 && y < 9) {
-					tile.setType(TextureType.SHALLOW_WATER);
+					//tile.setType(TextureType.SHALLOW_WATER);
 					isSolid = false;
 				}
 
@@ -124,18 +129,22 @@ public class Chunk {
 				res.setPosition(position);
 
 				if (x == 3 && y == 6) {
-					res.setType(TextureType.FISHING_SPOT);
+					//res.setType(TextureType.FISHING_SPOT);
 				}
 
 				if (isSolid) {
 
 					t = r.nextFloat();
-					if (t < 0.1f) {
-						// res.setType(TextureType.TREE, 10);
+					if (t < 0.05f) {
+						 res.setType(TextureType.TREE, 10);
+					}
+					t = r.nextFloat();
+					if (t < 0.05f) {
+						 res.setType(TextureType.BUSH, 10);
 					}
 					t = r.nextFloat();
 					if (t < 0.1f) {
-						// res.setType(TextureType.ROCK, 10);
+						 res.setType(TextureType.ROCK, 10);
 					}
 
 					t = r.nextFloat();
@@ -246,6 +255,8 @@ public class Chunk {
 							if (obj instanceof Resource) {
 								Resource res = (Resource) obj;
 								if (res != null) {
+									if(res.isAnimated())
+									{
 									ResourceData dat = GameDatabase.resources.get(res.getBaseType());
 									if (dat != null) {
 										res.cycleAnimation();
@@ -253,6 +264,7 @@ public class Chunk {
 										
 										res.setRawType(newType);
 										build();
+									}
 									}
 								}
 							}
@@ -263,12 +275,18 @@ public class Chunk {
 
 		}
 	}
-
-	public void render() {
-		if (tileID == -1 || itemID == -1 || otherID == -1) {
+	public void renderTiles() {
+		if (tileID == -1) {
 			build();
 		} else {
 			GL11.glCallList(tileID);
+		}
+	}
+	public void render() {
+		if ( itemID == -1 || otherID == -1) {
+			build();
+		} else {
+			
 			GL11.glCallList(itemID);
 			GL11.glCallList(otherID);
 		}

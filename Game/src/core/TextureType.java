@@ -3,10 +3,19 @@ package core;
 import java.util.ArrayList;
 
 public enum TextureType implements Comparable<TextureType> {
-	AIR(0, 0), COINS(7, 0, 1, 1), CHARACTER(0, 0.75F, 1, 0.75f, 0, -0.25f), GRASS(1, 0, 1, 0.75f),
-	GRASS0(1, 0.75f, 1, 0.75f), DIRT(2, 0, 1, 0.75f), TREE(3, 0, 1, 4, 0, -3.5f), BUSH(2, 0.75f, 1, 0.75f, 0, -0.75f),
+	//x,y,w,h,ox,oy
+	AIR(0, 0), 
+	COINS(7, 0, 1, 1), 
+	CHARACTER(0, 0.75F, 1, 0.75f, 0, -0.25f), 
+	GRASS(1, 0, 1, 1),
+	GRASS0(1, 1f, 1, 1f), 
+	DIRT(2, 0, 1,1f), 
+	TREE(3, 0, 2, 2, 0, -1.5f), 
+	BUSH(3,2, 2, 1, 0f, -0.5f),
+	ROCK(1, 2, 2, 1, 0, -0.4f),
+	
 	PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f),
-	ROCK(1, 0.75f * 2, 1, 0.75f, 0, -0.25f), ROCK_ITEM(0, 0, 1, 1), LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0),
+	ROCK_ITEM(0, 0, 1, 1), LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0),
 	TIN_ORE(1, 0.75F * 4, 1, 0.75f, 0, -0.25f), COPPER_ORE(1, 0.75F * 3, 1, 0.75f, 0, -0.25f),
 	SHALLOW_WATER(2, 0.75f * 2, 1, 0.75f), FISHING_SPOT(2, 0.75f * 3, 1, 0.75f), FISHING_SPOT1(2, 0.75f * 4, 1, 0.75f),
 	FISHING_SPOT2(2, 0.75f * 5, 1, 0.75f), FISHING_SPOT3(2, 0.75f * 6, 1, 0.75f), FISHING_SPOT4(2, 0.75f * 7, 1, 0.75f);
