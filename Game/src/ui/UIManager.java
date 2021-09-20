@@ -37,7 +37,7 @@ public class UIManager {
 		 */
 	}
 	public void update() {
-		//uiInventory.update();
+		uiInventory.update();
 		if(Input.isKeyPressed(Keyboard.KEY_1)) {
 
 			Inventory.addItem(ItemType.COINS,900);
@@ -59,7 +59,7 @@ public class UIManager {
 	public void render() {
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
-		//uiInventory.render();
+		uiInventory.render();
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		GL11.glBegin(GL11.GL_QUADS);

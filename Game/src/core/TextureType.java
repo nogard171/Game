@@ -12,7 +12,7 @@ public enum TextureType implements Comparable<TextureType> {
 	DIRT(2, 0, 1,1f), 
 	TREE(3, 0, 2, 2, 0, -1.5f), 
 	BUSH(3,2, 2, 1, 0f, -0.5f),
-	ROCK(1, 2, 2, 1, 0, -0.4f),
+	ROCK(1, 2, 2, 1, 0, -0.5f),
 	
 	PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f),
 	ROCK_ITEM(0, 0, 1, 1), LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0),
