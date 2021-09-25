@@ -266,6 +266,7 @@ public class UIInventory {
 	long startTicks = 0;
 
 	public void render() {
+		//show=true;
 		if (show) {
 			if (id == -1 || updateID) {
 				build();

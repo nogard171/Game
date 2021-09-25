@@ -38,22 +38,12 @@ public class UIManager {
 	}
 	public void update() {
 		uiInventory.update();
-		if(Input.isKeyPressed(Keyboard.KEY_1)) {
+		
+		if(Input.isKeyPressed(Keyboard.KEY_I)) {
 
-			Inventory.addItem(ItemType.COINS,900);
+			uiInventory.show = !uiInventory.show;
 		}
-		if(Input.isKeyPressed(Keyboard.KEY_2)) {
-
-			Inventory.addItem(ItemType.COINS,900000);
-		}
-		if(Input.isKeyPressed(Keyboard.KEY_3)) {
-
-			Inventory.addItem(ItemType.COINS,900000000);
-		}
-		if(Input.isKeyDown(Keyboard.KEY_4)) {
-
-			Inventory.addItem(ItemType.COINS,90000000000000l);
-		}
+		
 	}
 
 	public void render() {

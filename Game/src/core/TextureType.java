@@ -28,6 +28,10 @@ public enum TextureType implements Comparable<TextureType> {
 	float xOffset;
 	float yOffset;
 
+
+	public float pW;
+	public float pH;
+
 	TextureType(float newX, float newY) {
 		this(newX, newY, 1, 1);
 	}
@@ -36,7 +40,21 @@ public enum TextureType implements Comparable<TextureType> {
 		this(newX, newY, newW, newH, 0, 0);
 	}
 
-	TextureType(float newX, float newY, float newW, float newH, float newXOffset, float newYOffset) {
+	TextureType(float newX, float newY, float newW, float newH, float newXOffset, float newYOffset) {		x = newX;
+		y = newY;
+
+		w = newW;
+		h = newH;
+
+		xOffset = newXOffset;
+		yOffset = newYOffset;
+		
+		pW= newW;
+		pH = newH;
+	
+	}
+
+	TextureType(float newX, float newY, float newW, float newH, float newXOffset, float newYOffset, float newPW, float newPH) {
 		x = newX;
 		y = newY;
 
@@ -45,6 +63,9 @@ public enum TextureType implements Comparable<TextureType> {
 
 		xOffset = newXOffset;
 		yOffset = newYOffset;
+		
+		pW = newPW;
+		pH = newPH;
 	}
 
 	@Override

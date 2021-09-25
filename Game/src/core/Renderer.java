@@ -50,8 +50,8 @@ public class Renderer {
 	public static void renderTexture(TextureType type, int x, int y, int width, int height) {
 		if (currentTexture != null) {
 			if (type != TextureType.AIR) {
-				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.w, 0),
-						new Vector2f(width * type.w, height * type.h), new Vector2f(0, height * type.h) };
+				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.pW, 0),
+						new Vector2f(width * type.pW, height * type.pH), new Vector2f(0, height * type.pH) };
 				Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
 						new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
 
@@ -71,8 +71,8 @@ public class Renderer {
 	public static void renderUITexture(UITextureType type, int x, int y, int width, int height) {
 		if (currentTexture != null) {
 			if (type != UITextureType.BLANK) {
-				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.w, 0),
-						new Vector2f(width * type.w, height * type.h), new Vector2f(0, height * type.h) };
+				Vector2f[] vectors = { new Vector2f(0, 0), new Vector2f(width * type.pW, 0),
+						new Vector2f(width * type.pW, height * type.pH), new Vector2f(0, height * type.pH) };
 				Vector2f[] textureVectors = { new Vector2f(type.x, type.y), new Vector2f(type.x + type.w, type.y),
 						new Vector2f(type.x + type.w, type.y + type.h), new Vector2f(type.x, type.y + type.h)
 
