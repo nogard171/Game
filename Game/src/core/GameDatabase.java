@@ -4,12 +4,15 @@ import java.util.HashMap;
 
 import org.newdawn.slick.TrueTypeFont;
 
+import ui.Skill;
+import ui.SkillData;
 import ui.UITextureType;
 
 public class GameDatabase {
 	public static HashMap<TextureType, ResourceData> resources = new HashMap<TextureType, ResourceData>();
-
 	public static HashMap<ItemType, ItemData> items = new HashMap<ItemType, ItemData>();
+	
+	public static HashMap<String, SkillData> skillData = new HashMap<String, SkillData>();
 
 	public static void load() {
 		loadResources();
@@ -71,6 +74,18 @@ public class GameDatabase {
 		newItem.attr.add("EDIBLE");
 		items.put(newItem.type, newItem);
 	}
+	
+	public static void loadSkills()
+	{
+		SkillData discoverySkill = new SkillData("Discovery","Curiosity certainly killed the cat");
+		skillData.put(discoverySkill.name, discoverySkill);
+		
+
+		SkillData woodCuttingSkill = new SkillData("Wood Cutting","Wood cutting allow for the gathering of wood.",discoverySkill.name,2);
+		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
+		
+	}
+	
 	public static ItemData getItemData(ItemType type) {
 		ItemData data = items.get(type);
 		

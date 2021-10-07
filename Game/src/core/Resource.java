@@ -9,6 +9,7 @@ public class Resource extends Object {
 	private int animationIndex = 0;
 	private TextureType baseType = TextureType.AIR;
 	private boolean animated = false;
+	public int[] animatedID;
 
 	public boolean isAnimated() {
 		return animated;
@@ -83,5 +84,25 @@ public class Resource extends Object {
 
 	public java.lang.Object getBaseType() {
 		return baseType;
+	}
+
+	public void setAnimated(boolean b) {
+		this.animated = b;
+
+		ResourceData data = GameDatabase.resources.get(baseType);
+		if (data != null) {
+			animatedID = new int[data.animationTypes.length];
+			for (int i = 0; i < animatedID.length; i++) {
+				animatedID[i] = -1;
+				System.out.println("test: " + i);
+			}
+
+			int r = 0 + (int) (Math.random() * (((data.animationTypes.length - 1) - 0) + 1));
+			animationIndex = r;
+		}
+	}
+
+	public int getAnimatedID() {
+		return animatedID[animationIndex];
 	}
 }

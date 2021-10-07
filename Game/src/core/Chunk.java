@@ -3,6 +3,7 @@ package core;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -13,7 +14,8 @@ import org.newdawn.slick.Color;
 import utils.Ticker;
 
 public class Chunk {
-
+	public int[][] heightMap;
+	public int[][] treeMap;
 	private int tileID = -1;
 	private int itemID = -1;
 	private int otherID = -1;
@@ -22,6 +24,9 @@ public class Chunk {
 	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
 	HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
 	HashMap<Point, Object> objects = new HashMap<Point, Object>();
+	// HashMap<Point, Object> animatedObjects = new HashMap<Point, Object>();
+
+	ArrayList<Object> animatedObjects = new ArrayList<Object>();
 	HashMap<Point, Entity> entities = new HashMap<Point, Entity>();
 	public static Dimension size = new Dimension(16, 16);
 
@@ -49,6 +54,17 @@ public class Chunk {
 			}
 		}
 
+		if (tempIndex == null) {
+			for (int o = 0; o < animatedObjects.size(); o++) {
+				Object obj = animatedObjects.get(o);
+				if (obj != null) {
+					if (obj.getType() == type) {
+						tempIndex = obj.getIndex();
+						break;
+					}
+				}
+			}
+		}
 		if (tempIndex == null) {
 			for (Point key : objects.keySet()) {
 				Object obj = objects.get(key);
@@ -95,31 +111,41 @@ public class Chunk {
 	}
 
 	public void setup() {
-		float[][] heightMap = Generator.generateHeightMap(size.width, size.height);
+		heightMap = Generator.generateHeightMap(index, size.width, size.height, 9);
 
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
 
 				Vector2f position = getPosition(x, y);
 				boolean isSolid = true;
-				Tile tile = new Tile(TextureType.GRASS);
+				Tile tile = new Tile(TextureType.DIRT);
 				tile.setPosition(position);
 
 				Point tileIndex = new Point(x, y);
+				tile.setIndex(tileIndex);
 
 				Random r = new Random();
-				float t = r.nextFloat();
-				if (t < 0.5f) {
+				int t = heightMap[x][y];// r.nextFloat();
+
+				// System.out.println("T:" + t);
+
+				float g = r.nextFloat();
+				if (g < 0.5f) {
 					tile.setType(TextureType.GRASS0);
+				} else if (g >= 0.5f) {
+					tile.setType(TextureType.GRASS);
 				}
 
-				t = r.nextFloat();
-				if (t < 0.1f) {
-					tile.setType(TextureType.DIRT);
+				if (t <= 6) {
+					tile.setType(TextureType.SAND);
 				}
+				if (t < 2) {
+					tile.setType(TextureType.SHALLOW_WATER);
+					isSolid = false;
 
-				if (x < 5 && x < 9 && y > 5 && y < 9) {
-					//tile.setType(TextureType.SHALLOW_WATER);
+				}
+				if (t < -5) {
+					tile.setType(TextureType.DEEP_WATER);
 					isSolid = false;
 				}
 
@@ -128,31 +154,40 @@ public class Chunk {
 				Resource res = new Resource(TextureType.AIR);
 				res.setPosition(position);
 
-				if (x == 3 && y == 6) {
-					//res.setType(TextureType.FISHING_SPOT);
+				if (tile.getType() == TextureType.SHALLOW_WATER) {
+					g = r.nextFloat();
+					boolean beach = ChunkManager.checkSurroundingTilesFor(tileIndex, TextureType.SAND);
+					if (g < 0.1f && beach) {
+						System.out.println("Adding Fishing spot..." + beach);
+						Resource animatedRes = new Resource(TextureType.AIR);
+						animatedRes.setIndex(tileIndex);
+						animatedRes.setPosition(position);
+						animatedRes.setType(TextureType.FISHING_SPOT);
+						animatedRes.setAnimated(true);
+						animatedObjects.add(animatedRes);
+					}
 				}
 
 				if (isSolid) {
+					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
+					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
+						res.setType(TextureType.TREE, 10);
+					}
+					t = r.nextInt();
+					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
+						res.setType(TextureType.BUSH, 10);
+					}
+					t = r.nextInt();
+					if (t == 1 && (tile.getType() == TextureType.DIRT)) {
+						res.setType(TextureType.ROCK, 10);
+					}
 
-					t = r.nextFloat();
-					if (t < 0.05f) {
-						 res.setType(TextureType.TREE, 10);
-					}
-					t = r.nextFloat();
-					if (t < 0.05f) {
-						 res.setType(TextureType.BUSH, 10);
-					}
-					t = r.nextFloat();
-					if (t < 0.1f) {
-						 res.setType(TextureType.ROCK, 10);
-					}
-
-					t = r.nextFloat();
-					if (t < 0.1f) {
+					t = r.nextInt();
+					if (t == 1) {
 						// res.setType(TextureType.TIN_ORE, 10);
 					}
-					t = r.nextFloat();
-					if (t < 0.1f) {
+					t = r.nextInt();
+					if (t == 1) {
 						// res.setType(TextureType.COPPER_ORE, 10);
 					}
 				}
@@ -165,7 +200,7 @@ public class Chunk {
 				entities.put(tileIndex, ent);
 			}
 		}
-		// build();
+		buildAnimations();
 	}
 
 	public void build() {
@@ -243,38 +278,60 @@ public class Chunk {
 
 	}
 
+	int animationID = -1;
+
+	public void buildAnimations() {
+		for (int i = 0; i < animatedObjects.size(); i++) {
+			Object obj = animatedObjects.get(i);
+			if (obj != null) {
+				// obj.setPosition(position);
+				if (obj instanceof Resource) {
+					Resource res = (Resource) obj;
+					if (res != null) {
+						ResourceData dat = GameDatabase.resources.get(res.getBaseType());
+						if (dat != null) {
+							int tempID = -1;
+							for (int a = 0; a < res.animatedID.length; a++) {
+								tempID = GL11.glGenLists(1);
+								GL11.glNewList(tempID, GL11.GL_COMPILE);
+								GL11.glBegin(GL11.GL_QUADS);
+								TextureType newType = dat.animationTypes[a];
+								Renderer.renderTexture(newType, (int) obj.getPosition().x, (int) obj.getPosition().y);
+								GL11.glEnd();
+								GL11.glEndList();
+								res.animatedID[a] = tempID;
+							}
+						}
+
+					}
+				}
+			}
+		}
+	}
+
 	public void update(boolean ticked) {
 		if (ticked) {
-			for (int x = 0; x < size.width; x++) {
-				for (int y = 0; y < size.height; y++) {
-					Point tempIndex = new Point(x, y);
-
-					Object obj = objects.get(tempIndex);
-					if (obj != null) {
-						if (obj.getType() != TextureType.AIR) {
-							if (obj instanceof Resource) {
-								Resource res = (Resource) obj;
-								if (res != null) {
-									if(res.isAnimated())
-									{
-									ResourceData dat = GameDatabase.resources.get(res.getBaseType());
-									if (dat != null) {
-										res.cycleAnimation();
-										TextureType newType = dat.animationTypes[res.getAnimationIndex()];
-										
-										res.setRawType(newType);
-										build();
-									}
-									}
+			for (int i = 0; i < animatedObjects.size(); i++) {
+				Object obj = animatedObjects.get(i);
+				if (obj != null) {
+					if (obj instanceof Resource) {
+						Resource res = (Resource) obj;
+						if (res != null) {
+							if (res.isAnimated()) {
+								ResourceData dat = GameDatabase.resources.get(res.getBaseType());
+								if (dat != null) {
+									res.cycleAnimation();
+									TextureType newType = dat.animationTypes[res.getAnimationIndex()];
+									res.setRawType(newType);
 								}
 							}
 						}
 					}
 				}
 			}
-
 		}
 	}
+
 	public void renderTiles() {
 		if (tileID == -1) {
 			build();
@@ -282,11 +339,25 @@ public class Chunk {
 			GL11.glCallList(tileID);
 		}
 	}
+
 	public void render() {
-		if ( itemID == -1 || otherID == -1) {
+		if (itemID == -1 || otherID == -1) {
 			build();
 		} else {
-			
+			for (int i = 0; i < animatedObjects.size(); i++) {
+				Object obj = animatedObjects.get(i);
+				if (obj != null) {
+					if (obj instanceof Resource) {
+						Resource res = (Resource) obj;
+						if (res != null) {
+							if (res.isAnimated()) {
+								GL11.glCallList(res.getAnimatedID());
+							}
+						}
+					}
+				}
+			}
+
 			GL11.glCallList(itemID);
 			GL11.glCallList(otherID);
 		}
@@ -317,7 +388,22 @@ public class Chunk {
 		Entity ent = entities.get(point);
 		newTile = (ent != null && ((removeAIR && ent.getType() != TextureType.AIR) || (!removeAIR)) ? ent : null);
 
-		Object obj = objects.get(point);
+		Object obj = null;
+		if (newTile == null || (newTile.getType() == TextureType.AIR)) {
+			for (int o = 0; o < animatedObjects.size(); o++) {
+				obj = animatedObjects.get(o);
+				if (obj != null) {
+					if (obj.getIndex().equals(point)) {
+						if (obj != null && ((removeAIR && obj.getType() != TextureType.AIR) || (!removeAIR))) {
+							newTile = obj;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		obj = objects.get(point);
 		newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 				? (obj != null && ((removeAIR && obj.getType() != TextureType.AIR) || (!removeAIR)) ? obj : null)
 				: newTile);

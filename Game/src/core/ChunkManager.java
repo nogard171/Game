@@ -17,8 +17,8 @@ public class ChunkManager {
 	public static HashMap<Point, Chunk> chunks = new HashMap<Point, Chunk>();
 	public static ArrayList<Chunk> chunksInView = new ArrayList<Chunk>();
 
-	static Point chunkDim = new Point(3, 3);
-	public static Point viewRange = new Point(3, 3);
+	static Point chunkDim = new Point(9, 9);
+	public static Point viewRange = new Point(10, 10);
 	Ticker tickerUtil;
 
 	public void setup() {
@@ -348,5 +348,43 @@ public class ChunkManager {
 		}
 
 		return res;
+	}
+
+	public static boolean checkSurroundingTilesFor(Point index, TextureType type) {
+		boolean found = false;
+		for (int x = index.x - 1; x < index.x + 1; x++) {
+			for (int y = index.y - 1; y < index.y + 1; y++) {
+				int chunkX = x / Chunk.size.width;
+				int chunkY = y / Chunk.size.height;
+
+				Chunk chunk = chunks.get(new Point(chunkX, chunkY));
+				if (chunk != null) {
+					int objX = x;
+					int objY = y;
+					if (objX < 0) {
+						objX += 16;
+					}
+					if (objY < 0) {
+						objY += 16;
+					}
+					Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true, false);
+					if (tile != null) {
+						System.out.println("Chunk: " + index + "=>" + x + "," + y + "=" + tile.getType() + "==" + type);
+						if (tile.getType() == type) {
+							found = true;
+						}
+					}
+				}
+				if (found) {
+					break;
+				}
+			}
+
+			if (found) {
+				break;
+			}
+		}
+
+		return found;
 	}
 }

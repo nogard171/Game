@@ -19,6 +19,7 @@ import core.ItemType;
 import core.Renderer;
 import core.ResourceDatabase;
 import core.TextureType;
+import game.PlayerDatabase;
 import game.TaskManager;
 import utils.FPS;
 import utils.Ticker;
@@ -72,7 +73,7 @@ public class UIInventory {
 		int x = 0;
 		int y = 0;
 		for (int index = 0; index < slotCount; index++) {
-			ItemSlot slot = Inventory.itemSlots.get(index);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 			if (slot != null) {
 
 				Item item = slot.item;
@@ -110,7 +111,7 @@ public class UIInventory {
 		x = 0;
 		y = 0;
 		for (int index = 0; index < slotCount; index++) {
-			ItemSlot slot = Inventory.itemSlots.get(index);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 			if (slot != null) {
 
 				Item item = slot.item;
@@ -166,8 +167,8 @@ public class UIInventory {
 				int slotWidth = Inventory.getSlotWidth();
 				int index = itemX + (itemY * slotWidth);
 
-				if (index < Inventory.itemSlots.size() && index >= 0) {
-					ItemSlot slot = Inventory.itemSlots.get(index);
+				if (index <PlayerDatabase.itemSlots.size() && index >= 0) {
+					ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 					if (slot != null) {
 						if (itemX < slotWidth) {
 							slotIndexHovered = index;
@@ -187,7 +188,7 @@ public class UIInventory {
 
 			if (Input.isMousePressed(0) && slotIndexHovered > -1) {
 				if (slotIndexHovered < Inventory.getSlotCount()) {
-					ItemSlot tempSlot = Inventory.itemSlots.remove(slotIndexHovered);
+					ItemSlot tempSlot = PlayerDatabase.itemSlots.remove(slotIndexHovered);
 					System.out.println("Index: " + slotIndexHovered + "=>" + tempSlot.item);
 
 					if (tempSlot.item != null && dragSlot == null) {
@@ -210,7 +211,7 @@ public class UIInventory {
 						System.out.println("Use");
 						// TaskManager.addTask(null);
 					}
-					Inventory.itemSlots.add(slotIndexHovered, tempSlot);
+					PlayerDatabase.itemSlots.add(slotIndexHovered, tempSlot);
 
 				}
 				if (dragSlot != null) {
@@ -288,7 +289,7 @@ public class UIInventory {
 				}
 
 				if (startTicks + 1 < hoverTicker.getTicks() && !Input.moved) {
-					ItemSlot tempSlot = Inventory.itemSlots.get(slotIndexHovered);
+					ItemSlot tempSlot = PlayerDatabase.itemSlots.get(slotIndexHovered);
 					if (tempSlot != null) {
 						if (tempSlot.item != null) {
 							ItemData data = GameDatabase.getItemData(tempSlot.item.getType());

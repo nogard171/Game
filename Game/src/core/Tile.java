@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Point;
 import java.awt.Polygon;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -8,6 +9,15 @@ import org.newdawn.slick.Color;
 public class Tile {
 	protected TextureType type = TextureType.AIR;
 	private Vector2f position;
+	private Point index;
+
+	public void setIndex(Point newIndex) {
+		index = newIndex;
+	}
+
+	public Point getIndex() {
+		return index;
+	}
 
 	public Tile(TextureType newType) {
 		setType(newType);
@@ -28,7 +38,6 @@ public class Tile {
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}
-
 
 	public String toHoverString() {
 		String str = "";
@@ -59,7 +68,7 @@ public class Tile {
 		case FISHING_SPOT2:
 		case FISHING_SPOT3:
 		case FISHING_SPOT4:
-			
+
 			str = "Fish !%0,224,0%Fishing Spot";
 			break;
 		default:

@@ -10,6 +10,7 @@ import core.GroundItem;
 import core.Item;
 import core.ItemType;
 import core.TextureType;
+import game.PlayerDatabase;
 
 public class Inventory {
 	private static int slotCount = 30;
@@ -19,12 +20,11 @@ public class Inventory {
 	}
 
 	private static int slotWidth = 5;
-	public static LinkedList<ItemSlot> itemSlots = new LinkedList<ItemSlot>();
 
 	public static void setup() {
 		for (int i = 0; i < slotCount; i++) {
 			ItemSlot slot = new ItemSlot();
-			itemSlots.add(slot);
+			PlayerDatabase.itemSlots.add(slot);
 		}
 	}
 
@@ -42,7 +42,7 @@ public class Inventory {
 				index = findEmpty();
 			}
 			if (index >= 0) {
-				ItemSlot slot = itemSlots.get(index);
+				ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 				if (slot.item != null) {
 					slot.count += count;
 				} else {
@@ -65,7 +65,7 @@ public class Inventory {
 	private static int findItemIndex(ItemType type) {
 		int index = -1;
 		for (int i = 0; i < slotCount; i++) {
-			ItemSlot slot = itemSlots.get(i);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(i);
 			if (slot != null) {
 				if (slot.item != null) {
 					if (slot.item.getType() == type) {
@@ -83,7 +83,7 @@ public class Inventory {
 	private static int findEmpty() {
 		int index = -1;
 		for (int i = 0; i < slotCount; i++) {
-			ItemSlot slot = itemSlots.get(i);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(i);
 			if (slot != null) {
 				if (slot.item == null) {
 					index = i;
@@ -96,7 +96,7 @@ public class Inventory {
 
 	public static void printItems() {
 		for (int i = 0; i < slotCount; i++) {
-			ItemSlot slot = itemSlots.get(i);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(i);
 			if (slot != null) {
 				System.out.println("Index: " + i + "->" + slot.item);
 			}
@@ -107,7 +107,7 @@ public class Inventory {
 		boolean added = false;
 		Item item = GameDatabase.getItem(type);
 		if (item != null) {
-			ItemSlot slot = itemSlots.get(index);
+			ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 			if (slot.item == null) {
 				slot.item = item;
 				added = true;

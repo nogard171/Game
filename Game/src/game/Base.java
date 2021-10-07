@@ -161,8 +161,6 @@ public class Base {
 
 				LinkedList<ANode> path = null;
 
-				
-				System.out.println("In Range: " + inRange);
 				if (inRange) {
 					path = new LinkedList<ANode>();
 					path.add(new ANode(test));
@@ -256,7 +254,7 @@ public class Base {
 		uiMgr.render();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getDelta()+"/"+FPS.getFPS(), 12, Color.white);
 
 		TextureType type = ChunkManager.getTypeByIndexWithTiles(test);
 
