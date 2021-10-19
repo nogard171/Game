@@ -107,7 +107,42 @@ public class TaskManager {
 					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
 					ChunkManager.move(playerIndex, node.toPoint());
 				}
-				if (task.getType() == TaskType.RESOURCE) {
+				if (task.getType() == TaskType.TILL) {
+					ANode node = path.removeFirst();
+					if (path.size() == 0) {
+						System.out.println("tilling land");
+						Tile tile = ChunkManager.getTile(node.toPoint());
+						if(tile!=null)
+						{
+							ChunkManager.setTileAtIndex(node.toPoint(), TextureType.TILLED_DIRT);
+						}
+						/*
+						Resource res = ChunkManager.getResource();
+						if (res != null) {
+							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
+							if (dat != null) {
+								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
+								System.out.println("genR: " + genR);
+								if (genR == 1) {
+									for (ResourceItemDrop drop : dat.itemDrops) {
+										ArrayList<ItemType> types = drop.getDroppedItems();
+										for (ItemType type : types) {
+											Inventory.addItem(type);
+										}
+									}
+									if (!dat.isRenewable) {
+										ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
+									}
+								} else {
+									for (int t = 0; t < 10; t++) {
+										path.add(node);
+									}
+								}
+							}
+						}*/
+
+					}
+				} else if (task.getType() == TaskType.RESOURCE) {
 					ANode node = path.removeFirst();
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());

@@ -73,24 +73,41 @@ public class ChunkManager {
 			if (chunk != null) {
 				int objX = (int) (test.x % 16);
 				int objY = (int) (test.y % 16);
-
 				chunk.droppedItems.put(new Point(objX, objY), item);
 				chunk.build();
 			}
 		}
 	}
 
-	public static Point findIndexAroundIndex(Point index) {
-		Point newIndex = null;
+	public static double calculateDistanceBetweenPointsWithHypot(double x1, double y1, double x2, double y2) {
+
+		double ac = Math.abs(y2 - y1);
+		double cb = Math.abs(x2 - x1);
+
+		return Math.hypot(ac, cb);
+	}
+
+	public static Point findIndexAroundIndex(Point playerIndex, Point index) {
+		Point newIndex = index;
+		double closestDist = 1000;
 		if (index != null) {
 			for (int x = -1; x < 2; x++) {
 				for (int y = -1; y < 2; y++) {
 					Point tempIndex = new Point(index.x + x, index.y + y);
-					TextureType type = getTypeByIndexWithTiles(tempIndex);
-					if (type != null) {
-						if (type == TextureType.AIR || type == TextureType.GRASS || type == TextureType.GRASS0) {
-							newIndex = tempIndex;
-							break;
+					double dist = calculateDistanceBetweenPointsWithHypot(playerIndex.x, playerIndex.y, tempIndex.x,
+							tempIndex.y);
+					System.out.println("dist:" + tempIndex + "=>" + dist);
+					if (closestDist >= dist) {
+						if ((index.x + x == index.x || index.y + y == index.y) && tempIndex != index) {
+
+							TextureType type = getTypeByIndexWithTiles(tempIndex);
+							if (type != null) {
+								if (type == TextureType.AIR || type == TextureType.GRASS || type == TextureType.GRASS0
+										|| type == TextureType.SAND) {
+									newIndex = tempIndex;
+								}
+							}
+							closestDist = dist;
 						}
 					}
 				}
@@ -210,6 +227,24 @@ public class ChunkManager {
 				Object obj = chunk.objects.get(new Point(objX, objY));
 				if (obj != null) {
 					chunk.droppedItems.put(new Point(objX, objY), new GroundItem(type));
+					chunk.build();
+
+				}
+			}
+		}
+	}
+
+	public static void setTileAtIndex(Point index, TextureType type) {
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile obj = chunk.tiles.get(new Point(objX, objY));
+				if (obj != null) {
+					chunk.tiles.put(new Point(objX, objY), new Tile(type));
 					chunk.build();
 
 				}

@@ -6,7 +6,7 @@ public enum TextureType implements Comparable<TextureType> {
 	// x,y,w,h,ox,oy
 	AIR(0, 0), COINS(7, 0, 1, 1), CHARACTER(0, 0.75F, 1, 0.75f, 0, -0.25f), GRASS(1, 0, 1, 1), GRASS0(1, 1f, 1, 1f),
 	DIRT(2, 0, 1, 1f), SAND(0, 3, 1, 1f), TREE(3, 0, 2, 2, 0, -1.5f), BUSH(3, 2, 2, 1, 0f, -0.5f),
-	ROCK(1, 2, 2, 1, 0, -0.5f), DEEP_WATER(0, 4, 1, 1f),
+	ROCK(1, 2, 2, 1, 0, -0.5f), DEEP_WATER(0, 4, 1, 1f),TILLED_DIRT(3, 3, 1, 1f),
 
 	PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f), ROCK_ITEM(0, 0, 1, 1),
 	LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0), TIN_ORE(1, 0.75F * 4, 1, 0.75f, 0, -0.25f),

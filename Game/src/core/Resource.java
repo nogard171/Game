@@ -105,4 +105,8 @@ public class Resource extends Object {
 	public int getAnimatedID() {
 		return animatedID[animationIndex];
 	}
+
+	public void setHealth(int newHealth) {
+		this.health = newHealth;
+	}
 }

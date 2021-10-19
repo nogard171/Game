@@ -32,7 +32,6 @@ public class APathFinder {
 
 	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
 		parentList.clear();
-		System.out.println("Path Finding...");
 
 		LinkedList<ANode> openList = new LinkedList<ANode>();
 		LinkedList<ANode> closedList = new LinkedList<ANode>();

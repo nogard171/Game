@@ -28,6 +28,7 @@ import core.Entity;
 import core.GameDatabase;
 import core.GroundItem;
 import core.Input;
+import core.ItemType;
 import core.Renderer;
 import core.Resource;
 import core.ResourceDatabase;
@@ -149,14 +150,32 @@ public class Base {
 					&& test.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
 					&& test.y > playerIndex.y - (ChunkManager.viewRange.y * 32)
 					&& test.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
+				boolean useHoe = false;
+				Point tempTest = ChunkManager.findIndexAroundIndex(playerIndex,test);
+
+				if (UIInventory.dragSlot != null) {
+					if (UIInventory.dragSlot.item != null) {
+						if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
+							useHoe = true;
+						}
+					}
+				}
+				ANode hoeIndex = null;
+				if (useHoe) {
+					hoeIndex = new ANode(test.x, test.y);
+					test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+				}
+				System.out.println("Path Finding..."+new ANode(playerIndex)+"/"+ new ANode(test)+"=>"+test);
+
 				ANode resourceIndex = new ANode(test.x, test.y);
 				boolean isRes = ChunkManager.isResource(test);
 				boolean inRange = ChunkManager.resourceInRange(playerIndex, test);
 				Resource resource = null;
 				if (isRes) {
 					resource = ChunkManager.getResource(test);
-					test = ChunkManager.findIndexAroundIndex(test);
+					test = ChunkManager.findIndexAroundIndex(playerIndex,test);
 				}
+				System.out.println("Path Finding..."+new ANode(playerIndex)+"/"+ new ANode(test)+"=>"+test);
 				boolean isItem = ChunkManager.isItem(test);
 
 				LinkedList<ANode> path = null;
@@ -167,7 +186,6 @@ public class Base {
 				} else {
 					path = APathFinder.find(new ANode(playerIndex), new ANode(test));
 				}
-
 				if (path != null) {
 					if (path.size() > 0) {
 						for (int i = 0; i < path.size() - 1; i++) {
@@ -181,9 +199,17 @@ public class Base {
 
 						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
 
-						if (isRes) {
+						if (useHoe) {
+							System.out.println("added follow up" + isRes);
+							Resource temp = new Resource(TextureType.AIR);
+							temp.setHealth(100);
 
-							System.out.println("test");
+							Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
+
+							test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+
+							move.addFollowUp(till);
+						} else if (isRes) {
 
 							if (resource != null) {
 
@@ -192,7 +218,7 @@ public class Base {
 								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
 										resource.getANode(resourceIndex));
 
-								test = ChunkManager.findIndexAroundIndex(test);
+								test = ChunkManager.findIndexAroundIndex(playerIndex,test);
 
 								move.addFollowUp(chop);
 
@@ -205,7 +231,7 @@ public class Base {
 							if (item != null) {
 
 								Task chop = new Task(TaskType.ITEM, resourceIndex);
-								test = ChunkManager.findIndexAroundIndex(test);
+								test = ChunkManager.findIndexAroundIndex(playerIndex,test);
 								move.addFollowUp(chop);
 
 							}
@@ -254,17 +280,17 @@ public class Base {
 		uiMgr.render();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getDelta()+"/"+FPS.getFPS(), 12, Color.white);
-
+		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 16), "Hover Index: " + test, 12, Color.white);
 		TextureType type = ChunkManager.getTypeByIndexWithTiles(test);
 
 		if (type != null) {
-			Renderer.renderText(new Vector2f(0, 16), "Hover Type: " + type.toString(), 12, Color.white);
+			Renderer.renderText(new Vector2f(0, 32), "Hover Type: " + type.toString(), 12, Color.white);
 		}
 
-		Renderer.renderText(new Vector2f(0, 32), "Chunks In View: " + chunkMgr.chunksInView.size(), 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 48), "Chunks In View: " + chunkMgr.chunksInView.size(), 12, Color.white);
 
-		Renderer.renderText(new Vector2f(0, 48), "Input Moved: " + ""+Input.moved, 12, Color.white);
+		Renderer.renderText(new Vector2f(0, 64), "Input Moved: " + "" + Input.moved, 12, Color.white);
 
 		if (test != null) {
 

@@ -27,6 +27,7 @@ public class UIManager {
 		uiInventory.setup();
 		Inventory.setup();
 		Inventory.addItem(ItemType.COINS,9);
+		Inventory.addItem(ItemType.HOE,1);
 		/*
 		 *  Inventory.addItem(ItemType.ROCK);
 		 * Inventory.addItem(ItemType.ROCK); Inventory.addItem(ItemType.ROCK);

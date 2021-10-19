@@ -28,7 +28,7 @@ public class UIInventory {
 	private int id = -1;
 	public static Vector2f position = new Vector2f(100, 100);
 	public static boolean updateID = false;
-	public ItemSlot dragSlot;
+	public static ItemSlot dragSlot;
 	private static Point slotMargin = new Point(37, 37);
 
 	public Rectangle eatBound = null;
@@ -255,8 +255,9 @@ public class UIInventory {
 							droppedItem.item = dragSlot.item.getType();
 							droppedItem.type = dragSlot.item.getTexture();
 							ChunkManager.dropItem(droppedItem);
-
+							
 							dragSlot.item = null;
+							dragSlot = null;
 						}
 					}
 				}

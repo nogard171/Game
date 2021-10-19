@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -23,6 +24,7 @@ public class Chunk {
 
 	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
 	HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
+	HashMap<Point, LinkedList<GroundItem>> newdroppedItems = new HashMap<Point, LinkedList<GroundItem>>();
 	HashMap<Point, Object> objects = new HashMap<Point, Object>();
 	// HashMap<Point, Object> animatedObjects = new HashMap<Point, Object>();
 

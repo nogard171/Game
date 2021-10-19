@@ -73,6 +73,11 @@ public class GameDatabase {
 		newItem.setTexture(UITextureType.FISH_ITEM);
 		newItem.attr.add("EDIBLE");
 		items.put(newItem.type, newItem);
+		
+
+		newItem = new ItemData(ItemType.HOE, "A Hoe used for tiling.",20);
+		newItem.setTexture(UITextureType.HOE_ITEM);
+		items.put(newItem.type, newItem);
 	}
 	
 	public static void loadSkills()
