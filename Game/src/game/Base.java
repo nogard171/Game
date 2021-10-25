@@ -75,7 +75,7 @@ public class Base {
 
 		int indexX = (int) Math.floor((float) isoX / (float) 32);
 		int indexY = (int) Math.floor((float) isoY / (float) 32);
-		if (!UIInventory.isPanelHovered()) {
+		if (!UIManager.isHovered()) {
 			test = new Point(indexX, indexY);
 		} else {
 			test = null;
@@ -145,13 +145,13 @@ public class Base {
 			forceX = 1;
 		}
 		// fix path finding, if player is next to resource do not run path finding.
-		if (Input.isMousePressed(0) && !UIInventory.isPanelHovered()) {
+		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
 			if (test.x > playerIndex.x - (ChunkManager.viewRange.x * 32)
 					&& test.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
 					&& test.y > playerIndex.y - (ChunkManager.viewRange.y * 32)
 					&& test.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
 				boolean useHoe = false;
-				Point tempTest = ChunkManager.findIndexAroundIndex(playerIndex,test);
+				Point tempTest = ChunkManager.findIndexAroundIndex(playerIndex, test);
 
 				if (UIInventory.dragSlot != null) {
 					if (UIInventory.dragSlot.item != null) {
@@ -163,19 +163,16 @@ public class Base {
 				ANode hoeIndex = null;
 				if (useHoe) {
 					hoeIndex = new ANode(test.x, test.y);
-					test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+					test = ChunkManager.findIndexAroundIndex(playerIndex, test);
 				}
-				System.out.println("Path Finding..."+new ANode(playerIndex)+"/"+ new ANode(test)+"=>"+test);
-
 				ANode resourceIndex = new ANode(test.x, test.y);
 				boolean isRes = ChunkManager.isResource(test);
 				boolean inRange = ChunkManager.resourceInRange(playerIndex, test);
 				Resource resource = null;
 				if (isRes) {
 					resource = ChunkManager.getResource(test);
-					test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+					test = ChunkManager.findIndexAroundIndex(playerIndex, test);
 				}
-				System.out.println("Path Finding..."+new ANode(playerIndex)+"/"+ new ANode(test)+"=>"+test);
 				boolean isItem = ChunkManager.isItem(test);
 
 				LinkedList<ANode> path = null;
@@ -200,25 +197,22 @@ public class Base {
 						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
 
 						if (useHoe) {
-							System.out.println("added follow up" + isRes);
 							Resource temp = new Resource(TextureType.AIR);
-							temp.setHealth(100);
+							temp.setHealth(5);
 
 							Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
 
-							test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+							test = ChunkManager.findIndexAroundIndex(playerIndex, test);
 
 							move.addFollowUp(till);
 						} else if (isRes) {
 
 							if (resource != null) {
 
-								System.out.println("added follow up" + isRes);
-
 								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
 										resource.getANode(resourceIndex));
 
-								test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+								test = ChunkManager.findIndexAroundIndex(playerIndex, test);
 
 								move.addFollowUp(chop);
 
@@ -231,7 +225,7 @@ public class Base {
 							if (item != null) {
 
 								Task chop = new Task(TaskType.ITEM, resourceIndex);
-								test = ChunkManager.findIndexAroundIndex(playerIndex,test);
+								test = ChunkManager.findIndexAroundIndex(playerIndex, test);
 								move.addFollowUp(chop);
 
 							}

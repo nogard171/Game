@@ -19,6 +19,7 @@ import core.ItemType;
 import core.Renderer;
 import core.ResourceDatabase;
 import core.TextureType;
+import core.Window;
 import game.PlayerDatabase;
 import game.TaskManager;
 import utils.FPS;
@@ -26,7 +27,7 @@ import utils.Ticker;
 
 public class UIInventory {
 	private int id = -1;
-	public static Vector2f position = new Vector2f(100, 100);
+	public static Vector2f position = new Vector2f(0, 0);
 	public static boolean updateID = false;
 	public static ItemSlot dragSlot;
 	private static Point slotMargin = new Point(37, 37);
@@ -153,8 +154,17 @@ public class UIInventory {
 	Point slotPointHovered = new Point(-1, -1);
 
 	public void update() {
+		if(Window.wasResized)
+		{
+			int slotCount = Inventory.getSlotCount();
+			int slotWidth = Inventory.getSlotWidth();
+			position = new Vector2f(0,Window.height-((((int) Math.ceil((float) slotCount / (float) slotWidth) + 2)*32)+32));
+			build();
+		}
 		if (show) {
 			hoverTicker.poll(1000);
+			
+			
 
 			previousSlotIndexHovered = slotIndexHovered;
 			slotIndexHovered = -1;

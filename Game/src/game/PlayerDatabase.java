@@ -9,6 +9,6 @@ import ui.Skill;
 
 public class PlayerDatabase {
 
-	public static HashMap<String, Skill> skills = new HashMap<String, Skill>();	
+	public static LinkedList<Skill> skills = new LinkedList<Skill>();
 	public static LinkedList<ItemSlot> itemSlots = new LinkedList<ItemSlot>();
 }

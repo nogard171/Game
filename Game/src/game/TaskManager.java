@@ -109,8 +109,8 @@ public class TaskManager {
 				}
 				if (task.getType() == TaskType.TILL) {
 					ANode node = path.removeFirst();
+					System.out.println("tilling land="+path.size());
 					if (path.size() == 0) {
-						System.out.println("tilling land");
 						Tile tile = ChunkManager.getTile(node.toPoint());
 						if(tile!=null)
 						{
@@ -144,6 +144,7 @@ public class TaskManager {
 					}
 				} else if (task.getType() == TaskType.RESOURCE) {
 					ANode node = path.removeFirst();
+					System.out.println("Resource:"+path.size());
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
@@ -184,7 +185,6 @@ public class TaskManager {
 				} else if (task.getType() == TaskType.ITEM) {
 					ANode node = path.removeFirst();
 					if (path.size() == 0) {
-
 						GroundItem tile = ChunkManager.getItem(node.toPoint());
 						if (tile != null) {
 							if (tile instanceof GroundItem) {
@@ -207,7 +207,7 @@ public class TaskManager {
 	}
 
 	public void update() {
-		tickerUtil.poll(100);
+		tickerUtil.poll(500);
 		if (tickerUtil.ticked()) {
 			tickedUpdate();
 		}

@@ -17,6 +17,7 @@ public class GameDatabase {
 	public static void load() {
 		loadResources();
 		loadItems();
+		loadSkills();
 	}
 
 	private static void loadResources() {
@@ -39,7 +40,7 @@ public class GameDatabase {
 		dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.FISH));
 		
-		dat.rarity = 3;
+		dat.rarity =7;
 		dat.isRenewable = true;
 		TextureType[] types = { TextureType.FISHING_SPOT, TextureType.FISHING_SPOT1, TextureType.FISHING_SPOT2,
 				TextureType.FISHING_SPOT3, TextureType.FISHING_SPOT4 };
@@ -83,11 +84,11 @@ public class GameDatabase {
 	public static void loadSkills()
 	{
 		SkillData discoverySkill = new SkillData("Discovery","Curiosity certainly killed the cat");
-		skillData.put(discoverySkill.name, discoverySkill);
+		skillData.put(discoverySkill.name.toLowerCase().replace(" ",""), discoverySkill);
 		
 
-		SkillData woodCuttingSkill = new SkillData("Wood Cutting","Wood cutting allow for the gathering of wood.",discoverySkill.name,2);
-		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
+		SkillData woodCuttingSkill = new SkillData("Wood Cutting","Wood cutting allow for the gathering of wood.",UITextureType.COPPER_ORE_ITEM);
+		skillData.put(woodCuttingSkill.name.toLowerCase().replace(" ",""), woodCuttingSkill);
 		
 	}
 	

@@ -96,7 +96,6 @@ public class ChunkManager {
 					Point tempIndex = new Point(index.x + x, index.y + y);
 					double dist = calculateDistanceBetweenPointsWithHypot(playerIndex.x, playerIndex.y, tempIndex.x,
 							tempIndex.y);
-					System.out.println("dist:" + tempIndex + "=>" + dist);
 					if (closestDist >= dist) {
 						if ((index.x + x == index.x || index.y + y == index.y) && tempIndex != index) {
 
