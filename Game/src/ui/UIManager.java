@@ -38,13 +38,13 @@ public class UIManager {
 		Inventory.addItem(ItemType.HOE, 1);
 
 		Skill test = new Skill();
-		test.skill = "Wood Cutting";
+		test.skill = SkillName.WOODCUTTING;
 		test.level = 1;
 
 		PlayerDatabase.skills.add(test);
 
 		test = new Skill();
-		test.skill = "discovery";
+		test.skill = SkillName.DISCOVERY;
 		test.level = 1;
 
 		PlayerDatabase.skills.add(test);
@@ -99,6 +99,14 @@ public class UIManager {
 			uiInventory.show = false;
 			uiSkill.show = !uiSkill.show;
 		}
+		
+
+		if (Input.isKeyPressed(Keyboard.KEY_1)) {
+			SkillManager.addExperienceByResource(TextureType.TREE,3000000);
+			long xp = SkillManager.getSkillExperince(SkillName.WOODCUTTING);
+			System.out.println("XP: " + String.valueOf(xp));
+		}
+		
 	}
 
 	public void render() {

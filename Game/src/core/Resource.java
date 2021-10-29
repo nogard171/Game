@@ -82,7 +82,7 @@ public class Resource extends Object {
 
 	}
 
-	public java.lang.Object getBaseType() {
+	public TextureType getBaseType() {
 		return baseType;
 	}
 

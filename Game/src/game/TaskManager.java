@@ -18,6 +18,7 @@ import core.TaskType;
 import core.TextureType;
 import core.Tile;
 import ui.Inventory;
+import ui.SkillManager;
 import utils.Ticker;
 
 public class TaskManager {
@@ -109,50 +110,24 @@ public class TaskManager {
 				}
 				if (task.getType() == TaskType.TILL) {
 					ANode node = path.removeFirst();
-					System.out.println("tilling land="+path.size());
+					System.out.println("tilling land=" + path.size());
 					if (path.size() == 0) {
 						Tile tile = ChunkManager.getTile(node.toPoint());
-						if(tile!=null)
-						{
+						if (tile != null) {
+							SkillManager.addExperienceByTask(task.getType(), 10);
 							ChunkManager.setTileAtIndex(node.toPoint(), TextureType.TILLED_DIRT);
 						}
-						/*
-						Resource res = ChunkManager.getResource();
-						if (res != null) {
-							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
-							if (dat != null) {
-								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
-								System.out.println("genR: " + genR);
-								if (genR == 1) {
-									for (ResourceItemDrop drop : dat.itemDrops) {
-										ArrayList<ItemType> types = drop.getDroppedItems();
-										for (ItemType type : types) {
-											Inventory.addItem(type);
-										}
-									}
-									if (!dat.isRenewable) {
-										ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
-									}
-								} else {
-									for (int t = 0; t < 10; t++) {
-										path.add(node);
-									}
-								}
-							}
-						}*/
-
 					}
 				} else if (task.getType() == TaskType.RESOURCE) {
 					ANode node = path.removeFirst();
-					System.out.println("Resource:"+path.size());
+
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
 							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
-							System.out.println("test");
 							if (dat != null) {
+
 								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
-								System.out.println("genR: " + genR);
 								if (genR == 1) {
 									for (ResourceItemDrop drop : dat.itemDrops) {
 										ArrayList<ItemType> types = drop.getDroppedItems();
@@ -160,16 +135,15 @@ public class TaskManager {
 											Inventory.addItem(type);
 										}
 									}
+									SkillManager.addExperienceByResource(res.getBaseType(), dat.getXPGain());
 									if (!dat.isRenewable) {
 										ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
-									}
-									else
-									{
-										//generate new renewable resources in near by location,
-										//fishing spots should generate on the end of the water
-										//so it can be reached.
-										
-										//rocks can generate outside of view or add generating
+									} else {
+										// generate new renewable resources in near by location,
+										// fishing spots should generate on the end of the water
+										// so it can be reached.
+
+										// rocks can generate outside of view or add generating
 										// infinite cave on rock/ore break
 										// or generate on game load.
 									}
@@ -180,7 +154,6 @@ public class TaskManager {
 								}
 							}
 						}
-
 					}
 				} else if (task.getType() == TaskType.ITEM) {
 					ANode node = path.removeFirst();

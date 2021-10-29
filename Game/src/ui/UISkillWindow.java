@@ -53,7 +53,7 @@ public class UISkillWindow {
 	Point size = new Point(7, 8);
 
 	public void build() {
-		slotMargin = new Point(36, 42);
+		slotMargin = new Point(50, 42);
 		id = GL11.glGenLists(1);
 
 		GL11.glNewList(id, GL11.GL_COMPILE_AND_EXECUTE);
@@ -64,22 +64,29 @@ public class UISkillWindow {
 		int x = 0;
 		int y = 0;
 		for (int index = 0; index < PlayerDatabase.skills.size(); index++) {
+			Renderer.bindTexture(ResourceDatabase.uiTexture);
 			Skill skill = PlayerDatabase.skills.get(index);
 
-			SkillData skillData = GameDatabase.skillData.get(skill.skill.toLowerCase().replace(" ", ""));
+			SkillData skillData = GameDatabase.skillData.get(skill.skill);
 			Point pos = new Point((int) position.x + 5 + (x * slotMargin.x), (int) position.y + 5 + (y * slotMargin.y));
 
+			GL11.glBegin(GL11.GL_QUADS);
 			Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y, 32, 32);
-			System.out.println("test: " + GameDatabase.skillData.size());
+			Renderer.renderUITexture(UITextureType.ITEM_BACK_SIDE, pos.x + 30, pos.y, 32, 32);
 			if (skillData != null) {
 
 				UITextureType type = skillData.type;
 				if (type == null) {
 					type = UITextureType.INSPECT_ICON;
 				}
-
 				Renderer.renderUITexture(type, pos.x, pos.y, 32, 32);
+
 			}
+			GL11.glEnd();
+
+			int width = Math.round((float) 45 * ((float) skill.xp / (float) skill.nextXP));
+			width = (width > 45 ? 45 : width);
+			Renderer.renderQuad(new Rectangle(pos.x + 2, pos.y + 28, width, 2), new Color(0.3f, 1f, 0.2f, 0.75f));
 			if (x >= size.x - 1) {
 				y++;
 				x = 0;
@@ -107,9 +114,13 @@ public class UISkillWindow {
 		for (int index = 0; index < PlayerDatabase.skills.size(); index++) {
 			Skill data = PlayerDatabase.skills.get(index);
 			if (data != null) {
-				Point pos = new Point((int) position.x + 30 + (x * slotMargin.x),
-						(int) position.y + 20 + (y * slotMargin.y));
-				Renderer.renderText(new Vector2f(pos.x, pos.y), data.level + "", 12, Color.white);
+
+				int l = Renderer.getTextWidth(data.level + "", 12);
+
+				Point pos = new Point((int) position.x + 50 - (l) + (x * slotMargin.x),
+						(int) position.y + 18 + (y * slotMargin.y));
+
+				Renderer.renderText(new Vector2f(pos.x, pos.y), data.level + "", 12, new Color(0.75f, 0.75f, 0.75f));
 
 				if (x >= size.x - 1) {
 					y++;

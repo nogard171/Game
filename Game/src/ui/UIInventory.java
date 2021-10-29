@@ -218,8 +218,20 @@ public class UIInventory {
 
 					if (tempSlot.item != null && dragSlot != null) {
 
-						System.out.println("Use");
+						System.out.println("swap");
 						// TaskManager.addTask(null);
+						long tempItemCount = tempSlot.count;
+						Item tempItem = tempSlot.item;
+						long tempDragItemCount = dragSlot.count;
+						Item tempDragItem = dragSlot.item;
+
+						System.out.println("swap"+tempItemCount+"/"+tempDragItemCount);
+						
+						tempSlot.item = tempDragItem;
+						tempSlot.count = tempDragItemCount;
+						dragSlot.item=tempItem;
+						dragSlot.count = tempItemCount;
+						updateID = true;
 					}
 					PlayerDatabase.itemSlots.add(slotIndexHovered, tempSlot);
 

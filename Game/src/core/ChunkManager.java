@@ -354,7 +354,7 @@ public class ChunkManager {
 	public static boolean resourceInRange(Point index, Point resourceIndex) {
 		boolean inRange = false;
 		Rectangle rec = new Rectangle(resourceIndex.x - 1, resourceIndex.y - 1, 3, 3);
-		System.out.println("rec:" + rec);
+		//System.out.println("rec:" + rec);
 		if (rec.contains(index)) {
 			inRange = true;
 		}
