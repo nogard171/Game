@@ -1,12 +1,16 @@
 package ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import core.TextureType;
 
 public class SkillData {
 	public SkillName name = SkillName.NONE;
 	public String description;
 	public boolean unlocked = false;
 	public UITextureType type;
+	public HashMap<TextureType,Integer> resourceLevels = new HashMap<TextureType,Integer>();
 
 	public SkillData() {
 	}

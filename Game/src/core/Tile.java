@@ -8,6 +8,7 @@ import org.newdawn.slick.Color;
 
 public class Tile {
 	protected TextureType type = TextureType.AIR;
+	protected TextureType baseType = TextureType.AIR;
 	private Vector2f position;
 	private Point index;
 
@@ -27,8 +28,11 @@ public class Tile {
 		return type;
 	}
 
-	public void setType(TextureType type) {
-		this.type = type;
+	public void setType(TextureType newType) {
+		this.type = newType;
+		if (baseType == TextureType.AIR) {
+			baseType = newType;
+		}
 	}
 
 	public Vector2f getPosition() {
@@ -37,6 +41,10 @@ public class Tile {
 
 	public void setPosition(Vector2f position) {
 		this.position = position;
+	}
+
+	public TextureType getBaseType() {
+		return baseType;
 	}
 
 	public String toHoverString() {

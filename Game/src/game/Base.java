@@ -37,6 +37,10 @@ import core.TextureType;
 import core.Tile;
 import core.View;
 import core.Window;
+import ui.Skill;
+import ui.SkillData;
+import ui.SkillManager;
+import ui.SkillName;
 import ui.UIInventory;
 import ui.UIManager;
 import core.Task;
@@ -48,7 +52,7 @@ public class Base {
 	boolean isRunning = true;
 
 	public static Point playerIndex;
-	public static Point test;
+	public static Point hoverIndex;
 	public static View view;
 
 	ChunkManager chunkMgr;
@@ -76,9 +80,9 @@ public class Base {
 		int indexX = (int) Math.floor((float) isoX / (float) 32);
 		int indexY = (int) Math.floor((float) isoY / (float) 32);
 		if (!UIManager.isHovered()) {
-			test = new Point(indexX, indexY);
+			hoverIndex = new Point(indexX, indexY);
 		} else {
-			test = null;
+			hoverIndex = null;
 		}
 	}
 
@@ -146,12 +150,11 @@ public class Base {
 		}
 		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
-			if (test.x > playerIndex.x - (ChunkManager.viewRange.x * 32)
-					&& test.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
-					&& test.y > playerIndex.y - (ChunkManager.viewRange.y * 32)
-					&& test.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
+			if (hoverIndex.x > playerIndex.x - (ChunkManager.viewRange.x * 32)
+					&& hoverIndex.x < playerIndex.x + (ChunkManager.viewRange.x * 32)
+					&& hoverIndex.y > playerIndex.y - (ChunkManager.viewRange.y * 32)
+					&& hoverIndex.y < playerIndex.y + (ChunkManager.viewRange.y * 32)) {
 				boolean useHoe = false;
-				Point tempTest = ChunkManager.findIndexAroundIndex(playerIndex, test);
 
 				if (UIInventory.dragSlot != null) {
 					if (UIInventory.dragSlot.item != null) {
@@ -162,26 +165,26 @@ public class Base {
 				}
 				ANode hoeIndex = null;
 				if (useHoe) {
-					hoeIndex = new ANode(test.x, test.y);
-					test = ChunkManager.findIndexAroundIndex(playerIndex, test);
+					hoeIndex = new ANode(hoverIndex.x, hoverIndex.y);
+					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 				}
-				ANode resourceIndex = new ANode(test.x, test.y);
-				boolean isRes = ChunkManager.isResource(test);
-				boolean inRange = ChunkManager.resourceInRange(playerIndex, test);
+				ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
+				boolean isRes = ChunkManager.isResource(hoverIndex);
+				boolean inRange = ChunkManager.resourceInRange(playerIndex, hoverIndex);
 				Resource resource = null;
 				if (isRes) {
-					resource = ChunkManager.getResource(test);
-					test = ChunkManager.findIndexAroundIndex(playerIndex, test);
+					resource = ChunkManager.getResource(hoverIndex);
+					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 				}
-				boolean isItem = ChunkManager.isItem(test);
+				boolean isItem = ChunkManager.isItem(hoverIndex);
 
 				LinkedList<ANode> path = null;
 
 				if (inRange) {
 					path = new LinkedList<ANode>();
-					path.add(new ANode(test));
+					path.add(new ANode(hoverIndex));
 				} else {
-					path = APathFinder.find(new ANode(playerIndex), new ANode(test));
+					path = APathFinder.find(new ANode(playerIndex), new ANode(hoverIndex));
 				}
 				if (path != null) {
 					if (path.size() > 0) {
@@ -202,7 +205,7 @@ public class Base {
 
 							Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
 
-							test = ChunkManager.findIndexAroundIndex(playerIndex, test);
+							hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 
 							move.addFollowUp(till);
 						} else if (isRes) {
@@ -212,7 +215,7 @@ public class Base {
 								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
 										resource.getANode(resourceIndex));
 
-								test = ChunkManager.findIndexAroundIndex(playerIndex, test);
+								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 
 								move.addFollowUp(chop);
 
@@ -220,12 +223,12 @@ public class Base {
 						} else if (isItem) {
 							Tile item = null;
 							if (isItem) {
-								item = ChunkManager.getTile(test);
+								item = ChunkManager.getTile(hoverIndex);
 							}
 							if (item != null) {
 
 								Task chop = new Task(TaskType.ITEM, resourceIndex);
-								test = ChunkManager.findIndexAroundIndex(playerIndex, test);
+								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 								move.addFollowUp(chop);
 
 							}
@@ -261,22 +264,14 @@ public class Base {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
 		chunkMgr.render();
-		/*
-		 * if (test != null) { Tile tile = ChunkManager.getTile(test); if (tile != null)
-		 * { if (tile instanceof Resource || tile instanceof GroundItem) { float posX =
-		 * (((test.x - test.y) * 32) - 32); float posY = ((test.y + test.x) * 16);
-		 * GL11.glBegin(GL11.GL_QUADS); GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
-		 * Renderer.renderTexture(tile.getType(), (int) posX, (int) posY); GL11.glEnd();
-		 * } } }
-		 */
 		GL11.glPopMatrix();
 
 		uiMgr.render();
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 16), "Hover Index: " + test, 12, Color.white);
-		TextureType type = ChunkManager.getTypeByIndexWithTiles(test);
+		Renderer.renderText(new Vector2f(0, 16), "Hover Index: " + hoverIndex, 12, Color.white);
+		TextureType type = ChunkManager.getTypeByIndexWithTiles(hoverIndex);
 
 		if (type != null) {
 			Renderer.renderText(new Vector2f(0, 32), "Hover Type: " + type.toString(), 12, Color.white);
@@ -286,50 +281,6 @@ public class Base {
 
 		Renderer.renderText(new Vector2f(0, 64), "Input Moved: " + "" + Input.moved, 12, Color.white);
 
-		if (test != null) {
-
-			Tile tile = ChunkManager.getTile(test);
-			if (tile != null) {
-				String text = tile.toHoverString();
-				int fontType = Font.PLAIN;
-
-				if (text.contains("!")) {
-					fontType = Font.BOLD;
-					text = text.replace("!", "");
-				}
-				int r = 255;
-				int g = 255;
-				int b = 255;
-				if (text.contains("%")) {
-					int c = text.replaceAll("(%[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}%)", "").length();
-					Renderer.renderQuad(new Rectangle(Input.getMousePoint().x, Input.getMousePoint().y + 32, c * 8, 20),
-							new Color(0, 0, 0, 0.5f));
-
-					String[] data = text.split("%");
-					int tempC = 0;
-					for (int i = 0; i < data.length; i++) {
-						if (data[i].contains(",")) {
-							String[] rgb = data[i].split(",");
-							r = Integer.parseInt(rgb[0]);
-							g = Integer.parseInt(rgb[1]);
-							b = Integer.parseInt(rgb[2]);
-
-						} else {
-							int textWidth = Renderer.renderTextWithWidth(
-									new Vector2f(Input.getMousePoint().x + 5 + tempC, Input.getMousePoint().y + 1 + 32),
-									data[i], 12, new Color(r, g, b), Font.BOLD);
-							tempC += textWidth;
-						}
-					}
-				} else {
-					Renderer.renderQuad(
-							new Rectangle(Input.getMousePoint().x, Input.getMousePoint().y + 32, text.length() * 8, 20),
-							new Color(0, 0, 0, 0.5f));
-					Renderer.renderText(new Vector2f(Input.getMousePoint().x + 5, Input.getMousePoint().y + 1 + 32),
-							text, 12, new Color(r, g, b), fontType);
-				}
-			}
-		}
 	}
 
 	public void destroy() {

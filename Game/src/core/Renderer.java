@@ -170,6 +170,22 @@ public class Renderer {
 		return fontWidth;
 	}
 
+	public static int getFontWidth(String text, int fontSize, int fontType) {
+		int fontWidth = 0;
+		String key = fontSize + "," + fontType;
+		TrueTypeFont font = ResourceDatabase.fonts.get(key);
+
+		if (font == null) {
+			// Fixedsys
+			Font awtFont = new Font("Fixedsys", fontType, fontSize);
+			ResourceDatabase.fonts.put((fontSize + "," + fontType), new TrueTypeFont(awtFont, false));
+		}
+		if (font != null) {
+			fontWidth = font.getWidth(text);
+		}
+		return fontWidth;
+	}
+
 	public static int renderText(float x, float y, String text, int fontSize, Color color, int fontType) {
 		int fontWidth = 0;
 		String key = fontSize + "," + fontType;

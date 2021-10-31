@@ -156,31 +156,22 @@ public class UISkillWindow {
 			int offsetMouseX = (int) (Input.getMousePoint().x - position.x);
 			int offsetMouseY = (int) (Input.getMousePoint().y - position.y);
 			if (offsetMouseX >= 0 && offsetMouseY >= 0) {
-				int itemX = offsetMouseX / slotMargin.x;
-				int itemY = offsetMouseY / slotMargin.y;
+				int skillX = offsetMouseX / slotMargin.x;
+				int skillY = offsetMouseY / slotMargin.y;
 
 				int slotWidth = Inventory.getSlotWidth();
-				int index = itemX + (itemY * slotWidth);
+				int index = skillX + (skillY * slotWidth);
+				if (index < PlayerDatabase.skills.size() && index >= 0) {
+					Skill skill = PlayerDatabase.skills.get(index);
 
-				if (index < PlayerDatabase.itemSlots.size() && index >= 0) {
-					ItemSlot slot = PlayerDatabase.itemSlots.get(index);
-					if (slot != null) {
-						if (itemX < slotWidth) {
-							slotIndexHovered = index;
-							slotPointHovered = new Point(itemX, itemY);
-							if (slot.item != null) {
-								// System.out.println("Slot Count: " + slot.count);
-								// System.out.println("Offset: " + index + "=" + slot + "->" +
-								// slot.item.getType());
-							}
-
-						}
-					} else {
-						// slotIndexHovered = -1;
+					if (skill != null) {
+						// System.out.println("Skill Hovered:" + skill.skill.toString());
+						slotIndexHovered = index;
+						slotPointHovered = new Point(skillX, skillY);
 					}
 				}
-			}
 
+			}
 		}
 	}
 
@@ -194,6 +185,64 @@ public class UISkillWindow {
 			} else {
 				GL11.glCallList(id);
 			}
+
+			if (slotIndexHovered != -1) {
+				Point tempPos = new Point((int) position.x + 6 + (slotPointHovered.x * slotMargin.x),
+						(int) position.y + 6 + (slotPointHovered.y * slotMargin.y));
+
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+				Renderer.renderQuad(new Rectangle(tempPos.x, tempPos.y, 48, 32), new Color(255, 255, 255));
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+				if (startTicks == 0 && !Input.moved) {
+					startTicks = hoverTicker.getTicks();
+				} else if (Input.moved) {
+					 startTicks = 0;
+				}
+
+				if (startTicks + 1 < hoverTicker.getTicks() && !Input.moved) {
+					Skill skillHovered = PlayerDatabase.skills.get(slotIndexHovered);
+					if (skillHovered != null) {
+						Renderer.bindTexture(ResourceDatabase.uiTexture);
+						GL11.glBegin(GL11.GL_QUADS);
+						UIPanel.renderPanel(tempPos.x + 32, tempPos.y, 7, 3);
+						GL11.glEnd();
+
+						String tempSkillName = skillHovered.skill.toString().toLowerCase();
+						String tempFirstLetter = tempSkillName.substring(0, 1).toUpperCase();
+						String tempLower = tempSkillName.substring(1, tempSkillName.length());
+
+						Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 4, tempFirstLetter + tempLower, 20,
+								Color.white);
+
+						SkillData dat = GameDatabase.skillData.get(skillHovered.skill);
+						if (dat != null) {
+							String tempString = dat.description;
+							if (tempString.length() > 35) {
+								String ts = tempString.substring(35, tempString.length());
+
+								tempString = tempString.substring(0, 35) + ts.substring(0, ts.indexOf(" "));
+
+								String tempSecondString = dat.description.substring(35, dat.description.length())
+										.replace(ts.substring(0, ts.indexOf(" ")), "");
+								if (tempSecondString.length() > 35) {
+									tempSecondString = tempSecondString.substring(0, 35) + "...";
+								}
+
+								Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 42, tempSecondString, 12,
+										Color.white);
+							}
+							Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 30, "       "+tempString, 12, Color.white);
+
+						}
+
+						String expString = "XP: " + skillHovered.xp + " / " + skillHovered.nextXP;
+						int l = Renderer.getTextWidth(expString, 12);
+
+						Renderer.renderText(tempPos.x + 250 - l, tempPos.y + 78, expString, 12, Color.white);
+					}
+				}
+			}
+
 			/*
 			 * if (slotIndexHovered != -1) { Point tempPos = new Point((int) position.x + 6
 			 * + (slotPointHovered.x * slotMargin.x), (int) position.y + 6 +

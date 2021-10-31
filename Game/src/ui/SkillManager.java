@@ -8,22 +8,31 @@ import utils.LogUtil;
 public class SkillManager {
 
 	public static void addExperienceByResource(TextureType type, long amount) {
-		switch (type) {
-		case TREE:
-			addSkillExperince(SkillName.WOODCUTTING, amount);
-			break;
-		case ROCK:
-			addSkillExperince(SkillName.MINING, amount);
-			break;
-		}
+		addSkillExperince(getSkillByType(type), amount);
 	}
 
 	public static void addExperienceByTask(TaskType type, long amount) {
 		switch (type) {
 		case WALK:
-			addSkillExperince(SkillName.DISCOVERY, amount);
+			addSkillExperince(SkillName.AGILITY, amount);
 			break;
 		}
+	}
+
+	public static SkillName getSkillByType(TextureType type) {
+		SkillName skill = SkillName.NONE;
+		switch (type) {
+		case TREE:
+			skill = SkillName.WOODCUTTING;
+			break;
+		case ROCK:
+			skill = SkillName.MINING;
+			break;
+		case FISHING_SPOT:
+			skill = SkillName.FISHING;
+			break;
+		}
+		return skill;
 	}
 
 	public static void addSkillExperince(SkillName skillname, long amount) {
@@ -71,5 +80,15 @@ public class SkillManager {
 			}
 		}
 		return xp;
+	}
+	public static Skill getSkillByName(SkillName name) {
+		Skill skill = null;
+		for (Skill s : PlayerDatabase.skills) {
+			if (s.skill == name) {
+				skill = s;
+				break;
+			}
+		}
+		return skill;
 	}
 }

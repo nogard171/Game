@@ -87,11 +87,13 @@ public class GameDatabase {
 	}
 
 	public static void loadSkills() {
-		SkillData discoverySkill = new SkillData(SkillName.DISCOVERY, "Curiosity certainly killed the cat");
-		skillData.put(discoverySkill.name, discoverySkill);
+		SkillData fishingSkill = new SkillData(SkillName.FISHING, "Fish for many diferent fish.");
+		fishingSkill.resourceLevels.put(TextureType.FISHING_SPOT,5);
+		skillData.put(fishingSkill.name, fishingSkill);
 
 		SkillData woodCuttingSkill = new SkillData(SkillName.WOODCUTTING,
 				"Wood cutting allow for the gathering of wood.", UITextureType.COPPER_ORE_ITEM);
+		woodCuttingSkill.resourceLevels.put(TextureType.TREE,2);
 		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
 
 	}

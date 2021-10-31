@@ -7,7 +7,6 @@ import java.util.LinkedList;
 public class Resource extends Object {
 	private int health;
 	private int animationIndex = 0;
-	private TextureType baseType = TextureType.AIR;
 	private boolean animated = false;
 	public int[] animatedID;
 
@@ -27,13 +26,6 @@ public class Resource extends Object {
 		baseType = newType;
 	}
 
-	@Override
-	public void setType(TextureType newType) {
-		this.type = newType;
-		if (baseType == TextureType.AIR) {
-			baseType = newType;
-		}
-	}
 
 	public void setRawType(TextureType newType) {
 		this.type = newType;
@@ -80,10 +72,6 @@ public class Resource extends Object {
 		}
 		animationIndex = index;
 
-	}
-
-	public TextureType getBaseType() {
-		return baseType;
 	}
 
 	public void setAnimated(boolean b) {
