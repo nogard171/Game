@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.nio.IntBuffer;
 import java.util.LinkedList;
@@ -14,6 +15,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import core.ANode;
+import core.APathFinder;
+import core.Chunk;
 import core.ChunkManager;
 import core.GameDatabase;
 import core.GroundItem;
@@ -22,11 +26,14 @@ import core.ItemType;
 import core.Renderer;
 import core.Resource;
 import core.ResourceDatabase;
+import core.Task;
+import core.TaskType;
 import core.TextureType;
 import core.Tile;
 import core.Window;
 import game.Base;
 import game.PlayerDatabase;
+import game.TaskManager;
 
 public class UIManager {
 	UIInventory uiInventory;
@@ -80,9 +87,29 @@ public class UIManager {
 		}));
 	}
 
+	public static Point playerIndex;
+	public static Point hoverIndex;
+
+	private void pollHover() {
+		int cartX = (Input.getMousePoint().x) + Base.view.x;
+		int cartY = (Input.getMousePoint().y) + Base.view.y;
+		int isoX = (cartX / 2 + (cartY));
+		int isoY = (cartY - cartX / 2);
+
+		int indexX = (int) Math.floor((float) isoX / (float) 32);
+		int indexY = (int) Math.floor((float) isoY / (float) 32);
+		if (!UIManager.isHovered()) {
+			hoverIndex = new Point(indexX, indexY);
+		} else {
+			hoverIndex = null;
+		}
+	}
+
 	public void update() {
 		uiInventory.update();
 		uiSkill.update();
+
+		pollHover();
 
 		handleUIControls();
 		boolean btnHovered = false;
@@ -93,7 +120,113 @@ public class UIManager {
 		}
 
 		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || btnHovered ? true : false);
+		
+		// fix path finding, if player is next to resource do not run path finding.
+		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
+			playerIndex = TaskManager.getCurrentTaskEnd();
+			if (playerIndex == null) {
+				playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+			}
+			Point center = new Point(Input.mousePoint.x ,Input.mousePoint.y);// UIManager.playerIndex;
+			int cartX = center.x;
+			int cartY = center.y;
+			int isoX = (cartX / 2 + (cartY));
+			int isoY = (cartY - cartX / 2);
 
+			int indexX = (int) Math.floor((float) isoX / (float) 32);
+			int indexY = (int) Math.floor((float) isoY / (float) 32);
+			
+			
+			if (hoverIndex.x > playerIndex.x - 100
+					&& hoverIndex.x < playerIndex.x + 100
+					&& hoverIndex.y > playerIndex.y - 100
+					&& hoverIndex.y < playerIndex.y + 100) {
+				boolean useHoe = false;
+				if (UIInventory.dragSlot != null) {
+					if (UIInventory.dragSlot.item != null) {
+						if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
+							useHoe = true;
+						}
+					}
+				}
+				ANode hoeIndex = null;
+				if (useHoe) {
+					hoeIndex = new ANode(hoverIndex.x, hoverIndex.y);
+					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+				}
+				ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
+				boolean isRes = ChunkManager.isResource(hoverIndex);
+				boolean inRange = ChunkManager.resourceInRange(playerIndex, hoverIndex);
+				Resource resource = null;
+				if (isRes) {
+					resource = ChunkManager.getResource(hoverIndex);
+					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+				}
+				boolean isItem = ChunkManager.isItem(hoverIndex);
+
+				LinkedList<ANode> path = null;
+
+				if (inRange) {
+					path = new LinkedList<ANode>();
+					path.add(new ANode(hoverIndex));
+				} else {
+					path = APathFinder.find(new ANode(playerIndex), new ANode(hoverIndex));
+				}
+				if (path != null) {
+					if (path.size() > 0) {
+						for (int i = 0; i < path.size() - 1; i++) {
+							ANode node = path.get(i);
+							if (node != null) {
+								ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+							}
+						}
+						ANode node = path.get(path.size() - 1);
+						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+
+						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+
+						if (useHoe) {
+							Resource temp = new Resource(TextureType.AIR);
+							temp.setHealth(5);
+
+							Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
+
+							hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+
+							move.addFollowUp(till);
+						} else if (isRes) {
+
+							if (resource != null) {
+
+								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
+										resource.getANode(resourceIndex));
+
+								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+
+								move.addFollowUp(chop);
+
+							}
+						} else if (isItem) {
+							Tile item = null;
+							if (isItem) {
+								item = ChunkManager.getTile(hoverIndex);
+							}
+							if (item != null) {
+
+								Task chop = new Task(TaskType.ITEM, resourceIndex);
+								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+								move.addFollowUp(chop);
+
+							}
+						}
+						TaskManager.addTask(move);
+
+					}
+				} else {
+					// handle failed path
+				}
+			}
+		}
 	}
 
 	private void handleUIControls() {
@@ -137,19 +270,17 @@ public class UIManager {
 
 		Renderer.renderUITexture(UITextureType.CURSOR, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
 		GL11.glEnd();
-		
+
 		renderHover();
 	}
-	
-	public void renderHover()
-	{
 
-		if (Base.hoverIndex != null) {
+	public void renderHover() {
 
-			Tile tile = ChunkManager.getTile(Base.hoverIndex);
+		if (hoverIndex != null) {
+
+			Tile tile = ChunkManager.getTile(hoverIndex);
 			if (tile != null) {
 				if (tile instanceof Resource || tile instanceof GroundItem || tile instanceof core.Object) {
-					
 
 					String text = tile.toHoverString();
 					int fontType = Font.PLAIN;
@@ -188,10 +319,9 @@ public class UIManager {
 						}
 						SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
 						if (skillName != null) {
-							
+
 							SkillData dat = GameDatabase.skillData.get(skillName);
 							if (dat != null) {
-								System.out.println("hovered"+dat.resourceLevels);
 								if (dat.resourceLevels.containsKey(tile.getBaseType())) {
 									Integer level = dat.resourceLevels.get(tile.getBaseType());
 									if (level != null) {

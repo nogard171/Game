@@ -16,8 +16,7 @@ public class Generator {
 		int chunkY = chunkIndex.y*height;
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
-				tempMap[x][y] = (int) Math.round(
-						ImprovedNoise.noise((double) (x+chunkX) / (double) 100, 0, (double) (y+chunkY) / (double) 100) * (double) 100);
+				tempMap[x][y] = (int) Math.round(ImprovedNoise.noise((double) (x+chunkX) / (double) 100, 0, (double) (y+chunkY) / (double) 100) * (double) scale);
 			}
 		}
 		/*

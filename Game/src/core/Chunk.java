@@ -3,11 +3,13 @@ package core;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
@@ -112,8 +114,10 @@ public class Chunk {
 		return new Vector2f(posX, posY);
 	}
 
+	Random r = new Random();
+
 	public void setup() {
-		heightMap = Generator.generateHeightMap(index, size.width, size.height, 9);
+		heightMap = Generator.generateHeightMap(index, size.width, size.height, 20);
 
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
@@ -126,7 +130,6 @@ public class Chunk {
 				Point tileIndex = new Point(x, y);
 				tile.setIndex(tileIndex);
 
-				Random r = new Random();
 				int t = heightMap[x][y];// r.nextFloat();
 
 				// System.out.println("T:" + t);
@@ -155,20 +158,16 @@ public class Chunk {
 
 				Resource res = new Resource(TextureType.AIR);
 				res.setPosition(position);
-
-				if (tile.getType() == TextureType.SHALLOW_WATER) {
-					g = r.nextFloat();
-					boolean beach = ChunkManager.checkSurroundingTilesFor(tileIndex, TextureType.SAND);
-					if (g < 0.1f && beach) {
-						System.out.println("Adding Fishing spot..." + beach);
-						Resource animatedRes = new Resource(TextureType.AIR);
-						animatedRes.setIndex(tileIndex);
-						animatedRes.setPosition(position);
-						animatedRes.setType(TextureType.FISHING_SPOT);
-						animatedRes.setAnimated(true);
-						animatedObjects.add(animatedRes);
-					}
-				}
+				/*
+				 * if (tile.getType() == TextureType.SHALLOW_WATER) { g = r.nextFloat(); boolean
+				 * beach = ChunkManager.checkSurroundingTilesFor( new Point(tileIndex.x +
+				 * (index.x * size.width), tileIndex.y + (index.y * size.height)),
+				 * TextureType.SAND); if (beach) { System.out.println("Adding Fishing spot..." +
+				 * beach); Resource animatedRes = new Resource(TextureType.AIR);
+				 * animatedRes.setIndex(tileIndex); animatedRes.setPosition(position);
+				 * animatedRes.setType(TextureType.FISHING_SPOT); animatedRes.setAnimated(true);
+				 * animatedObjects.add(animatedRes); } }
+				 */
 
 				if (isSolid) {
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
@@ -202,7 +201,34 @@ public class Chunk {
 				entities.put(tileIndex, ent);
 			}
 		}
-		buildAnimations();
+	}
+
+	public void addFishingSpots() {
+
+		for (int x = 0; x < size.width; x++) {
+			for (int y = 0; y < size.height; y++) {
+				Point tileIndex = new Point(x, y);
+
+				Tile tile = tiles.get(tileIndex);
+				if (tile.getType() == TextureType.SHALLOW_WATER) {
+					float g = r.nextFloat();
+					boolean beach = ChunkManager.checkSurroundingTilesFor(
+							new Point(tileIndex.x + (index.x * size.width), tileIndex.y + (index.y * size.height)),
+							TextureType.SAND);
+
+					if (g < 0.3f && beach) {
+						Vector2f position = getPosition(x, y);
+						System.out.println("Adding Fishing spot..." + beach);
+						Resource animatedRes = new Resource(TextureType.AIR);
+						animatedRes.setIndex(tileIndex);
+						animatedRes.setPosition(position);
+						animatedRes.setType(TextureType.FISHING_SPOT);
+						animatedRes.setAnimated(true);
+						animatedObjects.add(animatedRes);
+					}
+				}
+			}
+		}
 	}
 
 	public void build() {
@@ -342,10 +368,19 @@ public class Chunk {
 		}
 	}
 
+	boolean isResourcesSetup = false;
+
 	public void render() {
+		if (!isResourcesSetup) {
+			addFishingSpots();
+			buildAnimations();
+			isResourcesSetup = true;
+		}
+
 		if (itemID == -1 || otherID == -1) {
 			build();
 		} else {
+
 			for (int i = 0; i < animatedObjects.size(); i++) {
 				Object obj = animatedObjects.get(i);
 				if (obj != null) {

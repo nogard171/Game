@@ -180,7 +180,7 @@ public class TaskManager {
 	}
 
 	public void update() {
-		tickerUtil.poll(500);
+		tickerUtil.poll(100);
 		if (tickerUtil.ticked()) {
 			tickedUpdate();
 		}

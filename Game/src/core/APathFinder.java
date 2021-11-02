@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import game.Base;
+import ui.UIManager;
 
 public class APathFinder {
 	public static HashMap<ANode, ANode> parentList = new HashMap<ANode, ANode>();
@@ -45,8 +46,8 @@ public class APathFinder {
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > Base.playerIndex.x + (ChunkManager.viewRange.x * 32)
-					|| current.y > Base.playerIndex.y + (ChunkManager.viewRange.y * 32)) {
+			if (current.x > UIManager.playerIndex.x + 100
+					|| current.y > UIManager.playerIndex.y + 100) {
 				return null;
 			}
 			for (ANode index : indexes) {
