@@ -107,6 +107,7 @@ public class TaskManager {
 					Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
 					ChunkManager.move(playerIndex, node.toPoint());
+					
 				}
 				if (task.getType() == TaskType.TILL) {
 					ANode node = path.removeFirst();

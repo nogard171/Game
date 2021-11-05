@@ -26,11 +26,15 @@ public class SkillManager {
 			skill = SkillName.WOODCUTTING;
 			break;
 		case ROCK:
+		case COPPER_ORE:
+		case TIN_ORE:
 			skill = SkillName.MINING;
 			break;
 		case FISHING_SPOT:
 			skill = SkillName.FISHING;
 			break;
+		default:
+			skill = SkillName.AGILITY;
 		}
 		return skill;
 	}
@@ -52,8 +56,13 @@ public class SkillManager {
 				long tempXP = skill.xp;
 				if (tempXP < 9223372036854775807l) {
 					skill.xp += amount;
+					UIChat.addMessage("System:You gained " + amount + " xp in "
+							+ skill.skill.toUserString() + ".");
 				} else {
 					LogUtil.addLog("Max skill xp reached for skill=" + skill.skill.toString());
+
+					UIChat.addMessage("System:You have reached max level for "
+							+ skill.skill.toUserString() + ".");
 				}
 
 				while (skill.xp > skill.nextXP && skill.level < 99) {
@@ -62,15 +71,14 @@ public class SkillManager {
 					skill.xp = skill.xp - skill.nextXP;
 					skill.nextXP = nextXp;
 					skill.level++;
+				
 				}
-
+				UISkillWindow.updateID = true;
 			}
 		}
 	}
 
 	public static long getSkillExperince(SkillName skillname) {
-		boolean hasSkill = false;
-		Skill skill = null;
 		long xp = 0;
 		for (Skill s : PlayerDatabase.skills) {
 			if (s != null) {
@@ -81,6 +89,7 @@ public class SkillManager {
 		}
 		return xp;
 	}
+
 	public static Skill getSkillByName(SkillName name) {
 		Skill skill = null;
 		for (Skill s : PlayerDatabase.skills) {

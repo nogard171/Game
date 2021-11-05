@@ -38,6 +38,8 @@ import game.TaskManager;
 public class UIManager {
 	UIInventory uiInventory;
 	UISkillWindow uiSkill;
+	UIChat uiChat;
+
 	public static boolean uiHovered = false;
 
 	LinkedList<UIButton> menu = new LinkedList<UIButton>();
@@ -47,6 +49,9 @@ public class UIManager {
 		uiInventory.setup();
 		uiSkill = new UISkillWindow();
 		uiSkill.setup();
+		uiChat = new UIChat();
+		uiChat.setup();
+
 		Inventory.setup();
 		Inventory.addItem(ItemType.COINS, 9);
 		Inventory.addItem(ItemType.HOE, 1);
@@ -59,6 +64,18 @@ public class UIManager {
 
 		test = new Skill();
 		test.skill = SkillName.FISHING;
+		test.level = 1;
+
+		PlayerDatabase.skills.add(test);
+
+		test = new Skill();
+		test.skill = SkillName.MINING;
+		test.level = 1;
+
+		PlayerDatabase.skills.add(test);
+
+		test = new Skill();
+		test.skill = SkillName.AGILITY;
 		test.level = 1;
 
 		PlayerDatabase.skills.add(test);
@@ -108,6 +125,7 @@ public class UIManager {
 	public void update() {
 		uiInventory.update();
 		uiSkill.update();
+		uiChat.update();
 
 		pollHover();
 
@@ -120,110 +138,136 @@ public class UIManager {
 		}
 
 		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || btnHovered ? true : false);
-		
+
 		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
-			playerIndex = TaskManager.getCurrentTaskEnd();
-			if (playerIndex == null) {
-				playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+			boolean canDo = false;
+			Tile tile = ChunkManager.getTile(hoverIndex);
+			if (tile != null) {
+				SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
+				if (skillName != null) {
+					SkillData dat = GameDatabase.skillData.get(skillName);
+					System.out.println("Type:" + tile.getBaseType() + "/" + dat);
+					if (dat != null) {
+						if (dat.resourceLevels.containsKey(tile.getBaseType())) {
+							Integer level = dat.resourceLevels.get(tile.getBaseType());
+							if (level != null) {
+								Skill skill = SkillManager.getSkillByName(skillName);
+								if (skill != null) {
+									if (skill.level > level) {
+										canDo = true;
+									} else {
+										UIChat.addMessage("System:You need to be Level " + skill.level + " in "
+												+ skillName.toUserString() + " interact with that object.");
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-			Point center = new Point(Input.mousePoint.x ,Input.mousePoint.y);// UIManager.playerIndex;
-			int cartX = center.x;
-			int cartY = center.y;
-			int isoX = (cartX / 2 + (cartY));
-			int isoY = (cartY - cartX / 2);
 
-			int indexX = (int) Math.floor((float) isoX / (float) 32);
-			int indexY = (int) Math.floor((float) isoY / (float) 32);
-			
-			
-			if (hoverIndex.x > playerIndex.x - 100
-					&& hoverIndex.x < playerIndex.x + 100
-					&& hoverIndex.y > playerIndex.y - 100
-					&& hoverIndex.y < playerIndex.y + 100) {
-				boolean useHoe = false;
-				if (UIInventory.dragSlot != null) {
-					if (UIInventory.dragSlot.item != null) {
-						if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
-							useHoe = true;
-						}
-					}
-				}
-				ANode hoeIndex = null;
-				if (useHoe) {
-					hoeIndex = new ANode(hoverIndex.x, hoverIndex.y);
-					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-				}
-				ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
-				boolean isRes = ChunkManager.isResource(hoverIndex);
-				boolean inRange = ChunkManager.resourceInRange(playerIndex, hoverIndex);
-				Resource resource = null;
-				if (isRes) {
-					resource = ChunkManager.getResource(hoverIndex);
-					hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-				}
-				boolean isItem = ChunkManager.isItem(hoverIndex);
+			if (canDo) {
 
-				LinkedList<ANode> path = null;
-
-				if (inRange) {
-					path = new LinkedList<ANode>();
-					path.add(new ANode(hoverIndex));
-				} else {
-					path = APathFinder.find(new ANode(playerIndex), new ANode(hoverIndex));
+				playerIndex = TaskManager.getCurrentTaskEnd();
+				if (playerIndex == null) {
+					playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 				}
-				if (path != null) {
-					if (path.size() > 0) {
-						for (int i = 0; i < path.size() - 1; i++) {
-							ANode node = path.get(i);
-							if (node != null) {
-								ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+				Point center = new Point(Input.mousePoint.x, Input.mousePoint.y);// UIManager.playerIndex;
+				int cartX = center.x;
+				int cartY = center.y;
+				int isoX = (cartX / 2 + (cartY));
+				int isoY = (cartY - cartX / 2);
+
+				int indexX = (int) Math.floor((float) isoX / (float) 32);
+				int indexY = (int) Math.floor((float) isoY / (float) 32);
+
+				if (hoverIndex.x > playerIndex.x - 100 && hoverIndex.x < playerIndex.x + 100
+						&& hoverIndex.y > playerIndex.y - 100 && hoverIndex.y < playerIndex.y + 100) {
+					boolean useHoe = false;
+					if (UIInventory.dragSlot != null) {
+						if (UIInventory.dragSlot.item != null) {
+							if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
+								useHoe = true;
 							}
 						}
-						ANode node = path.get(path.size() - 1);
-						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+					}
+					ANode hoeIndex = null;
+					if (useHoe) {
+						hoeIndex = new ANode(hoverIndex.x, hoverIndex.y);
+						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+					}
+					ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
+					boolean isRes = ChunkManager.isResource(hoverIndex);
+					boolean inRange = ChunkManager.resourceInRange(playerIndex, hoverIndex);
+					Resource resource = null;
+					if (isRes) {
+						resource = ChunkManager.getResource(hoverIndex);
+						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+					}
+					boolean isItem = ChunkManager.isItem(hoverIndex);
 
-						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+					LinkedList<ANode> path = null;
 
-						if (useHoe) {
-							Resource temp = new Resource(TextureType.AIR);
-							temp.setHealth(5);
+					if (inRange) {
+						path = new LinkedList<ANode>();
+						path.add(new ANode(hoverIndex));
+					} else {
+						path = APathFinder.find(new ANode(playerIndex), new ANode(hoverIndex));
+					}
+					if (path != null) {
+						if (path.size() > 0) {
+							for (int i = 0; i < path.size() - 1; i++) {
+								ANode node = path.get(i);
+								if (node != null) {
+									ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+								}
+							}
+							ANode node = path.get(path.size() - 1);
+							ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
 
-							Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
+							Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
 
-							hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+							if (useHoe) {
+								Resource temp = new Resource(TextureType.AIR);
+								temp.setHealth(5);
 
-							move.addFollowUp(till);
-						} else if (isRes) {
-
-							if (resource != null) {
-
-								Task chop = new Task(TaskType.RESOURCE, resourceIndex,
-										resource.getANode(resourceIndex));
+								Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
 
 								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 
-								move.addFollowUp(chop);
+								move.addFollowUp(till);
+							} else if (isRes) {
 
-							}
-						} else if (isItem) {
-							Tile item = null;
-							if (isItem) {
-								item = ChunkManager.getTile(hoverIndex);
-							}
-							if (item != null) {
+								if (resource != null) {
 
-								Task chop = new Task(TaskType.ITEM, resourceIndex);
-								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-								move.addFollowUp(chop);
+									Task chop = new Task(TaskType.RESOURCE, resourceIndex,
+											resource.getANode(resourceIndex));
 
+									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+
+									move.addFollowUp(chop);
+
+								}
+							} else if (isItem) {
+								Tile item = null;
+								if (isItem) {
+									item = ChunkManager.getTile(hoverIndex);
+								}
+								if (item != null) {
+
+									Task chop = new Task(TaskType.ITEM, resourceIndex);
+									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+									move.addFollowUp(chop);
+
+								}
 							}
+							TaskManager.addTask(move);
+
 						}
-						TaskManager.addTask(move);
-
+					} else {
+						// handle failed path
 					}
-				} else {
-					// handle failed path
 				}
 			}
 		}
@@ -253,6 +297,7 @@ public class UIManager {
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		uiInventory.render();
 		uiSkill.render();
+		uiChat.render();
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		GL11.glBegin(GL11.GL_QUADS);

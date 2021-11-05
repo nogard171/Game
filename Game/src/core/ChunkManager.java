@@ -118,12 +118,6 @@ public class ChunkManager {
 
 	public static TextureType getTypeByIndexWithTiles(Point index) {
 		TextureType type = null;
-		/*
-		 * for (int x = 0; x < 2; x++) { for (int y = 0; y < 2; y++) { Chunk chunk =
-		 * chunks.get(new Point(x, y)); if (chunk != null) { Tile tile =
-		 * chunk.getObjectAtIndex(index, true,false); if (tile != null) { type =
-		 * tile.getType(); } } } }
-		 */
 		if (index != null) {
 			int chunkX = (int) (index.x / Chunk.size.width);
 			int chunkY = (int) (index.y / Chunk.size.height);

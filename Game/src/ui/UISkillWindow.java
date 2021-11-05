@@ -34,6 +34,9 @@ public class UISkillWindow {
 
 	public void setup() {
 		hoverTicker = new Ticker();
+		int slotCount = Inventory.getSlotCount();
+		int slotWidth = Inventory.getSlotWidth();
+		position = new Vector2f(0, Window.height - (((size.y) * 32) + 32));
 	}
 
 	public static boolean isPanelHovered() {
@@ -93,20 +96,6 @@ public class UISkillWindow {
 			} else {
 				x++;
 			}
-			/*
-			 * 
-			 * ItemSlot slot = PlayerDatabase.itemSlots.get(index); if (slot != null) {
-			 * 
-			 * Item item = slot.item;
-			 * 
-			 * Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y, 32, 32); if
-			 * (item != null) {
-			 * 
-			 * Renderer.renderUITexture(item.getTexture(), pos.x, pos.y, 32, 32); } if (x >=
-			 * size.x - 1) { y++; x = 0; } else { x++; }
-			 * 
-			 * }
-			 */
 		}
 		GL11.glEnd();
 		x = 0;
@@ -180,7 +169,7 @@ public class UISkillWindow {
 	public void render() {
 		// show=true;
 		if (show) {
-			if (id == -1 || updateID || true == true) {
+			if (id == -1 || updateID) {
 				build();
 			} else {
 				GL11.glCallList(id);
@@ -196,7 +185,7 @@ public class UISkillWindow {
 				if (startTicks == 0 && !Input.moved) {
 					startTicks = hoverTicker.getTicks();
 				} else if (Input.moved) {
-					 startTicks = 0;
+					startTicks = 0;
 				}
 
 				if (startTicks + 1 < hoverTicker.getTicks() && !Input.moved) {
@@ -231,7 +220,8 @@ public class UISkillWindow {
 								Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 42, tempSecondString, 12,
 										Color.white);
 							}
-							Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 30, "       "+tempString, 12, Color.white);
+							Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 30, "       " + tempString, 12,
+									Color.white);
 
 						}
 
@@ -242,44 +232,7 @@ public class UISkillWindow {
 					}
 				}
 			}
-
-			/*
-			 * if (slotIndexHovered != -1) { Point tempPos = new Point((int) position.x + 6
-			 * + (slotPointHovered.x * slotMargin.x), (int) position.y + 6 +
-			 * (slotPointHovered.y * slotMargin.y));
-			 * 
-			 * GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-			 * Renderer.renderQuad(new Rectangle(tempPos.x, tempPos.y, 32, 32), new
-			 * Color(255, 255, 255)); GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,
-			 * GL11.GL_FILL); if (startTicks == 0 && !Input.moved) { startTicks =
-			 * hoverTicker.getTicks(); } else if (Input.moved) { startTicks = 0; }
-			 * 
-			 * if (startTicks + 1 < hoverTicker.getTicks() && !Input.moved) { ItemSlot
-			 * tempSlot = PlayerDatabase.itemSlots.get(slotIndexHovered); if (tempSlot !=
-			 * null) { if (tempSlot.item != null) { ItemData data =
-			 * GameDatabase.getItemData(tempSlot.item.getType()); if (data != null) { //
-			 * Renderer.renderQuad(new Rectangle(tempPos.x + 32, tempPos.y, 200, 50), new //
-			 * Color(0, 0, 0, 224)); String tempString = data.description; if
-			 * (tempString.length() > 35) { tempString = tempString.substring(0, 35) +
-			 * "..."; } Renderer.bindTexture(ResourceDatabase.uiTexture);
-			 * GL11.glBegin(GL11.GL_QUADS); UIPanel.renderPanel(tempPos.x + 32, tempPos.y,
-			 * 7, 2); GL11.glEnd(); String tempName = data.type.name(); tempName =
-			 * tempName.substring(0, 1).toUpperCase() + tempName.substring(1,
-			 * tempName.length()).toLowerCase();
-			 * 
-			 * Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 4, tempName, 12,
-			 * Color.white); Renderer.renderText(tempPos.x + 32 + 4, tempPos.y + 18,
-			 * tempString, 12, Color.white); Renderer.renderText(tempPos.x + 32 + 4,
-			 * tempPos.y + 44, "Value: " + (data.value * tempSlot.count), 12, Color.white);
-			 * } } } } } else { startTicks = 0; }
-			 * 
-			 * if (dragSlot != null) { if (dragSlot.item != null) {
-			 * Renderer.bindTexture(ResourceDatabase.uiTexture);
-			 * GL11.glBegin(GL11.GL_QUADS);
-			 * Renderer.renderUITexture(dragSlot.item.getTexture(), Input.getMousePoint().x,
-			 * Input.getMousePoint().y, 32, 32); GL11.glEnd(); } }
-			 * 
-			 */ }
+		}
 	}
 
 	public void destroy() {

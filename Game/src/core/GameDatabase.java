@@ -92,9 +92,27 @@ public class GameDatabase {
 		skillData.put(fishingSkill.name, fishingSkill);
 
 		SkillData woodCuttingSkill = new SkillData(SkillName.WOODCUTTING,
-				"Wood cutting allow for the gathering of wood.", UITextureType.COPPER_ORE_ITEM);
+				"Wood cutting allow for the gathering of wood.", UITextureType.WOODCUTTING_SKILL_ICON);
 		woodCuttingSkill.resourceLevels.put(TextureType.TREE,2);
 		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
+		
+
+		SkillData miningSkill = new SkillData(SkillName.MINING,
+				"Wood cutting allow for the gathering of wood.", UITextureType.MINING_SKILL_ICON);
+		miningSkill.resourceLevels.put(TextureType.ROCK,0);
+		miningSkill.resourceLevels.put(TextureType.COPPER_ORE,3);
+		miningSkill.resourceLevels.put(TextureType.TIN_ORE,3);
+		skillData.put(miningSkill.name, miningSkill);
+		
+		
+
+		SkillData agilitySkill = new SkillData(SkillName.AGILITY,
+				"Wood cutting allow for the gathering of wood.", UITextureType.MINING_SKILL_ICON);
+		agilitySkill.resourceLevels.put(TextureType.GRASS,0);
+		agilitySkill.resourceLevels.put(TextureType.GRASS0,0);
+		agilitySkill.resourceLevels.put(TextureType.DIRT,0);
+		agilitySkill.resourceLevels.put(TextureType.SAND,0);
+		skillData.put(agilitySkill.name, agilitySkill);
 
 	}
 

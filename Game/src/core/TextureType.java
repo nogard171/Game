@@ -9,8 +9,9 @@ public enum TextureType implements Comparable<TextureType> {
 	ROCK(1, 2, 2, 1, 0, -0.5f), DEEP_WATER(0, 4, 1, 1f),TILLED_DIRT(3, 3, 1, 1f),
 
 	PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f), ROCK_ITEM(0, 0, 1, 1),
-	LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0), TIN_ORE(1, 0.75F * 4, 1, 0.75f, 0, -0.25f),
-	COPPER_ORE(1, 0.75F * 3, 1, 0.75f, 0, -0.25f), SHALLOW_WATER(2, 1, 1, 1), FISHING_SPOT(0, 5, 1, 1f),
+	LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0), 
+	TIN_ORE(1, 1 * 4, 1, 1, 0, -0.5f),
+	COPPER_ORE(1, 1 * 3, 1, 1, 0, -0.5f), SHALLOW_WATER(2, 1, 1, 1), FISHING_SPOT(0, 5, 1, 1f),
 	FISHING_SPOT1(0, 6, 1, 1f), FISHING_SPOT2(0, 7, 1, 1f), FISHING_SPOT3(1, 5, 1, 1f),
 	FISHING_SPOT4(1, 6, 1, 1f);
 

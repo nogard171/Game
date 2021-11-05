@@ -140,8 +140,11 @@ public class Chunk {
 				} else if (g >= 0.5f) {
 					tile.setType(TextureType.GRASS);
 				}
-
-				if (t <= 6) {
+				g = r.nextFloat();
+				if (g < 0.2f) {
+					tile.setType(TextureType.DIRT);
+				}
+				if (t <= 2) {
 					tile.setType(TextureType.SAND);
 				}
 				if (t < 2) {
@@ -158,38 +161,30 @@ public class Chunk {
 
 				Resource res = new Resource(TextureType.AIR);
 				res.setPosition(position);
-				/*
-				 * if (tile.getType() == TextureType.SHALLOW_WATER) { g = r.nextFloat(); boolean
-				 * beach = ChunkManager.checkSurroundingTilesFor( new Point(tileIndex.x +
-				 * (index.x * size.width), tileIndex.y + (index.y * size.height)),
-				 * TextureType.SAND); if (beach) { System.out.println("Adding Fishing spot..." +
-				 * beach); Resource animatedRes = new Resource(TextureType.AIR);
-				 * animatedRes.setIndex(tileIndex); animatedRes.setPosition(position);
-				 * animatedRes.setType(TextureType.FISHING_SPOT); animatedRes.setAnimated(true);
-				 * animatedObjects.add(animatedRes); } }
-				 */
 
 				if (isSolid) {
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
 					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
 						res.setType(TextureType.TREE, 10);
 					}
-					t = r.nextInt();
+					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
 					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
 						res.setType(TextureType.BUSH, 10);
 					}
-					t = r.nextInt();
-					if (t == 1 && (tile.getType() == TextureType.DIRT)) {
-						res.setType(TextureType.ROCK, 10);
-					}
+					if ((tile.getType() == TextureType.DIRT)) {
+						t = 0 + (int) (Math.random() * ((10 - 0) + 1));
+						if (t == 1) {
+							res.setType(TextureType.ROCK, 10);
+						}
 
-					t = r.nextInt();
-					if (t == 1) {
-						// res.setType(TextureType.TIN_ORE, 10);
-					}
-					t = r.nextInt();
-					if (t == 1) {
-						// res.setType(TextureType.COPPER_ORE, 10);
+						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
+						if (t == 1) {
+							res.setType(TextureType.TIN_ORE, 10);
+						}
+						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
+						if (t == 1) {
+							res.setType(TextureType.COPPER_ORE, 10);
+						}
 					}
 				}
 				objects.put(tileIndex, res);

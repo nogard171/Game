@@ -20,6 +20,10 @@ public enum UITextureType {
 	SPELLS_ICON(6, 2, 1, 1),
 	MAP_ICON(5, 2, 1, 1),
 	OPTIONS_ICON(5, 0, 1, 1),
+	
+
+	MINING_SKILL_ICON(6, 4, 1, 1),
+	WOODCUTTING_SKILL_ICON(5, 4, 1, 1),
 
 	PANEL_TL(0, 0, 1, 1), PANEL_TC(1, 0, 1, 1), PANEL_TR(2, 0, 1, 1), PANEL_ML(0, 1, 1, 1), PANEL_MC(1, 1, 1, 1),
 	PANEL_MR(2, 1, 1, 1), PANEL_BL(0, 2, 1, 1), PANEL_BC(1, 2, 1, 1), PANEL_BR(2, 2, 1, 1);
