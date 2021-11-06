@@ -5,6 +5,8 @@ import java.awt.Point;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import ui.UIChat;
+
 public class Input {
 	private static int[] buttons;
 	private static int[] buttonCount;
@@ -31,6 +33,20 @@ public class Input {
 		}
 	}
 
+	public static int[] getKey() {
+		int[] key = new int[2];
+		for (int i = 0; i < key.length; i++) {
+			for (int k = 0; k < 256; k++) {
+				if (keysDown[k] && key[0] != k) {
+					if (keysCount[k] == 0) {
+						key[i] = k;
+					}
+				}
+			}
+		}
+		return key;
+	}
+
 	public static void poll() {
 		moved = (previousMousePoint.x != mousePoint.x && previousMousePoint.y != mousePoint.y);
 		if (buttons == null || keysDown == null) {
@@ -40,19 +56,25 @@ public class Input {
 			buttonCount[b] = (buttonDown[b] == true ? 1 : 0);
 			buttonDown[b] = Mouse.isButtonDown(buttons[b]);
 		}
-		for (int k = 0; k < 256; k++) {
-			keysCount[k] = (keysDown[k] == true ? 1 : 0);
-			keysDown[k] = Keyboard.isKeyDown(k);
-		}
+		
+			for (int k = 0; k < 256; k++) {
+				keysCount[k] = (keysDown[k] == true ? 1 : 0);
+				keysDown[k] = Keyboard.isKeyDown(k);
+			}
 	}
 
 	public static boolean isKeyPressed(int index) {
-		boolean isPressed = (keysDown[index] == true && keysCount[index] == 0 ? true : false);
+		boolean isPressed = 
+				(UIChat.isAllowedKeyboard()
+						?(keysDown[index] == true && keysCount[index] == 0 
+						? true 
+								: false)
+								:false);
 		return isPressed;
 	}
 
 	public static boolean isKeyDown(int index) {
-		return keysDown[index];
+		return (UIChat.isAllowedKeyboard()?keysDown[index]:false);
 	}
 
 	public static boolean isMousePressed(int index) {

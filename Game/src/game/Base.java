@@ -117,19 +117,19 @@ public class Base {
 		int forceX = 0;
 		int forceY = 0;
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		if (Input.isKeyDown(Keyboard.KEY_W)) {
 			forceY = -1;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		if (Input.isKeyDown(Keyboard.KEY_S)) {
 			forceY = 1;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if (Input.isKeyDown(Keyboard.KEY_A)) {
 			forceX = -1;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (Input.isKeyDown(Keyboard.KEY_D)) {
 			forceX = 1;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_F1)) {
+		if (Input.isKeyDown(Keyboard.KEY_F1)) {
 			ResourceDatabase.load();
 		}
 		// view.x = x;

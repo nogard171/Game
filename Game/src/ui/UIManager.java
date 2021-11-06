@@ -137,7 +137,10 @@ public class UIManager {
 			btnHovered = (!btnHovered ? btn.hovered : btnHovered);
 		}
 
-		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || btnHovered ? true : false);
+		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || uiChat.isPanelHovered() || btnHovered
+				? true
+				: false);
+		
 
 		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
@@ -315,8 +318,9 @@ public class UIManager {
 
 		Renderer.renderUITexture(UITextureType.CURSOR, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
 		GL11.glEnd();
-
-		renderHover();
+		if (!isHovered()) {
+			renderHover();
+		}
 	}
 
 	public void renderHover() {
