@@ -92,6 +92,7 @@ public class UIManager {
 			@Override
 			public void click(UIButton btn) {
 				uiSkill.show = false;
+				uiChat.show = false;
 				uiInventory.show = !uiInventory.show;
 			}
 		}));
@@ -99,7 +100,16 @@ public class UIManager {
 			@Override
 			public void click(UIButton btn) {
 				uiInventory.show = false;
+				uiChat.show = false;
 				uiSkill.show = !uiSkill.show;
+			}
+		}));
+		menu.add(new UIButton(UITextureType.CHAT_ICON, new Rectangle(64, 0, 32, 32), new UIAction() {
+			@Override
+			public void click(UIButton btn) {
+				uiInventory.show = false;
+				uiSkill.show = false;
+				uiChat.show = !uiChat.show;
 			}
 		}));
 	}
@@ -140,7 +150,6 @@ public class UIManager {
 		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || uiChat.isPanelHovered() || btnHovered
 				? true
 				: false);
-		
 
 		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
@@ -148,29 +157,34 @@ public class UIManager {
 			Tile tile = ChunkManager.getTile(hoverIndex);
 			if (tile != null) {
 				SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
-				if (skillName != null) {
+				if (skillName != null) {					
 					SkillData dat = GameDatabase.skillData.get(skillName);
-					System.out.println("Type:" + tile.getBaseType() + "/" + dat);
 					if (dat != null) {
+						boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
 						if (dat.resourceLevels.containsKey(tile.getBaseType())) {
 							Integer level = dat.resourceLevels.get(tile.getBaseType());
+
 							if (level != null) {
 								Skill skill = SkillManager.getSkillByName(skillName);
 								if (skill != null) {
 									if (skill.level > level) {
 										canDo = true;
 									} else {
-										UIChat.addMessage("System:You need to be Level " + skill.level + " in "
+										UIChat.addMessage("System:You need to be Level " + level + " in "
 												+ skillName.toUserString() + " interact with that object.");
 									}
 								}
 							}
+
+						} else if (isSearchable) {
+							canDo = true;
+						} else if (tile.getBaseType().equals(TextureType.ITEM)) {
+							canDo = true;
 						}
 					}
 				}
 			}
-
-			if (canDo) {
+			if (canDo||tile==null) {
 
 				playerIndex = TaskManager.getCurrentTaskEnd();
 				if (playerIndex == null) {
@@ -209,6 +223,7 @@ public class UIManager {
 						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 					}
 					boolean isItem = ChunkManager.isItem(hoverIndex);
+					boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
 
 					LinkedList<ANode> path = null;
 
@@ -264,6 +279,11 @@ public class UIManager {
 									move.addFollowUp(chop);
 
 								}
+							} else if (isSearchable) {
+									Task search = new Task(TaskType.SEARCH, resourceIndex);
+									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+									move.addFollowUp(search);
+
 							}
 							TaskManager.addTask(move);
 
@@ -280,11 +300,20 @@ public class UIManager {
 		if (Input.isKeyPressed(Keyboard.KEY_I)) {
 			uiSkill.show = false;
 			uiInventory.show = !uiInventory.show;
+			uiChat.show = false;
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_K)) {
 			uiInventory.show = false;
 			uiSkill.show = !uiSkill.show;
+			uiChat.show = false;
+		}
+
+		if (Input.isKeyPressed(Keyboard.KEY_C)) {
+			uiInventory.show = false;
+			uiSkill.show = false;
+			uiChat.show = !uiChat.show;
+			System.out.println("Chat:" + uiChat.show);
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_1)) {

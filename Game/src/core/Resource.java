@@ -17,13 +17,13 @@ public class Resource extends Object {
 	public Resource(TextureType newType) {
 		super(newType);
 		health = 1;
-		baseType = newType;
+		//baseType = newType;
 	}
 
 	public Resource(TextureType newType, int newHealth) {
 		super(newType);
 		health = newHealth;
-		baseType = newType;
+		//baseType = newType;
 	}
 
 

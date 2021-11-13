@@ -41,12 +41,18 @@ public class GameDatabase {
 		dat.addDrop(new ResourceItemDrop(ItemType.LOG));
 		dat.setXPGain(5);
 		resources.put(TextureType.TREE, dat);
+		
+
+		dat = new ResourceData();
+		dat.addDrop(new ResourceItemDrop(ItemType.STICK,0,2,5));
+		dat.isSearchable = true;
+		resources.put(TextureType.BUSH, dat);
 
 		dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.FISH));
 		dat.setXPGain(5);
 
-		dat.rarity = 7;
+		dat.destroyOnTask = false;
 		dat.isRenewable = true;
 		TextureType[] types = { TextureType.FISHING_SPOT, TextureType.FISHING_SPOT1, TextureType.FISHING_SPOT2,
 				TextureType.FISHING_SPOT3, TextureType.FISHING_SPOT4 };
@@ -83,6 +89,12 @@ public class GameDatabase {
 
 		newItem = new ItemData(ItemType.HOE, "A Hoe used for tiling.", 20);
 		newItem.setTexture(UITextureType.HOE_ITEM);
+		items.put(newItem.type, newItem);
+		
+		
+
+		newItem = new ItemData(ItemType.STICK, "A few sticks.", 20);
+		newItem.setTexture(UITextureType.STICK_ITEM);
 		items.put(newItem.type, newItem);
 	}
 

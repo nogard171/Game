@@ -6,8 +6,10 @@ public class ResourceData {
 	public ArrayList<ResourceItemDrop> itemDrops = new ArrayList<ResourceItemDrop>();
 	public TextureType[] animationTypes;
 	public int rarity = 1;// 1 in 3 chance
+	public boolean destroyOnTask = true;
 	public boolean isRenewable = false;
 	public long xpGain = 5;
+	public boolean isSearchable = false;
 
 	public void addDrop(ResourceItemDrop resourceItemDrop) {
 		itemDrops.add(resourceItemDrop);

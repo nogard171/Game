@@ -67,6 +67,11 @@ public class ChunkManager {
 
 	public static void dropItem(GroundItem item) {
 		Point test = ChunkManager.getIndexByType(TextureType.CHARACTER);
+		dropItemAtIndex(test, item);
+	}
+
+	public static void dropItemAtIndex(Point index, GroundItem item) {
+		Point test = index;
 		if (test != null) {
 			int chunkX = (int) (test.x / Chunk.size.width);
 			int chunkY = (int) (test.y / Chunk.size.height);
@@ -320,6 +325,28 @@ public class ChunkManager {
 		return isItem;
 	}
 
+	public static boolean isSearchable(Point index) {
+		boolean isSearchable = false;
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Tile tile = chunk.getObjectAtIndex(new Point(objX, objY), true);
+				if (tile != null) {
+					ResourceData res = GameDatabase.resources.get(tile.getBaseType());
+					if (res != null) {
+						isSearchable = (res.isSearchable ? true : false);
+					}
+				}
+			}
+		}
+
+		return isSearchable;
+	}
+
 	public static GroundItem getItem(Point index) {
 		GroundItem item = null;
 		if (index != null) {
@@ -337,7 +364,6 @@ public class ChunkManager {
 	}
 
 	public static Tile getTile(Point index) {
-
 		Tile tile = null;
 		if (index != null) {
 			int chunkX = (int) (index.x / Chunk.size.width);

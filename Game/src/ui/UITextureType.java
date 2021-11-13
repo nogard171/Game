@@ -7,6 +7,7 @@ import java.util.List;
 public enum UITextureType {
 	BLANK(0, 0, 0, 0), COINS_ITEM(7, 0, 1, 1), ITEM_BACK(3, 0, 1, 1),ITEM_BACK_SIDE(4, 0, 0.5f, 1), CURSOR(3, 1, 1, 1), ROCK_ITEM(0, 3, 1, 1),
 	LOG_ITEM(1, 3, 1, 1), COPPER_ORE_ITEM(0, 5, 1, 1), TIN_ORE_ITEM(1, 5, 1, 1), FISH_ITEM(3, 4, 1, 1), HOE_ITEM(4, 4, 1, 1),
+	STICK_ITEM(3,3, 1, 1),
 
 	MOUTH_ICON(5, 2, 1, 1),
 	DROP_ICON(5, 3, 1, 1), 
@@ -20,6 +21,7 @@ public enum UITextureType {
 	SPELLS_ICON(6, 2, 1, 1),
 	MAP_ICON(5, 2, 1, 1),
 	OPTIONS_ICON(5, 0, 1, 1),
+	CHAT_ICON(7, 3, 1, 1),
 	
 
 	MINING_SKILL_ICON(6, 4, 1, 1),

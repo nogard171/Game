@@ -30,7 +30,7 @@ public class Tile {
 
 	public void setType(TextureType newType) {
 		this.type = newType;
-		if (baseType == TextureType.AIR) {
+		if (baseType.equals(TextureType.AIR)) {
 			baseType = newType;
 		}
 	}

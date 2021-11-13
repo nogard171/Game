@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
+import ui.UITextureType;
 import utils.Ticker;
 
 public class Chunk {
@@ -168,22 +169,34 @@ public class Chunk {
 						res.setType(TextureType.TREE, 10);
 					}
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
-					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
+					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)&&res.getType().equals(TextureType.AIR)) {
 						res.setType(TextureType.BUSH, 10);
 					}
+					
 					if ((tile.getType() == TextureType.DIRT)) {
 						t = 0 + (int) (Math.random() * ((10 - 0) + 1));
-						if (t == 1) {
+						if (t == 1&&res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.ROCK, 10);
 						}
 
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
-						if (t == 1) {
+						if (t == 1&&res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.TIN_ORE, 10);
 						}
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
-						if (t == 1) {
+						if (t == 1&&res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.COPPER_ORE, 10);
+						}
+					}
+					if (res.getBaseType().equals(TextureType.AIR)&&res.getType().equals(TextureType.AIR)) {
+						t = 0 + (int) (Math.random() * ((5 - 0) + 1));
+						if (t == 1) {
+							GroundItem droppedItem = new GroundItem(TextureType.ITEM);
+							droppedItem.count = 1;
+							droppedItem.item = ItemType.ROCK;
+							droppedItem.type = UITextureType.ROCK_ITEM;
+							this.droppedItems.put(tileIndex, droppedItem);
+							System.out.println("adding item"+tileIndex);
 						}
 					}
 				}
@@ -411,7 +424,7 @@ public class Chunk {
 	}
 
 	public Tile getObjectAtIndex(Point point, boolean removeAIR) {
-		return getObjectAtIndex(point, removeAIR, false);
+		return getObjectAtIndex(point, removeAIR, true);
 	}
 
 	public Tile getObjectAtIndex(Point point, boolean removeAIR, boolean removeTiles) {

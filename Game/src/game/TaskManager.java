@@ -107,7 +107,7 @@ public class TaskManager {
 					Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
 					ChunkManager.move(playerIndex, node.toPoint());
-					
+
 				}
 				if (task.getType() == TaskType.TILL) {
 					ANode node = path.removeFirst();
@@ -127,17 +127,20 @@ public class TaskManager {
 						if (res != null) {
 							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
 							if (dat != null) {
-
 								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
 								if (genR == 1) {
 									for (ResourceItemDrop drop : dat.itemDrops) {
-										ArrayList<ItemType> types = drop.getDroppedItems();
-										for (ItemType type : types) {
-											Inventory.addItem(type);
+										genR = r.nextInt(drop.getRarity() - 1 + 1) + 1;
+										System.out.println("Rarity:"+genR);
+										if (genR == 1) {
+											ArrayList<ItemType> types = drop.getDroppedItems();
+											for (ItemType type : types) {
+												Inventory.addItem(type);
+											}
 										}
 									}
 									SkillManager.addExperienceByResource(res.getBaseType(), dat.getXPGain());
-									if (!dat.isRenewable) {
+									if (!dat.isRenewable && dat.destroyOnTask) {
 										ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.AIR);
 									} else {
 										// generate new renewable resources in near by location,
@@ -147,10 +150,6 @@ public class TaskManager {
 										// rocks can generate outside of view or add generating
 										// infinite cave on rock/ore break
 										// or generate on game load.
-									}
-								} else {
-									for (int t = 0; t < 10; t++) {
-										path.add(node);
 									}
 								}
 							}
