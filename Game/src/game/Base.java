@@ -69,7 +69,6 @@ public class Base {
 
 	}
 
-
 	public void setup() {
 		Window.start();
 		Window.setup();
@@ -97,7 +96,7 @@ public class Base {
 
 	public void update() {
 		Window.update();
-		
+
 		taskMgr.update();
 		chunkMgr.update();
 		uiMgr.update();
@@ -112,7 +111,6 @@ public class Base {
 			Window.wasResized = false;
 		}
 
-		
 		FPS.updateFPS();
 		int forceX = 0;
 		int forceY = 0;
@@ -156,18 +154,21 @@ public class Base {
 
 		uiMgr.render();
 
-		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);
-		Renderer.renderText(new Vector2f(0, 16), "Hover Index: " + UIManager.hoverIndex, 12, Color.white);
-		TextureType type = ChunkManager.getTypeByIndexWithTiles( UIManager.hoverIndex);
+		Vector2f pos = new Vector2f(0,50);
+
+		Renderer.renderQuad(new Rectangle((int) pos.x, (int) pos.y, 250, 80), new Color(0, 0, 0, 0.5f));
+		Renderer.renderText(new Vector2f(pos.x, pos.y), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);
+		Renderer.renderText(new Vector2f(pos.x, pos.y + 16), "Hover Index: " + UIManager.hoverIndex, 12, Color.white);
+		TextureType type = ChunkManager.getTypeByIndexWithTiles(UIManager.hoverIndex);
 
 		if (type != null) {
-			Renderer.renderText(new Vector2f(0, 32), "Hover Type: " + type.toString(), 12, Color.white);
+			Renderer.renderText(new Vector2f(pos.x, pos.y + 32), "Hover Type: " + type.toString(), 12, Color.white);
 		}
 
-		Renderer.renderText(new Vector2f(0, 48), "Chunks In View: " + chunkMgr.chunksInView.size(), 12, Color.white);
+		Renderer.renderText(new Vector2f(pos.x, pos.y + 48), "Chunks In View: " + chunkMgr.chunksInView.size(), 12,
+				Color.white);
 
-		Renderer.renderText(new Vector2f(0, 64), "Input Moved: " + "" + Input.moved, 12, Color.white);
+		Renderer.renderText(new Vector2f(pos.x, pos.y + 64), "Input Moved: " + "" + Input.moved, 12, Color.white);
 
 	}
 

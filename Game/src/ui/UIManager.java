@@ -40,6 +40,8 @@ public class UIManager {
 	UISkillWindow uiSkill;
 	UIChat uiChat;
 
+	UIHud hud;
+	
 	public static boolean uiHovered = false;
 
 	LinkedList<UIButton> menu = new LinkedList<UIButton>();
@@ -51,6 +53,9 @@ public class UIManager {
 		uiSkill.setup();
 		uiChat = new UIChat();
 		uiChat.setup();
+		
+		hud= new UIHud();
+		hud.setup();
 
 		Inventory.setup();
 		Inventory.addItem(ItemType.COINS, 9);
@@ -136,6 +141,7 @@ public class UIManager {
 		uiInventory.update();
 		uiSkill.update();
 		uiChat.update();
+		hud.update();
 
 		pollHover();
 
@@ -330,6 +336,8 @@ public class UIManager {
 		uiInventory.render();
 		uiSkill.render();
 		uiChat.render();
+		
+		hud.render();
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		GL11.glBegin(GL11.GL_QUADS);

@@ -10,9 +10,11 @@ import ui.SkillName;
 
 public class PlayerDatabase {
 	public static String name ="Silly_Box";
+	public static int maxHealth = 100;
 	public static int health = 100;
 	public static int level = 1;
 	public static long xp=0;
+	public static long nextXP=100;
 	
 	
 	
