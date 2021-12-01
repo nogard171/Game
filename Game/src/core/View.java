@@ -26,6 +26,10 @@ public class View {
 			x += forceX;
 			y += forceY;
 		}
+		
+		if (forceX == 0 && forceY == 0) {
+			moved = false;
+		}
 	}
 
 	public void finalizeMove() {
@@ -35,7 +39,6 @@ public class View {
 	}
 
 	public Rectangle getRect() {
-		// TODO Auto-generated method stub
 		return new Rectangle(x,y,w,h);
 	}
 }

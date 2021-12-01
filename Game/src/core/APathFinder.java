@@ -43,33 +43,16 @@ public class APathFinder {
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > ChunkManager.size.x && current.y > ChunkManager.size.y) {
+			if (current.x > 100 && current.y > 100) {
 				return null;
 			}
 			for (ANode index : indexes) {
 				ANode neighborIndex = new ANode(current.x + index.x, current.y + index.y, current.z + index.z);
-				int chunkX = (int) (neighborIndex.x / ChunkManager.size.x);
-				int chunkZ = (int) (neighborIndex.z / ChunkManager.size.z);
-				Chunk chunk = ChunkManager.chunks.get(chunkX + ",0," + chunkZ);
-				if (chunk != null) {
+				if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
+					System.out.println("Current: " + current);
+					parentList.put(neighborIndex, current);
+					openList.add(neighborIndex);
 
-					int objX = (int) (neighborIndex.x % 16);
-					int objY = (int) (neighborIndex.y % 16);
-					int objZ = (int) (neighborIndex.z % 16);
-					Object data = chunk.getData(objX, objY, objZ);
-
-					if (data != null) {
-						if (data.getSprite() == "air") {
-							Object lower = chunk.getData(objX, objY + 1, objZ);
-							if (lower.getSprite() != "air") {
-								if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
-									System.out.println("Current: " + current);
-									parentList.put(neighborIndex, current);
-									openList.add(neighborIndex);
-								}
-							}
-						}
-					}
 				}
 			}
 		}

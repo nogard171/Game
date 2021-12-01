@@ -11,21 +11,13 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
-import core.Chunk;
-import core.ChunkManager;
-import core.Input;
-import core.Renderer;
-import core.TaskManager;
-import core.UserInterface;
 import core.View;
 import core.Window;
 import utils.FPS;
-import core.Object;
+import utils.Input;
+import utils.Renderer;
 
 public class Base {
-
-	TaskManager taskManager;
-	UserInterface ui;
 
 	boolean isRunning = true;
 	public static Point mousePosition;
@@ -44,32 +36,31 @@ public class Base {
 	public void setup() {
 
 		Window.start();
-		Window.setup();
-		Renderer.load();
-
-		chunkManager.setup();
-
+		Window.setup();		
+		Input.setup();
 		FPS.setup();
-		taskManager = new TaskManager();
-		taskManager.start();
-		ui = new UserInterface();
-		ui.setup();
+		
+		Data.setup();
+		
+		Database.build();
 
-		viewTest = new View(0, 0, Window.width, Window.height);
+		viewFrame = new View(0, 0, Window.width, Window.height);
 	}
+	
+	
 
 	public void update() {
 		Window.update();
 
-		mousePosition = new Point(Mouse.getX() + viewTest.x, (Window.height - Mouse.getY()) + viewTest.y);
+	mousePosition = new Point(Mouse.getX() + viewFrame.x, (Window.height - Mouse.getY()) + viewFrame.y);
 
 		if (Window.close()) {
 			this.isRunning = false;
 		}
 
 		if (Window.wasResized) {
-			viewTest.w = Window.width;
-			viewTest.h = Window.height;
+			viewFrame.w = Window.width;
+			viewFrame.h = Window.height;
 			Window.wasResized = false;
 		}
 
@@ -91,57 +82,30 @@ public class Base {
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			forceY = (int) speed;
 		}
-		viewTest.move(forceX, forceY);
-
-		chunkManager.update();
-
-		viewTest.finalizeMove();
-
-		ui.update();
+		viewFrame.move(forceX, forceY);
 	}
 
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
-	public static View viewTest;
-	ChunkManager chunkManager = new ChunkManager();
+	public static View viewFrame;
 
 	public void render() {
 		Window.render();
 		Input.poll();
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, Renderer.texture.getTextureID());
+		Renderer.bindTexture();
 		GL11.glPushMatrix();
-		GL11.glTranslatef(-viewTest.x, -viewTest.y, 0);
-
-		chunkManager.render();
+		GL11.glTranslatef(-viewFrame.x,-viewFrame.y, 0);
+		
+		Renderer.renderTexture(new Rectangle(0,0,64,64), Color.white);
+		
 		GL11.glPopMatrix();
-		ui.render();
+
 
 		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(new Vector2f(0, 0), "FPS: " + FPS.getFPS(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 16), "Hover Count: " + hoveredObjects.size(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 32), "Render Count: " + ChunkManager.getRenderCount(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 48), "Chunk Count: " + ChunkManager.chunksInView.size(), 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 64), "Layer: " + ChunkManager.layer, 12, Color.white);
-
-		Renderer.renderText(new Vector2f(0, 80), "Task: " + taskManager.startedTasks.size()+"/"+ taskManager.tasks.size(), 12, Color.white);
-
-		if ((ChunkManager.hover == null ? UserInterface.hover : ChunkManager.hover) != null) {
-
-			Renderer.renderQuad(new Rectangle(200, 0, 300, 16), new Color(0, 0, 0, 0.5f));
-			Renderer.renderText(new Vector2f(200, 0),
-					"index: " + (ChunkManager.hover == null ? UserInterface.hover : ChunkManager.hover), 12,
-					Color.white);
-		}
-
-
+		Renderer.renderText(0,0, "FPS: " + FPS.getFPS(), 12, Color.white);
 	}
 
 	public void destroy() {
-		taskManager.destroy();
 		Window.destroy();
 	}
 }

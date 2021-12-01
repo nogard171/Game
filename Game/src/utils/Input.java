@@ -1,8 +1,10 @@
-package core;
+package utils;
 
 import java.awt.Point;
 
 import org.lwjgl.input.Mouse;
+
+import core.Window;
 
 public class Input {
 	private static int[] buttons;
