@@ -11,9 +11,16 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import core.Index;
+import core.Region;
+import core.Size;
 import core.TextureData;
 
 public class Database {
+
+	// world data
+	public static Size regionSize = new Size(16, 2, 16);
+	public static HashMap<Index, Region> regions = new HashMap<Index, Region>();
 
 	// renderer data
 	public static String textureFile = "assets/textures/tileset.png";
@@ -47,19 +54,16 @@ public class Database {
 
 	private static boolean buildTextures() {
 		if (texture != null) {
-			
 			for (Map.Entry<String, TextureData> set : textureData.entrySet()) {
-			    System.out.println(set.getKey() + " = " + set.getValue());
-			    
-			    
-			    
-			    
-			}
+				//System.out.println(set.getKey() + " = " + set.getValue());
 
+			}
 		} else {
 			return false;
 		}
 		return true;
 	}
 
+	
+	
 }

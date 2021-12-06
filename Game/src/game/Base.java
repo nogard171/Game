@@ -13,6 +13,10 @@ import org.newdawn.slick.Color;
 
 import core.View;
 import core.Window;
+import core.World;
+import gui.Menu;
+import gui.Panel;
+import gui.Telemetry;
 import utils.FPS;
 import utils.Input;
 import utils.Renderer;
@@ -21,6 +25,8 @@ public class Base {
 
 	boolean isRunning = true;
 	public static Point mousePosition;
+
+	Menu menu;
 
 	public void start() {
 		this.setup();
@@ -36,23 +42,26 @@ public class Base {
 	public void setup() {
 
 		Window.start();
-		Window.setup();		
+		Window.setup();
 		Input.setup();
 		FPS.setup();
-		
+
 		Data.setup();
-		
+
 		Database.build();
 
+		world = new World();
+		world.setup();
+
 		viewFrame = new View(0, 0, Window.width, Window.height);
+		menu = new Menu();
+		menu.setup();
 	}
-	
-	
 
 	public void update() {
 		Window.update();
-
-	mousePosition = new Point(Mouse.getX() + viewFrame.x, (Window.height - Mouse.getY()) + viewFrame.y);
+		menu.update();
+		mousePosition = new Point(Mouse.getX() + viewFrame.x, (Window.height - Mouse.getY()) + viewFrame.y);
 
 		if (Window.close()) {
 			this.isRunning = false;
@@ -83,10 +92,14 @@ public class Base {
 			forceY = (int) speed;
 		}
 		viewFrame.move(forceX, forceY);
+
+		world.update();
 	}
 
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
 	public static View viewFrame;
+
+	World world;
 
 	public void render() {
 		Window.render();
@@ -94,15 +107,15 @@ public class Base {
 
 		Renderer.bindTexture();
 		GL11.glPushMatrix();
-		GL11.glTranslatef(-viewFrame.x,-viewFrame.y, 0);
-		
-		Renderer.renderTexture(new Rectangle(0,0,64,64), Color.white);
-		
+		GL11.glTranslatef(-viewFrame.x, -viewFrame.y, 0);
+
+		world.render();
+
 		GL11.glPopMatrix();
 
+		Telemetry.render();
 
-		Renderer.renderQuad(new Rectangle(0, 0, 200, 64), new Color(0, 0, 0, 0.5f));
-		Renderer.renderText(0,0, "FPS: " + FPS.getFPS(), 12, Color.white);
+		menu.render();
 	}
 
 	public void destroy() {

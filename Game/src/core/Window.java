@@ -49,7 +49,6 @@ public class Window {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		setupViewport();
-		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
 	}
 
 	public static void update() {
@@ -63,12 +62,13 @@ public class Window {
 		}
 		else
 		{
-			Display.sync(60);
+			//Display.sync(60);
 		}
 	}
 
 	public static void render() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
 	}
 
 	public static void destroy() {

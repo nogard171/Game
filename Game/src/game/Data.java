@@ -15,9 +15,9 @@ public class Data {
 	}
 
 	private static boolean setupTextures() {
-		TextureData temp = new TextureData(64, 0, 64, 64);
+		TextureData temp = new TextureData(64, 0, 64, 64, 64, 64);
 		Database.textureData.put("grass", temp);
-
 		return true;
 	}
+
 }

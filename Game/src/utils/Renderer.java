@@ -16,6 +16,8 @@ import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import core.Index;
+import core.TextureData;
 import game.Database;
 
 public class Renderer {
@@ -37,50 +39,35 @@ public class Renderer {
 		textureBound = false;
 	}
 
-	private static void processBind() {
-		if (textureBound) {
-			bindTexture();
-		} else {
-			unbindTexture();
-		}
-	}
+	public static void renderTexture(Point position, TextureData data) {
+		GL11.glColor4f(1, 1, 1, 1);
+		float tempxStep = (float) data.textureX / (float) Database.textureSize.width;
+		float tempyStep = (float) data.textureY / (float) Database.textureSize.height;
+		float tempwStep = ((float) data.textureX + (float) data.textureWidth) / (float) Database.textureSize.width;
+		float temphStep = ((float) data.textureY + (float) data.textureHeight) / (float) Database.textureSize.height;
 
-	public static void renderTexture(Rectangle bound, Color color) {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glColor4f(color.r, color.g, color.b, color.a);
-
-		GL11.glBegin(GL11.GL_QUADS);
-		
-		
-		float tempxStep = bound.x / Database.textureSize.width;
-		float tempyStep = bound.y / Database.textureSize.height;
-		float tempwStep = (bound.x + bound.width) / Database.textureSize.width;
-		float temphStep = (bound.y + bound.height) / Database.textureSize.height;
 		GL11.glTexCoord2f(tempxStep, tempyStep);
-		GL11.glVertex2f(0, 0);
-		GL11.glTexCoord2f(tempxStep + tempwStep, tempyStep);
-		GL11.glVertex2f(bound.width, 0);
-		GL11.glTexCoord2f(tempxStep + tempwStep, tempyStep + temphStep);
-		GL11.glVertex2f(bound.width, bound.height);
-		GL11.glTexCoord2f(tempxStep, tempyStep + temphStep);
-		GL11.glVertex2f(0, bound.height);
-
-		GL11.glEnd();
+		GL11.glVertex2f(position.x, position.y);
+		GL11.glTexCoord2f(tempwStep, tempyStep);
+		GL11.glVertex2f(position.x + data.width, position.y);
+		GL11.glTexCoord2f(tempwStep, temphStep);
+		GL11.glVertex2f(position.x + data.width, position.y + data.height);
+		GL11.glTexCoord2f(tempxStep, temphStep);
+		GL11.glVertex2f(position.x, position.y + data.height);
 	}
 
-	public static void renderQuad(Rectangle bound, Color color) {	
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+	public static void renderQuad(Rectangle bound, Color color) {
+		unbindTexture();
 		GL11.glColor4f(color.r, color.g, color.b, color.a);
 
 		GL11.glBegin(GL11.GL_QUADS);
-
 		GL11.glVertex2f(bound.x, bound.y);
 		GL11.glVertex2f(bound.x + bound.width, bound.y);
 		GL11.glVertex2f(bound.x + bound.width, bound.y + bound.height);
 		GL11.glVertex2f(bound.x, bound.y + bound.height);
 
 		GL11.glEnd();
-		processBind();
+		bindTexture();
 	}
 
 	public static void renderText(Point position, String text, int fontSize, Color color) {
@@ -88,7 +75,7 @@ public class Renderer {
 	}
 
 	public static void renderText(int x, int y, String text, int fontSize, Color color) {
-
+		unbindTexture();
 		TrueTypeFont font = Database.fonts.get(fontSize);
 
 		if (font == null) {
@@ -96,9 +83,22 @@ public class Renderer {
 			Database.fonts.put(fontSize, new TrueTypeFont(awtFont, false));
 		}
 		if (font != null) {
-			TextureImpl.bindNone();
 			font.drawString(x, y, text, color);
+			TextureImpl.bindNone();
 		}
-		processBind();
+		bindTexture();
+	}
+
+	public static void bindColor(Color c) {
+		GL11.glColor4f(c.r, c.g, c.b, c.a);
+
+	}
+
+	public static void begin() {
+		GL11.glBegin(GL11.GL_QUADS);
+	}
+
+	public static void end() {
+		GL11.glEnd();
 	}
 }
