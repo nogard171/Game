@@ -1,6 +1,8 @@
 package core;
 
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.util.LinkedList;
 
 import org.lwjgl.opengl.GL11;
@@ -14,7 +16,8 @@ public class Region {
 	// y,x,z
 	Size size;
 	public Cell[][][] cellData;
-	private LinkedList<Cell> knownCells = new LinkedList<Cell>();
+	public LinkedList<Cell> knownCells = new LinkedList<Cell>();
+	public LinkedList<Cell> visibleCells = new LinkedList<Cell>();
 
 	private boolean update = false;
 	public int textureCount = 0;
@@ -29,37 +32,37 @@ public class Region {
 					String texture = "grass";
 					Cell cell = new Cell(cellIndex, texture);
 					cellData[y][x][z] = cell;
-					if (x >= 7 && x <= 8 && z >= 7 && z <= 8 && y == 1) {
+					if (y == 0) {
 						knownCells.add(cell);
-					} else if (x >= 7 && x <= 8 && z >= 7 && z <= 8 && y == 0) {
-						// knownCells.add(cell);
-					} else if (y == 0) {
-						knownCells.add(cell);
+
 					}
 				}
 			}
 		}
 	}
 
-	private int visibleLevel = 1;
+	private int visibleLevel = 0;
+	private int lowestKnownLevel = 0;
 
 	public void setLevel(int newLevel) {
-		if (newLevel != visibleLevel) {
+		if (newLevel != visibleLevel && newLevel <= lowestKnownLevel) {
 			visibleLevel = newLevel;
 			update = true;
 		}
 	}
 
 	private void build() {
-		float regionX = ((index.x - index.z) * 33) * 16;
-		float regionY = index.y * 33;
-		float regionZ = (((index.z + index.x) * 17) + regionY) * 16;
+		visibleCells.clear();
+		float regionX = ((index.x - index.z) * 32) * 16;
+		float regionY = index.y * 32;
+		float regionZ = (((index.z + index.x) * 16) + regionY) * 16;
 
 		Point regionPosition = new Point((int) regionX, (int) regionZ);
 		textureCount = 0;
 		size = Database.regionSize;
 		list = GL11.glGenLists(1);
 		GL11.glNewList(list, GL11.GL_COMPILE);
+
 		Renderer.begin();
 		/*
 		 * for (int y = size.getHeight() - 1; y >= 0; y--) { for (int x = 0; x <
@@ -72,17 +75,32 @@ public class Region {
 		 * Renderer.renderTexture( new Point((int) localX + regionPosition.x, (int)
 		 * localZ + regionPosition.y), data); textureCount++; } } } } }
 		 */
+		System.out.println("Size:" + knownCells.size());
 		for (Cell c : knownCells) {
 			Index index = c.getIndex();
+
+			if (lowestKnownLevel < index.y) {
+				lowestKnownLevel = index.y;
+			}
+
 			if (index.y >= visibleLevel) {
 				TextureData data = Database.textureData.get(c.getTexture());
 				if (data != null) {
-					float localX = (index.x - index.z) * 33;
-					float localY = index.y * 33;
-					float localZ = ((index.z + index.x) * 17) + localY;
+					float localX = (index.x - index.z) * 32;
+					float localY = index.y * 32;
+					float localZ = ((index.z + index.x) * 16) + localY;
+					Polygon b = new Polygon();
+					b.addPoint((int) localX + regionPosition.x + 32, (int) localZ + regionPosition.y);
+					b.addPoint((int) localX + regionPosition.x + 64, (int) localZ + regionPosition.y + 16);
+					b.addPoint((int) localX + regionPosition.x + 64, (int) localZ + regionPosition.y + 48);
+					b.addPoint((int) localX + regionPosition.x + 32, (int) localZ + regionPosition.y + 64);
+					b.addPoint((int) localX + regionPosition.x, (int) localZ + regionPosition.y + 48);
+					b.addPoint((int) localX + regionPosition.x, (int) localZ + regionPosition.y + 16);
 
+					c.setBounds(b);
 					Renderer.renderTexture(new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y),
 							data);
+					visibleCells.add(c);
 					textureCount++;
 				}
 			}

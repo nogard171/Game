@@ -12,6 +12,7 @@ public class Window {
 	public static int targetFPS = -1;
 	public static int inactiveFPS = 30;
 	public static boolean wasResized = false;
+	public static boolean close = false;
 
 	public static void start() {
 		try {
@@ -23,8 +24,12 @@ public class Window {
 		}
 	}
 
-	public static boolean close() {
-		return Display.isCloseRequested();
+	public static void close() {
+		close = true;
+	}
+
+	public static boolean isClose() {
+		return Display.isCloseRequested() || close;
 	}
 
 	public static void resize() {
@@ -54,15 +59,13 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-		
+
 		if (!Display.isActive()) {
 			Display.sync(inactiveFPS);
 		} else if (targetFPS != -1) {
 			Display.sync(targetFPS);
-		}
-		else
-		{
-			//Display.sync(60);
+		} else {
+			Display.sync(60);
 		}
 	}
 
