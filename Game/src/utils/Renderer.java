@@ -47,13 +47,13 @@ public class Renderer {
 		float temphStep = ((float) data.textureY + (float) data.textureHeight) / (float) Database.textureSize.height;
 
 		GL11.glTexCoord2f(tempxStep, tempyStep);
-		GL11.glVertex2f(position.x, position.y);
+		GL11.glVertex2f(position.x + data.centerX, position.y + data.centerY);
 		GL11.glTexCoord2f(tempwStep, tempyStep);
-		GL11.glVertex2f(position.x + data.width, position.y);
+		GL11.glVertex2f(position.x + data.width + data.centerX, position.y + data.centerY);
 		GL11.glTexCoord2f(tempwStep, temphStep);
-		GL11.glVertex2f(position.x + data.width, position.y + data.height);
+		GL11.glVertex2f(position.x + data.width + data.centerX, position.y + data.height + data.centerY);
 		GL11.glTexCoord2f(tempxStep, temphStep);
-		GL11.glVertex2f(position.x, position.y + data.height);
+		GL11.glVertex2f(position.x + data.centerX, position.y + data.height + data.centerY);
 	}
 
 	public static void renderQuad(Rectangle bound, Color color) {
@@ -102,18 +102,22 @@ public class Renderer {
 		GL11.glEnd();
 	}
 
-	public static void renderBounds(float x, float y, Color newColor) {
+	public static void renderBounds(Polygon polygon, Color newColor) {
 		unbindTexture();
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		GL11.glColor4f(newColor.r, newColor.g, newColor.b, newColor.a);
 
 		GL11.glBegin(GL11.GL_POLYGON);
-		GL11.glVertex2f(x + 32, y);
-		GL11.glVertex2f(x + 64, y + 16);
-		GL11.glVertex2f(x + 64, y + 48);
-		GL11.glVertex2f(x + 32, y + 64);
-		GL11.glVertex2f(x, y + 48);
-		GL11.glVertex2f(x, y + 16);
+		/*
+		 * GL11.glVertex2f(x + 32, y); GL11.glVertex2f(x + 64, y + 16);
+		 * GL11.glVertex2f(x + 64, y + 48); GL11.glVertex2f(x + 32, y + 64);
+		 * GL11.glVertex2f(x, y + 48); GL11.glVertex2f(x, y + 16);
+		 */
+
+		Polygon b = new Polygon();
+		for (int p = 0; p < polygon.npoints; p++) {
+			GL11.glVertex2f(polygon.xpoints[p], polygon.ypoints[p]);
+		}
 
 		GL11.glEnd();
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);

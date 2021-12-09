@@ -67,6 +67,7 @@ public class Menu {
 		menuBtns.add(new Button("Settings", new Rectangle(300, 300, width, 25), new Action() {
 			@Override
 			public void click() {
+				settings.show();
 			}
 
 			@Override
@@ -96,6 +97,8 @@ public class Menu {
 			}
 		}));
 		updateBounds();
+
+		settings = new Settings();
 		settings.setup();
 	}
 
@@ -138,6 +141,7 @@ public class Menu {
 
 		if (Input.isKeyPressed(Keyboard.KEY_ESCAPE)) {
 			showMenu = !showMenu;
+			settings.setShow(false);
 		}
 		if (showMenu) {
 			updateWhenVisible();

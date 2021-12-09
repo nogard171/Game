@@ -65,7 +65,7 @@ public class Window {
 		} else if (targetFPS != -1) {
 			Display.sync(targetFPS);
 		} else {
-			Display.sync(60);
+			// Display.sync(60);
 		}
 	}
 

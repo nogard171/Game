@@ -4,8 +4,10 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 
 import game.Database;
 import utils.Renderer;
@@ -21,6 +23,7 @@ public class Region {
 
 	private boolean update = false;
 	public int textureCount = 0;
+	public Polygon bounds;
 
 	public Region() {
 		size = Database.regionSize;
@@ -29,10 +32,35 @@ public class Region {
 			for (int x = 0; x < size.getWidth(); x++) {
 				for (int z = 0; z < size.getDepth(); z++) {
 					Index cellIndex = new Index(y, x, z);
-					String texture = "grass";
+
+					String texture = "air";
+					if (y >= 1) {
+						texture = "grass";
+						Random r = new Random();
+						int t = r.nextInt(10 - 1 + 1) + 1;
+						if (t == 3) {
+							texture = "dirt";
+						}
+						if (t == 2) {
+							texture = "sand";
+						}
+						if (t == 1) {
+							texture = "stone";
+						}
+					} else if (y == 0) {
+						Random r = new Random();
+						int t = r.nextInt(10 - 1 + 1) + 1;
+						if (t == 3) {
+							texture = "tree";
+						}
+					}
 					Cell cell = new Cell(cellIndex, texture);
 					cellData[y][x][z] = cell;
-					if (y == 0) {
+					if (y == 1) {
+						knownCells.add(cell);
+
+					}
+					if (y <= 1) {
 						knownCells.add(cell);
 
 					}
@@ -75,33 +103,42 @@ public class Region {
 		 * Renderer.renderTexture( new Point((int) localX + regionPosition.x, (int)
 		 * localZ + regionPosition.y), data); textureCount++; } } } } }
 		 */
-		System.out.println("Size:" + knownCells.size());
+		Polygon rb = new Polygon();
+		rb.addPoint(regionPosition.x + 32, regionPosition.y + 32);
+		rb.addPoint(regionPosition.x + 32 + Database.regionSize.getDepth() * 32,
+				regionPosition.y + (Database.regionSize.getWidth() * 16) + 32);
+		rb.addPoint(regionPosition.x + 32, regionPosition.y + (Database.regionSize.getWidth() * 32) + 32);
+		rb.addPoint(regionPosition.x + 32 - Database.regionSize.getDepth() * 32,
+				regionPosition.y + (Database.regionSize.getWidth() * 16) + 32);
+		this.bounds = rb;
 		for (Cell c : knownCells) {
 			Index index = c.getIndex();
 
 			if (lowestKnownLevel < index.y) {
 				lowestKnownLevel = index.y;
 			}
+			String texture = c.getTexture();
+			if (texture != "air") {
 
-			if (index.y >= visibleLevel) {
-				TextureData data = Database.textureData.get(c.getTexture());
-				if (data != null) {
-					float localX = (index.x - index.z) * 32;
-					float localY = index.y * 32;
-					float localZ = ((index.z + index.x) * 16) + localY;
-					Polygon b = new Polygon();
-					b.addPoint((int) localX + regionPosition.x + 32, (int) localZ + regionPosition.y);
-					b.addPoint((int) localX + regionPosition.x + 64, (int) localZ + regionPosition.y + 16);
-					b.addPoint((int) localX + regionPosition.x + 64, (int) localZ + regionPosition.y + 48);
-					b.addPoint((int) localX + regionPosition.x + 32, (int) localZ + regionPosition.y + 64);
-					b.addPoint((int) localX + regionPosition.x, (int) localZ + regionPosition.y + 48);
-					b.addPoint((int) localX + regionPosition.x, (int) localZ + regionPosition.y + 16);
-
-					c.setBounds(b);
-					Renderer.renderTexture(new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y),
-							data);
-					visibleCells.add(c);
-					textureCount++;
+				if (index.y >= visibleLevel) {
+					TextureData data = Database.textureData.get(texture);
+					if (data != null) {
+						float localX = (index.x - index.z) * 32;
+						float localY = index.y * 32;
+						float localZ = ((index.z + index.x) * 16) + localY;
+						Polygon b = new Polygon();
+						for (int p = 0; p < data.bounds.npoints; p++) {
+							Point point = new Point(
+									(int) localX + regionPosition.x + data.bounds.xpoints[p] + data.centerX,
+									(int) localZ + regionPosition.y + data.bounds.ypoints[p] + data.centerY);
+							b.addPoint(point.x, point.y);
+						}
+						c.setBounds(b);
+						Renderer.renderTexture(
+								new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y), data);
+						visibleCells.add(c);
+						textureCount++;
+					}
 				}
 			}
 		}
@@ -117,6 +154,7 @@ public class Region {
 		} else {
 			GL11.glCallList(list);
 		}
+		Renderer.renderBounds(bounds, Color.red);
 	}
 
 	public void rebuild() {
@@ -129,5 +167,9 @@ public class Region {
 
 	public void setIndex(Index index) {
 		this.index = index;
+	}
+
+	public Polygon getBounds() {
+		return this.bounds;
 	}
 }

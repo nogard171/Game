@@ -13,6 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
+import core.Cell;
 import core.Index;
 import core.View;
 import core.Window;
@@ -130,12 +131,15 @@ public class Base {
 				float localX = (i.x - i.z) * 32;
 				float localY = i.y * 32;
 				float localZ = ((i.z + i.x) * 16) + localY;
-				if (c >= hoveredBounds.size() - 1) {
-					Renderer.renderBounds(localX, localZ, Color.red);
-				} else {
-					Renderer.renderBounds(localX, localZ, new Color(0, 0, 0, 0.5f));
+				Cell cell = world.getCell(i);
+				if (cell != null) {
+					if (c >= hoveredBounds.size() - 1) {
+						Renderer.renderBounds(cell.getBounds(), Color.red);
+					} else {
+						Renderer.renderBounds(cell.getBounds(), new Color(0, 0, 0, 0.5f));
+					}
+					c++;
 				}
-				c++;
 			}
 		}
 		GL11.glPopMatrix();
