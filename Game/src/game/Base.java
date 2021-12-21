@@ -38,6 +38,9 @@ public class Base {
 		while (this.isRunning) {
 			this.update();
 			this.render();
+			if (Window.isClose()) {
+				this.isRunning = false;
+			}
 		}
 		this.destroy();
 
@@ -70,7 +73,7 @@ public class Base {
 
 	public void update() {
 		Window.update();
-		//Database.agentMgr.update();
+		// Database.agentMgr.update();
 		if (Window.isClose()) {
 			this.isRunning = false;
 		}
@@ -127,6 +130,7 @@ public class Base {
 	}
 
 	public void destroy() {
+		Database.agentMgr.active = false;
 		Window.destroy();
 	}
 }

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Agent {// extends Thread {
 	private Task task;
 	private String characterHash;
-	private LinkedList<Index> path;
+	private LinkedList<Index> path = new LinkedList<Index>();
 	private boolean complete = false;
 
 	public Agent(String newHash) {
@@ -23,12 +23,14 @@ public class Agent {// extends Thread {
 				// check if task is near or not
 				// check if task is to find nearest resource
 				// check if path is needed
-				if (path == null) {
+				if (path.size() == 0) {
 					Cell charc = World.getCharacterByHash(characterHash);
 					if (charc != null) {
 						ANode anode = charc.getIndex().toANode();
 
-						APathFinder.find(anode, task.end.toANode());
+						LinkedList<ANode> tempPath = APathFinder.find(anode, task.end.toANode());
+
+						System.out.println("Path Found=>" + tempPath);
 					}
 					// while (path.size() > 0) {
 
@@ -50,7 +52,7 @@ public class Agent {// extends Thread {
 	public void clear() {
 		task = null;
 		characterHash = "";
-		path = null;
+		path = new LinkedList<Index>();
 		complete = false;
 	}
 }

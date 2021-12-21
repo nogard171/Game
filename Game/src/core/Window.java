@@ -61,7 +61,8 @@ public class Window {
 	}
 
 	public static boolean isClose() {
-		return Display.isCloseRequested() || close;
+		close = Display.isCloseRequested();
+		return close;
 	}
 
 	public static void resize() {

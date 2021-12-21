@@ -21,8 +21,8 @@ public class World {
 	public static int textureCount = 0;
 
 	public void setup() {
-		for (int x = 0; x < 10; x++) {
-			for (int z = 0; z < 10; z++) {
+		for (int x = 0; x < 1; x++) {
+			for (int z = 0; z < 1; z++) {
 				Generator.generateRegion(0, x, z);
 			}
 		}
@@ -166,6 +166,13 @@ public class World {
 				if (cells.size() > 0) {
 					// for (Cell cell : cells) {
 					cells.get(0).setTexture("dirt");
+					reg.rebuild();
+					/*try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}*/
 					// c.add(cell);// reg.cellData[cellY][cellX][cellZ];
 					// }
 				}

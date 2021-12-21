@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class AgentManager extends Thread {
 
-	private boolean active = true;
+	public boolean active = true;
 	private static LinkedList<Task> queuedTasks = new LinkedList<Task>();
 	private static LinkedList<Agent> availableAgents = new LinkedList<Agent>();
 	private static LinkedList<Agent> activeAgents = new LinkedList<Agent>();
@@ -35,11 +35,15 @@ public class AgentManager extends Thread {
 	}
 
 	public void update() {
+
+		if (Window.isClose()) {
+			System.out.println("Closed:");
+		}
 		LinkedList<Task> assignedTasks = new LinkedList<Task>();
 		if (queuedTasks.size() > 0) {
 			for (Task task : queuedTasks) {
 				if (availableAgents.size() > 0) {
-					Agent agent = availableAgents.getFirst();
+					Agent agent = availableAgents.removeFirst();
 					agent.setTask(task);
 					activeAgents.add(agent);
 					assignedTasks.add(task);
@@ -62,7 +66,7 @@ public class AgentManager extends Thread {
 	}
 
 	public static int queuedSize() {
-		return -1;// queuedTasks.size();
+		return  queuedTasks.size();
 	}
 
 	public static int agentSize() {

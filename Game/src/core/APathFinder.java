@@ -9,6 +9,7 @@ import java.util.List;
 
 public class APathFinder {
 	public static HashMap<ANode, ANode> parentList = new HashMap<ANode, ANode>();
+	public static LinkedList<ANode> nodeSearchList = new LinkedList<ANode>();
 	public static LinkedList<ANode> indexes = new LinkedList<>(Arrays.asList(new ANode(0, -1, 0), new ANode(0, 1, 0),
 
 			new ANode(-1, 0, 0), new ANode(1, 0, 0), new ANode(0, 0, -1), new ANode(0, 0, 1),
@@ -28,9 +29,14 @@ public class APathFinder {
 		return path;
 	}
 
-	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
-		parentList.clear();
+	private static Long startTime;
+	private static Long endTime;
 
+	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
+		startTime = System.currentTimeMillis();
+		System.out.println("Finding Path...");
+		nodeSearchList.clear();
+		parentList.clear();
 		LinkedList<ANode> openList = new LinkedList<ANode>();
 		LinkedList<ANode> closedList = new LinkedList<ANode>();
 		openList.add(startIndex);
@@ -39,6 +45,12 @@ public class APathFinder {
 		while (!openList.isEmpty()) {
 			ANode current = (ANode) openList.removeFirst();
 			if (current.equals(endIndex)) {
+				endTime = System.currentTimeMillis();
+
+				long temp = (endTime - startTime);
+				System.out.println("Search Size:" + nodeSearchList.size());
+				System.out.println("Search Time:" + temp+"ms");
+
 				return constructPath(endIndex);
 			} else {
 				closedList.add(current);
@@ -46,24 +58,18 @@ public class APathFinder {
 			if ((current.x > 100 && current.y > 100) || (current.x < -100 && current.y < -100)) {
 				return null;
 			}
-			float shortestDistance = 100;
 			for (ANode index : indexes) {
 				ANode neighborIndex = new ANode(current.x + index.x, current.y + index.y, current.z + index.z);
-
-				float distance = (float) Math.sqrt(Math.pow(neighborIndex.x - current.x, 2)
-						+ Math.pow(neighborIndex.y - current.y, 2) + Math.pow(neighborIndex.z - current.z, 2));
-				System.out.println("Finding Path..." + neighborIndex + "=>" + distance);
-				// if (distance <= shortestDistance) {
-				if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
-					// System.out.println("Current: " + current);
-					parentList.put(neighborIndex, current);
-					openList.add(neighborIndex);
-					shortestDistance = distance;
-					// World.setCell(neighborIndex.toIndex(), "dirt");
+				if (!nodeSearchList.contains(neighborIndex)) {
+					nodeSearchList.add(neighborIndex);
+					if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
+						parentList.put(neighborIndex, current);
+						openList.add(neighborIndex);
+					}
 				}
-				// }
 			}
 		}
+
 		return null;
 	}
 }
