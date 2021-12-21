@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import org.lwjgl.input.Keyboard;
 
 import core.Window;
+import game.Database;
 import utils.Input;
 
 public class Menu {
@@ -16,7 +17,7 @@ public class Menu {
 	private LinkedList<Button> menuBtns = new LinkedList<Button>();
 
 	public void setup() {
-		backgroundPanel = new Panel(new Rectangle(0, 0, Window.width, Window.height));
+		backgroundPanel = new Panel(new Rectangle(0, 0, Database.width, Database.height));
 		int width = 100;
 		menuBtns.add(new Button("Resume", new Rectangle(300, 300, width, 25), new Action() {
 			@Override
@@ -105,8 +106,8 @@ public class Menu {
 	private void updateBounds() {
 		int y = 0;
 		for (Button b : menuBtns) {
-			b.setPosition((Window.width / 2) - (b.getSize().width / 2),
-					(Window.height / 2) - (b.getSize().height / 2) + (28 * y));
+			b.setPosition((Database.width / 2) - (b.getSize().width / 2),
+					(Database.height / 2) - (b.getSize().height / 2) + (28 * y));
 			y++;
 		}
 		/*
@@ -130,13 +131,13 @@ public class Menu {
 		}
 		settings.update();
 		for (Button b : menuBtns) {
-			b.update();
+			b.update(Input.getMousePoint());
 		}
 	}
 
 	public void update() {
 		if (Window.wasResized) {
-			backgroundPanel.setBounds(new Rectangle(0, 0, Window.width, Window.height));
+			backgroundPanel.setBounds(new Rectangle(0, 0, Database.width, Database.height));
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_ESCAPE)) {

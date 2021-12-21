@@ -16,7 +16,7 @@ import utils.Input;
 import utils.Renderer;
 
 public class World {
-	ArrayList<Region> regionsInView = new ArrayList<Region>();
+	private static ArrayList<Region> regionsInView = new ArrayList<Region>();
 	private static int regionCount = 0;
 	public static int textureCount = 0;
 
@@ -64,18 +64,18 @@ public class World {
 	public LinkedList<Index> getHoveredIndexes(Point mousePoint) {
 		LinkedList<Index> indexes = new LinkedList<Index>();
 		for (Region r : regionsInView) {
-
-			// if (r.getBounds().contains(mousePoint)) {
 			for (Cell c : r.visibleCells) {
 				if (c.getBounds() != null) {
 					if (c.getBounds().contains(mousePoint)) {
-						indexes.add(new Index((r.getIndex().y * Database.regionSize.getHeight()) + c.getIndex().y,
+						Index index = new Index((r.getIndex().y * Database.regionSize.getHeight()) + c.getIndex().y,
 								(r.getIndex().x * Database.regionSize.getWidth()) + c.getIndex().x,
-								(r.getIndex().z * Database.regionSize.getDepth()) + c.getIndex().z));
+								(r.getIndex().z * Database.regionSize.getDepth()) + c.getIndex().z, c.getIndex().i);
+						if (!indexes.contains(index)) {
+							indexes.add(index);
+						}
 					}
 				}
 			}
-			// }
 		}
 		return indexes;
 	}
@@ -104,20 +104,89 @@ public class World {
 		return regionCount;
 	}
 
-	public Cell getCell(Index i) {
-		Cell c = null;
+	public LinkedList<Cell> getCells(Index i) {
+		LinkedList<Cell> c = new LinkedList<Cell>();
 		int regionX = i.x / Database.regionSize.getWidth();
 		int regionY = i.y / Database.regionSize.getHeight();
 		int regionZ = i.z / Database.regionSize.getDepth();
 		Index index = new Index(regionY, regionX, regionZ);
 		Region reg = Database.regions.get(index);
 		if (reg != null) {
-
 			int cellX = i.x % Database.regionSize.getWidth();
 			int cellY = i.y % Database.regionSize.getHeight();
 			int cellZ = i.z % Database.regionSize.getDepth();
-			c = reg.cellData[cellY][cellX][cellZ];
+			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, i.i));
+			if (cells != null) {
+				for (Cell cell : cells) {
+					c.add(cell);// reg.cellData[cellY][cellX][cellZ];
+				}
+			}
 		}
 		return c;
+	}
+
+	public LinkedList<Cell> getCells(LinkedList<Index> indexes) {
+		LinkedList<Cell> c = new LinkedList<Cell>();
+		for (Index i : indexes) {
+			int regionX = i.x / Database.regionSize.getWidth();
+			int regionY = i.y / Database.regionSize.getHeight();
+			int regionZ = i.z / Database.regionSize.getDepth();
+			Index index = new Index(regionY, regionX, regionZ);
+			Region reg = Database.regions.get(index);
+			if (reg != null) {
+				int cellX = i.x % Database.regionSize.getWidth();
+				int cellY = i.y % Database.regionSize.getHeight();
+				int cellZ = i.z % Database.regionSize.getDepth();
+				LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, i.i));
+				if (cells != null) {
+					for (Cell cell : cells) {
+						c.add(cell);// reg.cellData[cellY][cellX][cellZ];
+					}
+				}
+			}
+		}
+		return c;
+	}
+
+	public static LinkedList<Cell> setCell(Index i, String type) {
+
+		LinkedList<Cell> c = new LinkedList<Cell>();
+		// for (Index i : indexes) {
+		int regionX = i.x / Database.regionSize.getWidth();
+		int regionY = i.y / Database.regionSize.getHeight();
+		int regionZ = i.z / Database.regionSize.getDepth();
+		Index index = new Index(regionY, regionX, regionZ);
+		Region reg = Database.regions.get(index);
+		if (reg != null) {
+			int cellX = i.x % Database.regionSize.getWidth();
+			int cellY = i.y % Database.regionSize.getHeight();
+			int cellZ = i.z % Database.regionSize.getDepth();
+			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, 0));
+			if (cells != null) {
+				if (cells.size() > 0) {
+					// for (Cell cell : cells) {
+					cells.get(0).setTexture("dirt");
+					// c.add(cell);// reg.cellData[cellY][cellX][cellZ];
+					// }
+				}
+			}
+		}
+		// }
+		return c;
+	}
+
+	public static Cell getCharacterByHash(String hash) {
+		Cell character = null;
+		for (Region r : regionsInView) {
+			for (Cell c : r.visibleCells) {
+				if (c.getBounds() != null) {
+					if (c.getClass() == Character.class) {
+						character = c;
+						break;
+					}
+				}
+			}
+		}
+		return character;
 	}
 }

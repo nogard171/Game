@@ -27,6 +27,12 @@ public class Telemetry {
 			Renderer.renderText(0, count * 16, "Texture Count: " + World.getTextureCount(), 12, Color.white);
 			count++;
 		}
+		Renderer.renderText(0, (count + 1) * 16, "Queued Task Count: " + Database.agentMgr.queuedSize(), 12,
+				Color.white);
+		Renderer.renderText(0, (count + 2) * 16, "Agents Available Count: " + Database.agentMgr.agentSize(), 12,
+				Color.white);
+		Renderer.renderText(0, (count + 3) * 16, "Agents Active Count: " + Database.agentMgr.activeAgentSize(), 12,
+				Color.white);
 
 	}
 }

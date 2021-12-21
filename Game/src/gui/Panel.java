@@ -14,11 +14,15 @@ public class Panel {
 	}
 
 	public void render() {
-		//System.out.println("tesT:" + bounds);
+		// System.out.println("tesT:" + bounds);
 		Renderer.renderQuad(bounds, new Color(0, 0, 0, 0.5f));
 	}
 
 	public void setBounds(Rectangle newBounds) {
 		bounds = newBounds;
+	}
+
+	public Rectangle getBounds() {
+		return this.bounds;
 	}
 }

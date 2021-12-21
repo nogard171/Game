@@ -43,17 +43,25 @@ public class APathFinder {
 			} else {
 				closedList.add(current);
 			}
-			if (current.x > 100 && current.y > 100) {
+			if ((current.x > 100 && current.y > 100) || (current.x < -100 && current.y < -100)) {
 				return null;
 			}
+			float shortestDistance = 100;
 			for (ANode index : indexes) {
 				ANode neighborIndex = new ANode(current.x + index.x, current.y + index.y, current.z + index.z);
+
+				float distance = (float) Math.sqrt(Math.pow(neighborIndex.x - current.x, 2)
+						+ Math.pow(neighborIndex.y - current.y, 2) + Math.pow(neighborIndex.z - current.z, 2));
+				System.out.println("Finding Path..." + neighborIndex + "=>" + distance);
+				// if (distance <= shortestDistance) {
 				if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
-					System.out.println("Current: " + current);
+					// System.out.println("Current: " + current);
 					parentList.put(neighborIndex, current);
 					openList.add(neighborIndex);
-
+					shortestDistance = distance;
+					// World.setCell(neighborIndex.toIndex(), "dirt");
 				}
+				// }
 			}
 		}
 		return null;

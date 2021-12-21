@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import org.newdawn.slick.Color;
@@ -11,12 +12,14 @@ import utils.Renderer;
 
 public class Button {
 	private String name = "";
+
 	private Rectangle bounds;
 	private Action action;
 	private Color color = new Color(0, 0, 0, 0.5f);
 	private Color activeColor = new Color(1, 0, 0, 0.5f);
 	private Color defaultColor = new Color(0, 0, 0, 0.5f);
 	private int hoverCount = 0;
+	private String renderForTexture = "";
 
 	public Button(String newName, Rectangle newBounds) {
 		name = newName;
@@ -29,9 +32,16 @@ public class Button {
 		action = newClick;
 	}
 
-	public void update() {
+	public Button(String newName, Rectangle newBounds, String newRenderForTexture, Action newClick) {
+		name = newName;
+		bounds = newBounds;
+		action = newClick;
+		this.setRenderForTexture(newRenderForTexture);
+	}
+
+	public void update(Point mousePoint) {
 		if (action != null) {
-			if (bounds.contains(Input.getMousePoint())) {
+			if (bounds.contains(mousePoint)) {
 				if (hoverCount == 0) {
 					action.in(this);
 					action.in();
@@ -56,6 +66,15 @@ public class Button {
 		Renderer.renderText(bounds.x, bounds.y, name, 20, Color.white);
 	}
 
+	public void render(boolean renderBackground) {
+		if (renderBackground) {
+			Renderer.renderQuad(bounds, this.color);
+		} else if (this.color != this.defaultColor) {
+			Renderer.renderQuad(bounds, this.color);
+		}
+		Renderer.renderText(bounds.x, bounds.y, name, 20, Color.white);
+	}
+
 	public void setPosition(int x, int y) {
 		bounds.x = x;
 		bounds.y = y;
@@ -73,9 +92,20 @@ public class Button {
 		if (b) {
 			defaultColor = this.color;
 			this.color = activeColor;
-
 		} else {
 			this.color = defaultColor;
 		}
+	}
+
+	public String getRenderForTexture() {
+		return renderForTexture;
+	}
+
+	public void setRenderForTexture(String renderForTexture) {
+		this.renderForTexture = renderForTexture;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 }

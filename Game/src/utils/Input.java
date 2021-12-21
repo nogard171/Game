@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import core.Window;
+import game.Database;
 
 public class Input {
 	private static int[] buttons;
@@ -16,22 +17,27 @@ public class Input {
 	private static boolean[] keysDown;
 
 	public static void setup() {
+		Debugger.log("Input Setup Started");
 		int bCount = Mouse.getButtonCount();
+		Debugger.log("Input Mouse Button Count: " + bCount);
 		buttons = new int[bCount];
 		buttonCount = new int[bCount];
 		buttonDown = new boolean[bCount];
 
 		keyCount = new int[256];
 		keysDown = new boolean[256];
+		Debugger.log("Input Completed Variable Initlization");
 
 		for (int b = 0; b < bCount; b++) {
 			buttons[b] = b;
 			buttonCount[b] = 0;
 		}
+		Debugger.log("Input Completed Zeroing Mouse Buttons");
 		for (int k = 0; k < 256; k++) {
 			keyCount[k] = 0;
 			keysDown[k] = false;
 		}
+		Debugger.log("Input Completed Zeroing Keyboard Buttons");
 	}
 
 	public static void poll() {
@@ -64,6 +70,11 @@ public class Input {
 	}
 
 	public static Point getMousePoint() {
-		return new Point(Mouse.getX(), Window.height - Mouse.getY());
+		return new Point(Mouse.getX(), Database.height - Mouse.getY());
+	}
+
+	public static Point getMousePointInWorld() {
+
+		return new Point(Mouse.getX() + Database.viewFrame.x, (Database.height - Mouse.getY()) + Database.viewFrame.y);
 	}
 }

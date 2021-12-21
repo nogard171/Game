@@ -12,8 +12,11 @@ public class TextureData {
 	public int textureWidth = 0;
 	public int textureHeight = 0;
 
-	public int centerX = 0;
-	public int centerY = 0;
+	public int centerX;
+	public int centerY;
+
+	public int spriteX;
+	public int spriteY;
 
 	public Polygon bounds;
 
@@ -61,5 +64,19 @@ public class TextureData {
 		this.centerX = tempcenterx;
 		this.centerY = tempcentery;
 		this.bounds = newBounds;
+	}
+
+	public TextureData(int tempx, int tempy, int tempwidth, int tempheight, int tempTextureWidth, int tempTextureHeight,
+			int tempcenterx, int tempcentery, int tempSpriteX, int tempSpriteY) {
+		this.textureX = tempx;
+		this.textureY = tempy;
+		this.width = tempwidth;
+		this.height = tempheight;
+		this.textureWidth = tempTextureWidth;
+		this.textureHeight = tempTextureHeight;
+		this.centerX = tempcenterx;
+		this.centerY = tempcentery;
+		this.spriteX = tempSpriteX;
+		this.spriteY = tempSpriteY;
 	}
 }

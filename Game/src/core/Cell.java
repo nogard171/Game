@@ -2,15 +2,27 @@ package core;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.util.UUID;
 
 public class Cell {
 	private Index index;
 	private String texture;
 	private Polygon bounds;
+	private String hash;
+
+	public Cell() {
+		hash = UUID.randomUUID().toString();
+
+	}
+
+	public String getHash() {
+		return hash;
+	}
 
 	public Cell(Index newIndex, String newTexture) {
 		index = newIndex;
 		texture = newTexture;
+		hash = UUID.randomUUID().toString();
 	}
 
 	public Index getIndex() {

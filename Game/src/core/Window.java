@@ -5,23 +5,55 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-public class Window {
+import game.Database;
+import utils.Debugger;
 
-	public static int width = 800;
-	public static int height = 600;
-	public static int targetFPS = -1;
-	public static int inactiveFPS = 30;
-	public static boolean wasResized = false;
+public class Window {
 	public static boolean close = false;
+	public static boolean wasResized = false;
 
 	public static void start() {
 		try {
-			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.setResizable(true);
+			Debugger.log("Looking for Desired Display Mode");
+			DisplayMode dm = getTargetDispalyMode();
+
+			Debugger.log("Found Desired Display Mode(" + dm.getWidth() + "px by " + dm.getHeight() + " @ "
+					+ dm.getFrequency() + "Hz");
+			// if (Database.resizable) {
+			Debugger.log("Display Set Resizable Mode to: " + Database.resizable);
+			Display.setResizable(Database.resizable);
+			// }
+			// if (Database.fullscreen) {
+			Debugger.log("Display Set Fullscreen Mode to: " + Database.fullscreen);
+			Display.setFullscreen(Database.fullscreen);
+			// }
+			Display.setDisplayMode(dm);
 			Display.create();
+			Debugger.log("Display created");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static DisplayMode getTargetDispalyMode() {
+		DisplayMode targetDisplayMode = new DisplayMode(Database.width, Database.height);
+		try {
+			for (DisplayMode dm : Display.getAvailableDisplayModes()) {
+				if (Database.resolutionMax && (dm.getWidth() > targetDisplayMode.getWidth()
+						|| dm.getHeight() > targetDisplayMode.getHeight())) {
+					targetDisplayMode = dm;
+				} else if (!Database.resolutionMax) {
+					if (dm.isFullscreenCapable() && dm.getWidth() == Database.width
+							&& dm.getHeight() == Database.height) {
+						targetDisplayMode = dm;
+						break;
+					}
+				}
+			}
+		} catch (LWJGLException e) {
+			Debugger.logException(e.getMessage());
+		}
+		return targetDisplayMode;
 	}
 
 	public static void close() {
@@ -40,12 +72,12 @@ public class Window {
 	}
 
 	private static void setupViewport() {
-		width = Display.getWidth();
-		height = Display.getHeight();
+		Database.width = Display.getWidth();
+		Database.height = Display.getHeight();
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, height, 0, 1, -1);
+		GL11.glOrtho(0, Database.width, Database.height, 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
@@ -59,13 +91,12 @@ public class Window {
 	public static void update() {
 		resize();
 		Display.update();
-
 		if (!Display.isActive()) {
-			Display.sync(inactiveFPS);
-		} else if (targetFPS != -1) {
-			Display.sync(targetFPS);
+			Display.sync(Database.inactiveFPS);
+		} else if (Database.targetFPS != -1) {
+			Display.sync(Database.targetFPS);
 		} else {
-			// Display.sync(60);
+			Display.sync(60);
 		}
 	}
 

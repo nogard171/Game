@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.util.LinkedList;
 
 import core.Window;
+import game.Database;
+import utils.Input;
 
 public class Settings {
 	private boolean show = false;
@@ -11,8 +13,8 @@ public class Settings {
 	private LinkedList<Button> menuBtns = new LinkedList<Button>();
 
 	public void setup() {
-		backgroundPanel = new Panel(new Rectangle((Window.width / 2) - 200, (Window.height / 2) - 200, 400, 400));
-		menuBtns.add(new Button("Back", new Rectangle((Window.width / 2) - 200, (Window.height / 2) - 200, 50, 25),
+		backgroundPanel = new Panel(new Rectangle((Database.width / 2) - 200, (Database.height / 2) - 200, 400, 400));
+		menuBtns.add(new Button("Back", new Rectangle((Database.width / 2) - 200, (Database.height / 2) - 200, 50, 25),
 				new Action() {
 					@Override
 					public void click() {
@@ -30,7 +32,7 @@ public class Settings {
 					}
 				}));
 		menuBtns.add(new Button("Controls",
-				new Rectangle((Window.width / 2) - 200 + 60, (Window.height / 2) - 200, 100, 25), new Action() {
+				new Rectangle((Database.width / 2) - 200 + 60, (Database.height / 2) - 200, 100, 25), new Action() {
 					@Override
 					public void click() {
 					}
@@ -46,7 +48,8 @@ public class Settings {
 					}
 				}));
 		menuBtns.add(new Button("Graphics",
-				new Rectangle((Window.width / 2) - 200 + 60 + 110, (Window.height / 2) - 200, 100, 25), new Action() {
+				new Rectangle((Database.width / 2) - 200 + 60 + 110, (Database.height / 2) - 200, 100, 25),
+				new Action() {
 					@Override
 					public void click() {
 					}
@@ -63,7 +66,7 @@ public class Settings {
 				}));
 
 		menuBtns.add(new Button("Audio",
-				new Rectangle((Window.width / 2) - 200 + 60 + 110 + 110, (Window.height / 2) - 200, 65, 25),
+				new Rectangle((Database.width / 2) - 200 + 60 + 110 + 110, (Database.height / 2) - 200, 65, 25),
 				new Action() {
 					@Override
 					public void click() {
@@ -81,7 +84,7 @@ public class Settings {
 				}));
 
 		menuBtns.add(new Button("Etc",
-				new Rectangle((Window.width / 2) - 200 + 60 + 110 + 110 + 75, (Window.height / 2) - 200, 40, 25),
+				new Rectangle((Database.width / 2) - 200 + 60 + 110 + 110 + 75, (Database.height / 2) - 200, 40, 25),
 				new Action() {
 					@Override
 					public void click() {
@@ -105,7 +108,7 @@ public class Settings {
 
 	public void update() {
 		if (Window.wasResized) {
-			backgroundPanel.setBounds(new Rectangle((Window.width / 2) - 200, (Window.height / 2) - 200, 400, 400));
+			backgroundPanel.setBounds(new Rectangle((Database.width / 2) - 200, (Database.height / 2) - 200, 400, 400));
 		}
 		if (show) {
 			updateWhenVisible();
@@ -114,7 +117,7 @@ public class Settings {
 
 	public void updateWhenVisible() {
 		for (Button b : menuBtns) {
-			b.update();
+			b.update(Input.getMousePoint());
 		}
 	}
 

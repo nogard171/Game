@@ -12,16 +12,33 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import core.AgentManager;
 import core.Index;
 import core.Region;
 import core.Size;
 import core.TextureData;
 import core.View;
+import core.World;
+import gui.HUD;
+import gui.Menu;
 
 public class Database {
 	// window data
 	public static View viewFrame;
 	public static Point mousePosition;
+	public static int width = 800;
+	public static int height = 600;
+	public static int targetFPS = -1;
+	public static int inactiveFPS = 30;
+	public static boolean resizable = true;
+	public static boolean fullscreen = false;
+	public static boolean resolutionMax = false;
+
+	// game data
+	public static Menu menu;
+	public static World world;
+	public static HUD hud;
+	public static AgentManager agentMgr;
 
 	// world data
 	public static Size regionSize = new Size(16, 16, 16);

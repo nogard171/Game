@@ -45,15 +45,14 @@ public class Renderer {
 		float tempyStep = (float) data.textureY / (float) Database.textureSize.height;
 		float tempwStep = ((float) data.textureX + (float) data.textureWidth) / (float) Database.textureSize.width;
 		float temphStep = ((float) data.textureY + (float) data.textureHeight) / (float) Database.textureSize.height;
-
 		GL11.glTexCoord2f(tempxStep, tempyStep);
-		GL11.glVertex2f(position.x + data.centerX, position.y + data.centerY);
+		GL11.glVertex2f(position.x + data.spriteX, position.y + data.spriteY);
 		GL11.glTexCoord2f(tempwStep, tempyStep);
-		GL11.glVertex2f(position.x + data.width + data.centerX, position.y + data.centerY);
+		GL11.glVertex2f(position.x + data.width + data.spriteX, position.y + data.spriteY);
 		GL11.glTexCoord2f(tempwStep, temphStep);
-		GL11.glVertex2f(position.x + data.width + data.centerX, position.y + data.height + data.centerY);
+		GL11.glVertex2f(position.x + data.width + data.spriteX, position.y + data.height + data.spriteY);
 		GL11.glTexCoord2f(tempxStep, temphStep);
-		GL11.glVertex2f(position.x + data.centerX, position.y + data.height + data.centerY);
+		GL11.glVertex2f(position.x + data.spriteX, position.y + data.height + data.spriteY);
 	}
 
 	public static void renderQuad(Rectangle bound, Color color) {
