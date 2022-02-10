@@ -97,7 +97,7 @@ public class Window {
 		} else if (Database.targetFPS != -1) {
 			Display.sync(Database.targetFPS);
 		} else {
-			Display.sync(60);
+			//Display.sync(60);
 		}
 	}
 

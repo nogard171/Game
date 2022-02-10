@@ -49,7 +49,7 @@ public class APathFinder {
 
 				long temp = (endTime - startTime);
 				System.out.println("Search Size:" + nodeSearchList.size());
-				System.out.println("Search Time:" + temp+"ms");
+				System.out.println("Search Time:" + temp + "ms");
 
 				return constructPath(endIndex);
 			} else {
