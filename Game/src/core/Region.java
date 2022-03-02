@@ -114,7 +114,6 @@ public class Region {
 		list = GL11.glGenLists(1);
 		GL11.glNewList(list, GL11.GL_COMPILE);
 
-		Renderer.begin();
 		/*
 		 * for (int y = size.getHeight() - 1; y >= 0; y--) { for (int x = 0; x <
 		 * size.getWidth(); x++) { for (int z = 0; z < size.getDepth(); z++) { Cell cell
@@ -157,9 +156,12 @@ public class Region {
 							b.addPoint(point.x, point.y);
 						}
 						c.setBounds(b);
+
+						Renderer.begin();
 						Renderer.renderTexture(
 								new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y), data);
 
+						Renderer.end();
 						visibleCells.add(c);
 						textureCount++;
 					}
@@ -167,7 +169,6 @@ public class Region {
 			}
 		}
 
-		Renderer.end();
 		GL11.glEndList();
 	}
 
