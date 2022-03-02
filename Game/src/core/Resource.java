@@ -32,7 +32,6 @@ public class Resource extends Object {
 	}
 
 	public void setType(TextureType newType, int newHealth) {
-
 		setType(newType);
 		health = newHealth;
 	}

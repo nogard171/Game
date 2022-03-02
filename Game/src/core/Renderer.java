@@ -80,8 +80,8 @@ public class Renderer {
 				int i = 0;
 				for (Vector2f vec : vectors) {
 					Vector2f textureVec = textureVectors[i];
-					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
-							(textureVec.y * height) / currentTexture.getImageHeight());
+					GL11.glTexCoord2f((textureVec.x * 32) / currentTexture.getImageWidth(),
+							(textureVec.y * 32) / currentTexture.getImageHeight());
 					GL11.glVertex2f(((vec.x) + x) + (width * type.xOffset), ((vec.y) + y) + (height * type.yOffset));
 					i++;
 				}

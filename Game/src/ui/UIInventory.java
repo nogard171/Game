@@ -154,17 +154,15 @@ public class UIInventory {
 	Point slotPointHovered = new Point(-1, -1);
 
 	public void update() {
-		if(Window.wasResized)
-		{
+		if (Window.wasResized) {
 			int slotCount = Inventory.getSlotCount();
 			int slotWidth = Inventory.getSlotWidth();
-			position = new Vector2f(0,Window.height-((((int) Math.ceil((float) slotCount / (float) slotWidth) + 2)*32)+32));
+			position = new Vector2f(0,
+					Window.height - ((((int) Math.ceil((float) slotCount / (float) slotWidth) + 2) * 32) + 32));
 			build();
 		}
 		if (show) {
 			hoverTicker.poll(1000);
-			
-			
 
 			previousSlotIndexHovered = slotIndexHovered;
 			slotIndexHovered = -1;
@@ -177,7 +175,7 @@ public class UIInventory {
 				int slotWidth = Inventory.getSlotWidth();
 				int index = itemX + (itemY * slotWidth);
 
-				if (index <PlayerDatabase.itemSlots.size() && index >= 0) {
+				if (index < PlayerDatabase.itemSlots.size() && index >= 0) {
 					ItemSlot slot = PlayerDatabase.itemSlots.get(index);
 					if (slot != null) {
 						if (itemX < slotWidth) {
@@ -225,11 +223,11 @@ public class UIInventory {
 						long tempDragItemCount = dragSlot.count;
 						Item tempDragItem = dragSlot.item;
 
-						System.out.println("swap"+tempItemCount+"/"+tempDragItemCount);
-						
+						System.out.println("swap" + tempItemCount + "/" + tempDragItemCount);
+
 						tempSlot.item = tempDragItem;
 						tempSlot.count = tempDragItemCount;
-						dragSlot.item=tempItem;
+						dragSlot.item = tempItem;
 						dragSlot.count = tempItemCount;
 						updateID = true;
 					}
@@ -271,13 +269,12 @@ public class UIInventory {
 							}
 						}
 						if (dropBound.contains(Input.getMousePoint())) {
-							System.out.println("Drop: " + dragSlot.item.getType());
-							GroundItem droppedItem = new GroundItem(TextureType.AIR);
+							GroundItem droppedItem = new GroundItem(TextureType.ITEM);
 							droppedItem.count = dragSlot.count;
 							droppedItem.item = dragSlot.item.getType();
 							droppedItem.type = dragSlot.item.getTexture();
 							ChunkManager.dropItem(droppedItem);
-							
+
 							dragSlot.item = null;
 							dragSlot = null;
 						}
@@ -290,7 +287,7 @@ public class UIInventory {
 	long startTicks = 0;
 
 	public void render() {
-		//show=true;
+		// show=true;
 		if (show) {
 			if (id == -1 || updateID) {
 				build();

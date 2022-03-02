@@ -25,14 +25,13 @@ public class Chunk {
 	private int otherID = -1;
 	Point index;
 
-	HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
-	HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
+	public HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
+	public HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
 	HashMap<Point, LinkedList<GroundItem>> newdroppedItems = new HashMap<Point, LinkedList<GroundItem>>();
-	HashMap<Point, Object> objects = new HashMap<Point, Object>();
-	// HashMap<Point, Object> animatedObjects = new HashMap<Point, Object>();
+	public HashMap<Point, Object> objects = new HashMap<Point, Object>();
 
-	ArrayList<Object> animatedObjects = new ArrayList<Object>();
-	HashMap<Point, Entity> entities = new HashMap<Point, Entity>();
+	public ArrayList<Object> animatedObjects = new ArrayList<Object>();
+	public HashMap<Point, Entity> entities = new HashMap<Point, Entity>();
 	public static Dimension size = new Dimension(16, 16);
 
 	public Chunk(int x, int y) {
@@ -132,8 +131,7 @@ public class Chunk {
 				tile.setIndex(tileIndex);
 
 				int t = heightMap[x][y];// r.nextFloat();
-
-				// System.out.println("T:" + t);
+				// t = 3;
 
 				float g = r.nextFloat();
 				if (g < 0.5f) {
@@ -169,26 +167,27 @@ public class Chunk {
 						res.setType(TextureType.TREE, 10);
 					}
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
-					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)&&res.getType().equals(TextureType.AIR)) {
+					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)
+							&& res.getType().equals(TextureType.AIR)) {
 						res.setType(TextureType.BUSH, 10);
 					}
-					
+
 					if ((tile.getType() == TextureType.DIRT)) {
 						t = 0 + (int) (Math.random() * ((10 - 0) + 1));
-						if (t == 1&&res.getType().equals(TextureType.AIR)) {
+						if (t == 1 && res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.ROCK, 10);
 						}
 
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
-						if (t == 1&&res.getType().equals(TextureType.AIR)) {
+						if (t == 1 && res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.TIN_ORE, 10);
 						}
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
-						if (t == 1&&res.getType().equals(TextureType.AIR)) {
+						if (t == 1 && res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.COPPER_ORE, 10);
 						}
 					}
-					if (res.getBaseType().equals(TextureType.AIR)&&res.getType().equals(TextureType.AIR)) {
+					if (res.getBaseType().equals(TextureType.AIR) && res.getType().equals(TextureType.AIR)) {
 						t = 0 + (int) (Math.random() * ((5 - 0) + 1));
 						if (t == 1) {
 							GroundItem droppedItem = new GroundItem(TextureType.ITEM);
@@ -196,7 +195,6 @@ public class Chunk {
 							droppedItem.item = ItemType.ROCK;
 							droppedItem.type = UITextureType.ROCK_ITEM;
 							this.droppedItems.put(tileIndex, droppedItem);
-							System.out.println("adding item"+tileIndex);
 						}
 					}
 				}
@@ -226,7 +224,6 @@ public class Chunk {
 
 					if (g < 0.3f && beach) {
 						Vector2f position = getPosition(x, y);
-						System.out.println("Adding Fishing spot..." + beach);
 						Resource animatedRes = new Resource(TextureType.AIR);
 						animatedRes.setIndex(tileIndex);
 						animatedRes.setPosition(position);
@@ -274,8 +271,8 @@ public class Chunk {
 				GroundItem tile = droppedItems.get(tempIndex);
 				if (tile != null) {
 					tile.setPosition(position);
-					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x + 16, (int) tile.getPosition().y - 6,
-							32, 32);
+					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x + 16, (int) tile.getPosition().y + 6,
+							32, 16);
 				}
 			}
 		}
@@ -455,17 +452,15 @@ public class Chunk {
 
 		GroundItem item = droppedItems.get(point);
 		newTile = (newTile == null || (removeAIR && newTile.getType() == TextureType.AIR)
-				? (item != null && ((removeAIR && item.getType() != TextureType.AIR) || (!removeAIR)) ? item : null)
+				? (item != null && ((removeAIR && item.type != UITextureType.BLANK) || (!removeAIR)) ? item : null)
 				: newTile);
-
-		// System.out.println("Dropped Item: " + newTile+"/"+
-		// (item==null?"":item.getType()));
 		if (!removeTiles) {
 			Tile tile = tiles.get(point);
 			newTile = (newTile == null || (newTile.getType() == TextureType.AIR)
 					? (tile != null && ((removeAIR && tile.getType() != TextureType.AIR) || (!removeAIR)) ? tile : null)
 					: newTile);
 		}
+		//System.out.println("Dropped Item1: " + newTile);
 
 		return newTile;
 	}
