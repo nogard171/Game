@@ -34,7 +34,7 @@ public class TaskManager extends Thread {
 		ticked = false;
 		time = System.currentTimeMillis();
 		if (time > tickTime) {
-			tickTime = time + 1000;
+			tickTime = time + 1;
 			tickCount++;
 			ticked = true;
 		}
@@ -56,7 +56,6 @@ public class TaskManager extends Thread {
 				completedTasks.add(task);
 			}
 		}
-		System.out.println("Task Count: " + tempCompletedTasks.size());
 		if (tempCompletedTasks.size() > 0) {
 			startedTasks.removeAll(tempCompletedTasks);
 			tempCompletedTasks.clear();
@@ -72,19 +71,31 @@ public class TaskManager extends Thread {
 	}
 
 	public void setupTask(Task task) {
-		ANode characterIndex = null;
-		if (ChunkManager.avaliableCharacters.size() > 0) {
-			characterIndex = ChunkManager.avaliableCharacters.removeFirst();
+		/*
+		 * ANode characterIndex = null; if (ChunkManager.avaliableCharacters.size() > 0)
+		 * { characterIndex = ChunkManager.avaliableCharacters.removeFirst(); } if
+		 * (characterIndex != null) { switch (task.taskName) { case "MOVE": Object obj =
+		 * ChunkManager.getObjectAt(characterIndex.x, characterIndex.y,
+		 * characterIndex.z); if (obj != null) { task.characterIndex = characterIndex;
+		 * System.out.println("Move Setup: " + task.data.endIndex); task.isSetup = true;
+		 * } else { ChunkManager.avaliableCharacters.add(characterIndex); } break;
+		 * default: } }
+		 */
+		UUID characterIndex = null;
+		if (ChunkManager.avaliableCharacterUUIDs.size() > 0) {
+			characterIndex = ChunkManager.avaliableCharacterUUIDs.removeFirst();
 		}
 		if (characterIndex != null) {
 			switch (task.taskName) {
 			case "MOVE":
-				Object obj = ChunkManager.getObjectAt(characterIndex.x, characterIndex.y, characterIndex.z);
+				Object obj = ChunkManager.getObjectByUUID(characterIndex);
 				if (obj != null) {
-					task.characterIndex = characterIndex;
-					task.characteruuid = obj.uuid;
-					System.out.println("Move Setup: " + task.data.endIndex);
+					task.characteruuid = characterIndex;
+					task.characterIndex = new ANode(obj.getIndex());
+					System.out.println("Move Setup: " + characterIndex);
 					task.isSetup = true;
+				} else {
+					ChunkManager.avaliableCharacterUUIDs.add(characterIndex);
 				}
 				break;
 			default:
@@ -93,20 +104,37 @@ public class TaskManager extends Thread {
 	}
 
 	public void processTask(Task task) {
+		/*
+		 * switch (task.taskName) { case "MOVE": if (task.characterIndex != null) {
+		 * Object obj = ChunkManager.getObjectAt(task.characterIndex.x,
+		 * task.characterIndex.y, task.characterIndex.z); if (obj != null) {
+		 * System.out.println("Move Process: " + obj.getSprite());
+		 * 
+		 * LinkedList<ANode> test = APathFinder.find(task.characterIndex,
+		 * task.data.endIndex); task.data.path = test;
+		 * ChunkManager.avaliableCharacters.add(task.characterIndex); task.isComplete =
+		 * true; }
+		 * 
+		 * } break; }
+		 */
+
 		switch (task.taskName) {
 		case "MOVE":
-			if (task.characterIndex != null) {
+			System.out.println("Move Setup: " + task.characteruuid);
+			if (task.characteruuid != null) {
 				Object obj = ChunkManager.getObjectByUUID(task.characteruuid);
-				System.out.println("Move Process: " + obj.getSprite());
+				if (obj != null) {
+					System.out.println("Move Process: " + obj.getSprite());
 
-				List test = APathFinder.find(task.characterIndex, task.data.endIndex);
-				task.data.path = test;
-				ChunkManager.avaliableCharacters.add(task.characterIndex);
-				task.isComplete = true;
+					LinkedList<ANode> test = APathFinder.find(new ANode(obj.getIndex()), task.data.endIndex);
+					task.data.path = test;
+					//ChunkManager.avaliableCharacterUUIDs.add(task.characteruuid);
+					task.isComplete = true;
+				}
+
 			}
 			break;
 		}
-
 	}
 
 	public void destroy() {

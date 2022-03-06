@@ -46,4 +46,8 @@ public class Object {
 	public Vector3f getIndex() {
 		return index;
 	}
+
+	public void setIndex(Vector3f newIndex) {
+		this.index = newIndex;
+	}
 }

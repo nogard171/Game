@@ -128,6 +128,11 @@ public class Base {
 
 			Renderer.renderQuad(new Rectangle(200, 0, 300, 16), new Color(0, 0, 0, 0.5f));
 			Renderer.renderText(new Vector2f(200, 0), "index: " + ChunkManager.hover, 12, Color.white);
+			Object obj = ChunkManager.getObjectAt(ChunkManager.hover.getX(), ChunkManager.hover.getObjectIndex()-1,
+					ChunkManager.hover.getY());
+			if (obj != null) {
+				Renderer.renderText(new Vector2f(200, 20), "UUID: " + obj.uuid, 12, Color.white);
+			}
 		}
 		/*
 		 * int i = 0; for (Object obj : hoveredObjects) { String sprite =

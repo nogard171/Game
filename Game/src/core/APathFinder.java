@@ -9,26 +9,38 @@ import java.util.List;
 
 public class APathFinder {
 	public static HashMap<ANode, ANode> parentList = new HashMap<ANode, ANode>();
-	public static LinkedList<ANode> indexes = new LinkedList<>(Arrays.asList(new ANode(0, -1, 0), new ANode(0, 1, 0),
+	public static LinkedList<ANode> indexes = new LinkedList<>(Arrays.asList(
+			new ANode(-1, 1, 0), 
+			new ANode(1, 1, 0), 
+			new ANode(0, 1, -1), 
+			new ANode(0, 1, 1),
+			new ANode(-1, -1, 0), 
+			new ANode(1, -1, 0), 
+			new ANode(0, -1, -1), 
+			new ANode(0, -1, 1),
+			
+			new ANode(0, -1, 0), 
+			new ANode(0, 1, 0),
+			new ANode(-1, 0, 0), 
+			new ANode(1, 0, 0), 
+			new ANode(0, 0, -1), 
+			new ANode(0, 0, 1)
+			
 
-			new ANode(-1, 0, 0), new ANode(1, 0, 0), new ANode(0, 0, -1), new ANode(0, 0, 1),
+			));
 
-			new ANode(-1, 1, 0), new ANode(1, 1, 0), new ANode(0, 1, -1), new ANode(0, 1, 1),
-
-			new ANode(-1, -1, 0), new ANode(1, -1, 0), new ANode(0, -1, -1), new ANode(0, -1, 1)));
-
-	public static List<ANode> constructPath(ANode index) {
+	public static LinkedList<ANode> constructPath(ANode index) {
 		LinkedList<ANode> path = new LinkedList<ANode>();
 		while (parentList.get(index) != null) {
-
 			path.addFirst(index);
 			index = parentList.get(index);
 		}
+		System.out.println("Done" + path);
 		parentList.clear();
 		return path;
 	}
 
-	public static List<ANode> find(ANode startIndex, ANode endIndex) {
+	public static LinkedList<ANode> find(ANode startIndex, ANode endIndex) {
 		parentList.clear();
 
 		LinkedList<ANode> openList = new LinkedList<ANode>();
@@ -56,10 +68,11 @@ public class APathFinder {
 					int objY = (int) (neighborIndex.y % 16);
 					int objZ = (int) (neighborIndex.z % 16);
 					Object data = chunk.getData(objX, objY, objZ);
+					Object dataLower = chunk.getData(objX, objY+1, objZ);
 
-					if (data != null) {
-						System.out.println("task assigned: " +neighborIndex+"/"+openList.size());
-						if (data.getSprite() == "air") {
+					if (data != null&&dataLower!=null) {
+						System.out.println("task assigned: " + neighborIndex + "/" + openList.size() + "=>");
+						if (data.getSprite() == "air" &&(dataLower.getSprite()!="air"&&dataLower.getSprite()!="character")) {
 							if (!closedList.contains(neighborIndex) && !openList.contains(neighborIndex)) {
 								parentList.put(neighborIndex, current);
 								openList.add(neighborIndex);

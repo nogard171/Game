@@ -63,6 +63,9 @@ public class Chunk {
 		if (index.x != 0 || index.y != 0 || index.z != 0) {
 			offset = 1;
 		}
+		if (index.x == 1 && index.y == 0 && index.z == 0) {
+			offset = 2;
+		}
 		for (int y = (int) (ChunkManager.size.y) - 1; y >= 0; y--) {
 			for (int x = 0; x < ChunkManager.size.x; x++) {
 				for (int z = 0; z < ChunkManager.size.z; z++) {
@@ -95,7 +98,17 @@ public class Chunk {
 						obj.setSprite("character");
 						obj.offset = new Point(10, 32);
 						objects.put(x + "," + y + "," + z, obj);
+						System.out.println("Size:" + obj.uuid);
 						ChunkManager.avaliableCharacters.add(new ANode(x, y, z));
+						ChunkManager.avaliableCharacterUUIDs.add(obj.uuid);
+					}
+					if (index.x == 1 && index.y == 0 && index.z == 0 && x == 1 && y == 2 && z == 1) {
+						System.out.println("Size:" + obj.uuid);
+						obj.setSprite("character");
+						obj.offset = new Point(10, 32);
+						objects.put(x + "," + y + "," + z, obj);
+						ChunkManager.avaliableCharacters.add(new ANode(x, y, z));
+						ChunkManager.avaliableCharacterUUIDs.add(obj.uuid);
 					}
 
 					if (y > offset) {
@@ -149,6 +162,7 @@ public class Chunk {
 									obj.setSprite("unknown");
 								}
 								Renderer.renderSprite(sprite, posX + obj.offset.x, posZ + obj.offset.y);
+
 								renderedObjects.add(obj);
 
 							}
@@ -194,7 +208,6 @@ public class Chunk {
 	}
 
 	public void handleHover() {
-
 		for (Object obj : this.renderedObjects) {
 			if (obj.bounds != null) {
 				if (obj.bounds.contains(Base.mousePosition) && !Base.hoveredObjects.contains(obj)) {
@@ -278,6 +291,28 @@ public class Chunk {
 			obj = new Object(new Vector3f(x, y, z));
 			obj.known = true;
 			obj.setSprite(sprite);
+			objects.put(x + "," + y + "," + z, obj);
+			knownUpdate = true;
+			build();
+		}
+	}
+
+	public void setData(int x, int y, int z, Object newObj) {
+		Object obj = objects.get(x + "," + y + "," + z);
+		if (obj != null) {
+			if (newObj.getSprite() == "air") {
+				objects.put(x + "," + y + "," + z, null);
+				knownUpdate = true;
+				build();
+			} else {
+				obj = newObj;
+				obj.known = true;
+				knownUpdate = true;
+				build();
+			}
+		} else if (newObj.getSprite() != "air") {
+			obj = newObj;
+			obj.known = true;
 			objects.put(x + "," + y + "," + z, obj);
 			knownUpdate = true;
 			build();
