@@ -5,14 +5,33 @@ import java.util.ArrayList;
 
 public enum TextureType implements Comparable<TextureType> {
 	// x,y,w,h,ox,oy
-	AIR(0, 0), COINS(7, 0, 1, 1), CHARACTER(0, 0.75F, 1, 0.75f, 0, -0.25f), GRASS(1, 0, 1, 1), GRASS0(1, 1f, 1, 1f),
-	DIRT(2, 0, 1, 1f), SAND(0, 3, 1, 1f), TREE(3, 0, 2, 2, 0, -1.5f), BUSH(3, 2, 2, 1, 0f, -0.5f),
-	ROCK(1, 2, 2, 1, 0, -0.5f), DEEP_WATER(0, 4, 1, 1f), TILLED_DIRT(3, 3, 1, 1f),
+	AIR(0, 0),  
+	CHARACTER(8, 54, 48, 36,8,-12), 
+	GRASS(64, 0, 64,64), 
+	GRASS0(64, 64, 64,64),
+	DIRT(128, 0, 64,64), 
+	SAND(0, 192, 64,64), 
+	TREE(192, 0, 128, 128, 0, -96), 
+	BUSH(192, 128, 128, 64, 0f, -32),
+	ROCK(64, 128, 128, 64, 0, -32), 
+	DEEP_WATER(0, 256, 64, 64), 
+	TILLED_DIRT(192, 192, 64, 64),
 
-	PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f), ROCK_ITEM(0, 0, 1, 1),
-	LOG_ITEM(1, 0, 1, 1), ITEM(0, 0, 0, 0), TIN_ORE(1, 1 * 4, 1, 1, 0, -0.5f), COPPER_ORE(1, 1 * 3, 1, 1, 0, -0.5f),
-	SHALLOW_WATER(2, 1, 1, 1), FISHING_SPOT(0, 5, 1, 1f), FISHING_SPOT1(0, 6, 1, 1f), FISHING_SPOT2(0, 7, 1, 1f),
-	FISHING_SPOT3(1, 5, 1, 1f), FISHING_SPOT4(1, 6, 1, 1f);
+	ITEM(0, 0, 0, 0), 
+	TIN_ORE(64, 64 * 4, 64, 64, 0, -32), 
+	COPPER_ORE(64, 64 * 3, 64, 64, 0, -32),
+	SHALLOW_WATER(128, 64,64,64), 
+	FISHING_SPOT(0, 5*64, 64,64), 
+	FISHING_SPOT1(0, 6*64, 64,64), 
+	FISHING_SPOT2(0, 7*64, 64,64),
+	FISHING_SPOT3(64, 5*64, 64,64), 
+	FISHING_SPOT4(64, 6*64, 64,64),
+	PATH_DURING(0, 90, 64,42,0,-8), 
+	PATH_FINISH(0,132, 64,42,0,-8),
+	//PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), 
+	//PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f)
+
+	WOOD_WALL_E(322,0,36,78,0,-60);
 
 	float x;
 	float y;

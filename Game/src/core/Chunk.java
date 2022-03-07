@@ -131,7 +131,7 @@ public class Chunk {
 				tile.setIndex(tileIndex);
 
 				int t = heightMap[x][y];// r.nextFloat();
-				// t = 3;
+				 t = 3;
 
 				float g = r.nextFloat();
 				if (g < 0.5f) {

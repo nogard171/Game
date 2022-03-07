@@ -41,7 +41,7 @@ public class UIManager {
 	UIChat uiChat;
 
 	UIHud hud;
-	
+
 	public static boolean uiHovered = false;
 
 	LinkedList<UIButton> menu = new LinkedList<UIButton>();
@@ -53,8 +53,8 @@ public class UIManager {
 		uiSkill.setup();
 		uiChat = new UIChat();
 		uiChat.setup();
-		
-		hud= new UIHud();
+
+		hud = new UIHud();
 		hud.setup();
 
 		Inventory.setup();
@@ -119,7 +119,7 @@ public class UIManager {
 		}));
 	}
 
-	public static Point playerIndex;
+	public static Point playerIndex = new Point(0, 0);
 	public static Point hoverIndex;
 
 	private void pollHover() {
@@ -153,9 +153,55 @@ public class UIManager {
 			btnHovered = (!btnHovered ? btn.hovered : btnHovered);
 		}
 
-		uiHovered = (uiInventory.isPanelHovered() || uiSkill.isPanelHovered() || uiChat.isPanelHovered() || btnHovered
-				? true
-				: false);
+		uiHovered = (UIInventory.isPanelHovered() || UISkillWindow.isPanelHovered() || UIChat.isPanelHovered()
+				|| btnHovered ? true : false);
+		boolean cursorInRange = false;
+		if (hoverIndex != null) {
+			int range = 20;
+			cursorInRange = (hoverIndex.x > playerIndex.x - range && hoverIndex.x < playerIndex.x + range
+					&& hoverIndex.y > playerIndex.y - range && hoverIndex.y < playerIndex.y + range);
+
+			if (cursorInRange) {
+				playerIndex = TaskManager.getCurrentTaskEnd();
+				if (playerIndex == null) {
+					playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
+				}
+				boolean useHoe = false;
+				if (UIInventory.dragSlot != null) {
+					if (UIInventory.dragSlot.item != null) {
+						if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
+							useHoe = true;
+						}
+					}
+				}
+				if (useHoe) {
+					cursorType = UITextureType.CURSOR_TILLING;
+				} else {
+					Tile tile = ChunkManager.getTile(hoverIndex);
+					if (tile != null) {
+						SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
+						if (skillName != null) {
+							switch (skillName) {
+							case MINING:
+								cursorType = UITextureType.CURSOR_MINING;
+								break;
+							case WOODCUTTING:
+								cursorType = UITextureType.CURSOR_WOODCUTTING;
+								break;
+							default:
+								cursorType = UITextureType.CURSOR;
+							}
+						}
+					}
+				}
+			} else if (cursorType != UITextureType.CURSOR_INVALID) {
+
+				cursorType = UITextureType.CURSOR_INVALID;
+			}
+		} else if (cursorType != UITextureType.CURSOR) {
+
+			cursorType = UITextureType.CURSOR;
+		}
 
 		// fix path finding, if player is next to resource do not run path finding.
 		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
@@ -163,7 +209,7 @@ public class UIManager {
 			Tile tile = ChunkManager.getTile(hoverIndex);
 			if (tile != null) {
 				SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
-				if (skillName != null) {					
+				if (skillName != null) {
 					SkillData dat = GameDatabase.skillData.get(skillName);
 					if (dat != null) {
 						boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
@@ -190,23 +236,8 @@ public class UIManager {
 					}
 				}
 			}
-			if (canDo||tile==null) {
-
-				playerIndex = TaskManager.getCurrentTaskEnd();
-				if (playerIndex == null) {
-					playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
-				}
-				Point center = new Point(Input.mousePoint.x, Input.mousePoint.y);// UIManager.playerIndex;
-				int cartX = center.x;
-				int cartY = center.y;
-				int isoX = (cartX / 2 + (cartY));
-				int isoY = (cartY - cartX / 2);
-
-				int indexX = (int) Math.floor((float) isoX / (float) 32);
-				int indexY = (int) Math.floor((float) isoY / (float) 32);
-
-				if (hoverIndex.x > playerIndex.x - 100 && hoverIndex.x < playerIndex.x + 100
-						&& hoverIndex.y > playerIndex.y - 100 && hoverIndex.y < playerIndex.y + 100) {
+			if (canDo || tile == null) {
+				if (cursorInRange) {
 					boolean useHoe = false;
 					if (UIInventory.dragSlot != null) {
 						if (UIInventory.dragSlot.item != null) {
@@ -286,16 +317,14 @@ public class UIManager {
 
 								}
 							} else if (isSearchable) {
-									Task search = new Task(TaskType.SEARCH, resourceIndex);
-									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-									move.addFollowUp(search);
+								Task search = new Task(TaskType.SEARCH, resourceIndex);
+								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+								move.addFollowUp(search);
 
 							}
 							TaskManager.addTask(move);
 
 						}
-					} else {
-						// handle failed path
 					}
 				}
 			}
@@ -330,13 +359,15 @@ public class UIManager {
 
 	}
 
+	UITextureType cursorType = UITextureType.CURSOR;
+
 	public void render() {
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
 		uiInventory.render();
 		uiSkill.render();
 		uiChat.render();
-		
+
 		hud.render();
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);
@@ -353,7 +384,7 @@ public class UIManager {
 			Renderer.renderUITexture(btn.type, btn.bounds.x, btn.bounds.y, btn.bounds.width, btn.bounds.height);
 		}
 
-		Renderer.renderUITexture(UITextureType.CURSOR, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
+		Renderer.renderUITexture(cursorType, Input.getMousePoint().x, Input.getMousePoint().y, 32, 32);
 		GL11.glEnd();
 		if (!isHovered()) {
 			renderHover();

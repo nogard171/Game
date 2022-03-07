@@ -149,12 +149,16 @@ public class Base {
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
-		chunkMgr.render();
+		 chunkMgr.render();
 		GL11.glPopMatrix();
+
+		//GL11.glBegin(GL11.GL_QUADS);
+		//Renderer.renderTexture(TextureType.TREE, 200, 200, 64, 64);
+		//GL11.glEnd();
 
 		uiMgr.render();
 
-		Vector2f pos = new Vector2f(0,50);
+		Vector2f pos = new Vector2f(0, 50);
 
 		Renderer.renderQuad(new Rectangle((int) pos.x, (int) pos.y, 250, 80), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(pos.x, pos.y), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);
