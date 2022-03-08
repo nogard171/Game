@@ -46,7 +46,7 @@ public class Database {
 	public static ArrayList<Object> hoveredObjects = new ArrayList<Object>();
 
 	// renderer data
-	public static String textureFile = "assets/textures/tileset.png";
+	public static String textureFile = "Assets/Textures/tileset.png";
 	public static Texture texture;
 	public static Dimension textureSize;
 	public static HashMap<String, Integer> textures = new HashMap<String, Integer>();

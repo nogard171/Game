@@ -6,12 +6,14 @@ import java.util.LinkedList;
 
 import org.lwjgl.input.Keyboard;
 
+import core.ANode;
 import core.AgentManager;
 import core.Cell;
 import core.Index;
 import core.Task;
 import core.TaskType;
 import core.Window;
+import game.Database;
 import utils.Input;
 
 public class ContextMenu {
@@ -36,7 +38,7 @@ public class ContextMenu {
 						@Override
 						public void click() {
 							Task task = new Task();
-							task.type = TaskType.MOVE;
+							task.type = TaskType.CHOP;
 							Cell cell = hoveredCells.getLast();
 							task.end = cell.getIndex();
 							AgentManager.addTask(task);
@@ -52,38 +54,66 @@ public class ContextMenu {
 							self.setActive(false);
 						}
 					}));
-		} /*
-			 * menuBtns.add(new Button("Mine", new Rectangle(300, 300, width, 25), "rock",
-			 * new Action() {
-			 * 
-			 * @Override public void click() {
-			 * 
-			 * }
-			 * 
-			 * @Override public void in(Button self) { self.setActive(true); }
-			 * 
-			 * @Override public void out(Button self) { self.setActive(false); } }));
-			 * menuBtns.add(new Button("Harvest", new Rectangle(300, 300, width, 25),
-			 * "plant", new Action() {
-			 * 
-			 * @Override public void click() {
-			 * 
-			 * }
-			 * 
-			 * @Override public void in(Button self) { self.setActive(true); }
-			 * 
-			 * @Override public void out(Button self) { self.setActive(false); } }));
-			 * menuBtns.add(new Button("Search", new Rectangle(300, 300, width, 25),
-			 * "container", new Action() {
-			 * 
-			 * @Override public void click() {
-			 * 
-			 * }
-			 * 
-			 * @Override public void in(Button self) { self.setActive(true); }
-			 * 
-			 * @Override public void out(Button self) { self.setActive(false); } }));
-			 */
+		}
+		if (type == "grass") {
+			menuBtns.add(new Button("Move", new Rectangle(300, 300, width, 25), "move", new Action() {
+				@Override
+				public void click() {
+					Task task = new Task();
+					task.type = TaskType.MOVE;
+					Cell cell = hoveredCells.getLast();
+					task.end = cell.getIndex();/*new Index(
+							(int) ((cell.getRegionIndex().x * Database.regionSize.getWidth()) + cell.getIndex().x),
+							cell.getIndex().y,
+							(int) ((cell.getRegionIndex().z * Database.regionSize.getHeight()) + cell.getIndex().z));*/
+
+					System.out.println("Search Time:" +task.end );
+					AgentManager.addTask(task);
+				}
+
+				@Override
+				public void in(Button self) {
+					self.setActive(true);
+				}
+
+				@Override
+				public void out(Button self) {
+					self.setActive(false);
+				}
+			}));
+		}
+		/*
+		 * menuBtns.add(new Button("Mine", new Rectangle(300, 300, width, 25), "rock",
+		 * new Action() {
+		 * 
+		 * @Override public void click() {
+		 * 
+		 * }
+		 * 
+		 * @Override public void in(Button self) { self.setActive(true); }
+		 * 
+		 * @Override public void out(Button self) { self.setActive(false); } }));
+		 * menuBtns.add(new Button("Harvest", new Rectangle(300, 300, width, 25),
+		 * "plant", new Action() {
+		 * 
+		 * @Override public void click() {
+		 * 
+		 * }
+		 * 
+		 * @Override public void in(Button self) { self.setActive(true); }
+		 * 
+		 * @Override public void out(Button self) { self.setActive(false); } }));
+		 * menuBtns.add(new Button("Search", new Rectangle(300, 300, width, 25),
+		 * "container", new Action() {
+		 * 
+		 * @Override public void click() {
+		 * 
+		 * }
+		 * 
+		 * @Override public void in(Button self) { self.setActive(true); }
+		 * 
+		 * @Override public void out(Button self) { self.setActive(false); } }));
+		 */
 
 	}
 

@@ -37,6 +37,7 @@ public class HUD {
 		if (hoveredBounds != null) {
 			int c = 0;
 			for (Index i : hoveredBounds) {
+				
 				LinkedList<Cell> cells = world.getCells(i);
 				for (Cell cell : cells) {
 					if (cell != null) {

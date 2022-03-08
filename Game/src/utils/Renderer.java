@@ -102,24 +102,19 @@ public class Renderer {
 	}
 
 	public static void renderBounds(Polygon polygon, Color newColor) {
-		unbindTexture();
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-		GL11.glColor4f(newColor.r, newColor.g, newColor.b, newColor.a);
 
-		GL11.glBegin(GL11.GL_POLYGON);
-		/*
-		 * GL11.glVertex2f(x + 32, y); GL11.glVertex2f(x + 64, y + 16);
-		 * GL11.glVertex2f(x + 64, y + 48); GL11.glVertex2f(x + 32, y + 64);
-		 * GL11.glVertex2f(x, y + 48); GL11.glVertex2f(x, y + 16);
-		 */
+		if (polygon != null) {
+			unbindTexture();
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+			GL11.glColor4f(newColor.r, newColor.g, newColor.b, newColor.a);
 
-		Polygon b = new Polygon();
-		for (int p = 0; p < polygon.npoints; p++) {
-			GL11.glVertex2f(polygon.xpoints[p], polygon.ypoints[p]);
+			GL11.glBegin(GL11.GL_POLYGON);
+			for (int p = 0; p < polygon.npoints; p++) {
+				GL11.glVertex2f(polygon.xpoints[p], polygon.ypoints[p]);
+			}
+			GL11.glEnd();
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+			bindTexture();
 		}
-
-		GL11.glEnd();
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-		bindTexture();
 	}
 }

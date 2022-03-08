@@ -35,7 +35,6 @@ public class AgentManager extends Thread {
 	}
 
 	public void update() {
-
 		if (Window.isClose()) {
 			System.out.println("Closed:");
 		}

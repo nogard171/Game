@@ -26,7 +26,6 @@ public class World {
 				Generator.generateRegion(0, x, z);
 			}
 		}
-		// Generator.generateRegion(0, 1, 0);
 		regionsInView = getRegionsInView(0, 0, 0);
 		for (Region r : regionsInView) {
 			r.render();
@@ -50,7 +49,7 @@ public class World {
 		}
 	}
 
-	int visibleLevel = 1;
+	int visibleLevel = 0;
 
 	public void render() {
 		textureCount = 0;
@@ -84,10 +83,27 @@ public class World {
 		return textureCount;
 	}
 
+	int range = 2;
+	Index[] indexes;
+
 	private ArrayList<Region> getRegionsInView(int y, int x, int z) {
-		Index[] indexes = new Index[] { new Index(y, x, z), new Index(y, x - 1, z), new Index(y, x + 1, z),
-				new Index(y, x, z - 1), new Index(y, x, z + 1), new Index(y, x - 1, z - 1),
-				new Index(y, x + 1, z + 1) };
+		if (indexes == null) {
+			int i = 0;
+			indexes = new Index[(range * 2) * (range * 2)];
+			System.out.println("size:"+indexes.length);
+			for (int tx = 0 - (range/2); tx <= (range/2); tx++) {
+				for (int tz = 0 - (range/2); tz <= (range/2); tz++) {
+					indexes[i] = new Index(0, tx, tz);
+					i++;
+				}
+			}
+		}
+		/*
+		 * Index[] indexes = new Index[] { new Index(y, x, z), new Index(y, x - range,
+		 * z), new Index(y, x + range, z), new Index(y, x, z - range), new Index(y, x, z
+		 * + range), new Index(y, x - range, z - range), new Index(y, x + range, z +
+		 * range) };
+		 */
 		ArrayList<Region> regionsInView = new ArrayList<Region>();
 		for (Index i : indexes) {
 			Region reg = Database.regions.get(i);
@@ -167,12 +183,10 @@ public class World {
 					// for (Cell cell : cells) {
 					cells.get(0).setTexture("dirt");
 					reg.rebuild();
-					/*try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}*/
+					/*
+					 * try { Thread.sleep(100); } catch (InterruptedException e) { // TODO
+					 * Auto-generated catch block e.printStackTrace(); }
+					 */
 					// c.add(cell);// reg.cellData[cellY][cellX][cellZ];
 					// }
 				}
