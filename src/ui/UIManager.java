@@ -156,6 +156,7 @@ public class UIManager {
 		uiHovered = (UIInventory.isPanelHovered() || UISkillWindow.isPanelHovered() || UIChat.isPanelHovered()
 				|| btnHovered ? true : false);
 		boolean cursorInRange = false;
+		//change hover to hover the object, instead of the tile
 		if (hoverIndex != null) {
 			int range = 20;
 			cursorInRange = (hoverIndex.x > playerIndex.x - range && hoverIndex.x < playerIndex.x + range
@@ -260,7 +261,9 @@ public class UIManager {
 						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
 					}
 					boolean isItem = ChunkManager.isItem(hoverIndex);
+					System.out.println("Size:");
 					boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
+					System.out.println("test:");
 
 					LinkedList<ANode> path = null;
 

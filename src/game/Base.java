@@ -158,7 +158,7 @@ public class Base {
 
 		uiMgr.render();
 
-		Vector2f pos = new Vector2f(0, 50);
+		Vector2f pos = new Vector2f(Window.width-250, 0);
 
 		Renderer.renderQuad(new Rectangle((int) pos.x, (int) pos.y, 250, 80), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(pos.x, pos.y), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);

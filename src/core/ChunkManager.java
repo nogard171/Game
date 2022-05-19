@@ -115,7 +115,7 @@ public class ChunkManager {
 						}
 					}
 				}
-				File outputfile = new File("saved.png");
+				File outputfile = new File("saved0.png");
 				ImageIO.write(bi, "png", outputfile);
 				System.out.println("Saved!");
 			} catch (Exception e) {

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public enum TextureType implements Comparable<TextureType> {
 	// x,y,w,h,ox,oy
-	AIR(0, 0),  
-	CHARACTER(8, 54, 48, 36,8,-12), 
+	AIR(0, 0,0,0),  
+	CHARACTER(0, 0,32,64,16,-40), 
 	GRASS(64, 0, 64,64), 
 	GRASS0(64, 64, 64,64),
 	DIRT(128, 0, 64,64), 
@@ -26,8 +26,8 @@ public enum TextureType implements Comparable<TextureType> {
 	FISHING_SPOT2(0, 7*64, 64,64),
 	FISHING_SPOT3(64, 5*64, 64,64), 
 	FISHING_SPOT4(64, 6*64, 64,64),
-	PATH_DURING(0, 90, 64,42,0,-8), 
-	PATH_FINISH(0,132, 64,42,0,-8),
+	PATH_DURING(32, 0, 20,10,22,10), 
+	PATH_FINISH(32,10, 20,10,22,10),
 	//PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), 
 	//PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f)
 

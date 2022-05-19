@@ -16,21 +16,47 @@ public class Window {
 	public static int width = 800;
 	public static int height = 600;
 	public static boolean wasResized = false;
+	public static boolean isFullscreen = false;
+	public static boolean isResizable = true;
+	public static boolean autoDisplayMode = false;
 
 	public static void start() {
 		try {
-			// DisplayMode dm = new DisplayMode(width, height);
-			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.setResizable(true);
-			Display.create();
+			DisplayMode dm = getDisplayMode();
 
-//			Mouse.setGrabbed(true);
+			Display.setDisplayMode(new DisplayMode(width, height));
+			Display.setResizable(isResizable);
+			Display.create();
+			
 			hideCursor();
 
 		} catch (LWJGLException e) {
 			// e.printStackTrace();
 			System.out.println("failed");
 		}
+	}
+
+	private static DisplayMode getDisplayMode() throws LWJGLException {
+		DisplayMode newDisplayMode = new DisplayMode(width, height);
+		int highestWidth = -1;
+		int highestHeight = -1;
+		int highestFreq = -1;
+		// loop through all possible display modes based on the monitor data
+		for (DisplayMode dm : Display.getAvailableDisplayModes()) {
+			// setup variables for data needed
+			int dmWidth = dm.getWidth();
+			int dmHeight = dm.getHeight();
+			int dmFreq = dm.getFrequency();
+			if (autoDisplayMode) {
+
+			} else {
+				if (dmWidth == width && dmHeight == height && dmFreq > highestFreq) {
+					highestFreq = dmFreq;
+					newDisplayMode = dm;
+				}
+			}
+		}
+		return newDisplayMode;
 	}
 
 	public static boolean close() {
@@ -64,15 +90,22 @@ public class Window {
 		setupViewport();
 	}
 
+	private static int targetFPS = -1;
+	private static int menuFPS = 60;
+	private static int inactiveFPS = 60;
+
 	public static void update() {
 		resize();
 		Display.update();
-		if (Display.isActive()) {
-			Display.sync(999);
+		if (!Display.isActive()) {
+			Display.sync(inactiveFPS);
+		} else if (true == false) {
+			Display.sync(menuFPS);
+		} else if (targetFPS < 0) {
+			Display.sync(targetFPS);
 		} else {
-			Display.sync(30);
+			Display.sync(120);
 		}
-
 	}
 
 	public static void render() {
