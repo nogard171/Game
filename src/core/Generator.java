@@ -9,28 +9,24 @@ public class Generator {
 	private static int[][] map;
 	private static Random r;
 
-	public static int[][] generateHeightMap(Point chunkIndex,int width, int height, int scale) {
+	public static int[][] generateHeightMap(Point chunkIndex, int width, int height, int scale) {
 		r = new Random();
 		int[][] tempMap = new int[width][height];
-		int chunkX = chunkIndex.x*width;
-		int chunkY = chunkIndex.y*height;
+		int chunkX = chunkIndex.x * width;
+		int chunkY = chunkIndex.y * height;
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
-				tempMap[x][y] = (int) Math.round(ImprovedNoise.noise((double) (x+chunkX) / (double) 100, 0, (double) (y+chunkY) / (double) 100) * (double) scale);
+				tempMap[x][y] = (int) Math.round(ImprovedNoise.noise((double) (x + chunkX) / (double) 100, 0,
+						(double) (y + chunkY) / (double) 100) * (double) scale);
 			}
 		}
-		/*
-		 * // Setup points in the 4 corners of the map. map[0][0] = scale; map[width -
-		 * 1][0] = scale; map[width - 1][height - 1] = scale; map[0][height - 1] =
-		 * scale; // Do the midpoint midpoint(0, 0, width - 1, height - 1);
-		 */
-		return tempMap;
+
+		return generateHeightMapWithMap( width,  height, tempMap, scale);
 	}
 
 	public static int[][] generateHeightMapWithMap(int width, int height, int[][] tempMap, int scale) {
 		r = new Random();
 		map = tempMap;
-		// Do the midpoint
 		midpoint(0, 0, width - 1, height - 1);
 		return map;
 	}

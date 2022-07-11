@@ -131,16 +131,16 @@ public class Chunk {
 				tile.setIndex(tileIndex);
 
 				int t = heightMap[x][y];// r.nextFloat();
-				 t = 3;
+				//t = 3;
 
-				float g = r.nextFloat();
+				float g = 0.5f;// r.nextFloat();
 				if (g < 0.5f) {
 					tile.setType(TextureType.GRASS0);
 				} else if (g >= 0.5f) {
 					tile.setType(TextureType.GRASS);
 				}
-				g = r.nextFloat();
-				if (g < 0.2f) {
+				g = 1;// r.nextFloat();
+				if (g < 0.2f || (x % 2 == 0 && y % 2 == 0)) {
 					tile.setType(TextureType.DIRT);
 				}
 				if (t <= 2) {
@@ -164,7 +164,14 @@ public class Chunk {
 				if (isSolid) {
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
 					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)) {
-						res.setType(TextureType.TREE, 10);
+
+						float tr = r.nextFloat();
+						if (tr >= 0.5f) {
+							res.setType(TextureType.TREE, 10);
+						}
+						if (tr < 0.5f) {
+							res.setType(TextureType.MAPLE_TREE, 10);
+						}
 					}
 					t = 0 + (int) (Math.random() * ((10 - 0) + 1));
 					if (t == 1 && (tile.getType() == TextureType.GRASS || tile.getType() == TextureType.GRASS0)
@@ -175,7 +182,7 @@ public class Chunk {
 					if ((tile.getType() == TextureType.DIRT)) {
 						t = 0 + (int) (Math.random() * ((10 - 0) + 1));
 						if (t == 1 && res.getType().equals(TextureType.AIR)) {
-							res.setType(TextureType.ROCK, 10);
+							res.setType(TextureType.ROCK_ORE, 10);
 						}
 
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
@@ -185,6 +192,10 @@ public class Chunk {
 						t = 0 + (int) (Math.random() * ((50 - 0) + 1));
 						if (t == 1 && res.getType().equals(TextureType.AIR)) {
 							res.setType(TextureType.COPPER_ORE, 10);
+						}
+						t = 0 + (int) (Math.random() * ((100 - 0) + 1));
+						if (t == 1 && res.getType().equals(TextureType.AIR)) {
+							res.setType(TextureType.COAL_ORE, 10);
 						}
 					}
 					if (res.getBaseType().equals(TextureType.AIR) && res.getType().equals(TextureType.AIR)) {
@@ -271,7 +282,7 @@ public class Chunk {
 				GroundItem tile = droppedItems.get(tempIndex);
 				if (tile != null) {
 					tile.setPosition(position);
-					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x + 16, (int) tile.getPosition().y + 6,
+					Renderer.renderUITexture(tile.type, (int) tile.getPosition().x + 16, (int) tile.getPosition().y - 4,
 							32, 16);
 				}
 			}
@@ -460,9 +471,65 @@ public class Chunk {
 					? (tile != null && ((removeAIR && tile.getType() != TextureType.AIR) || (!removeAIR)) ? tile : null)
 					: newTile);
 		}
-		//System.out.println("Dropped Item1: " + newTile);
+		// System.out.println("Dropped Item1: " + newTile);
 
 		return newTile;
+	}
+
+	public LinkedList<Tile> getObjectsAtIndex(Point point) {
+		return getObjectsAtIndex(point, false, true);
+	}
+
+	public LinkedList<Tile> getObjectsAtIndex(Point point, boolean removeAIR) {
+		return getObjectsAtIndex(point, removeAIR, false);
+	}
+
+	public LinkedList<Tile> getObjectsAtIndex(Point point, boolean removeAIR, boolean removeTiles) {
+		LinkedList<Tile> newTiles = new LinkedList<Tile>();
+
+		Entity ent = entities.get(point);
+		if (ent != null) {
+			if (!ent.getType().equals(TextureType.AIR)) {
+				newTiles.add(ent);
+			}
+		}
+
+		Object animObj = null;
+		for (int o = 0; o < animatedObjects.size(); o++) {
+			animObj = animatedObjects.get(o);
+			if (animObj != null) {
+				if (animObj.getIndex().equals(point)) {
+					if (animObj != null && ((removeAIR && animObj.getType() != TextureType.AIR) || (!removeAIR))) {
+						newTiles.add(animObj);
+						break;
+					}
+				}
+			}
+		}
+
+		Tile obj = objects.get(point);
+		if (obj != null) {
+			if (!obj.getType().equals(TextureType.AIR)) {
+				newTiles.add(obj);
+			}
+		}
+
+		GroundItem item = droppedItems.get(point);
+		if (item != null) {
+			if (!item.getType().equals(TextureType.AIR)) {
+				newTiles.add(item);
+			}
+		}
+
+		if (!removeTiles) {
+			Tile tile = tiles.get(point);
+			if (tile != null) {
+				if (!tile.getType().equals(TextureType.AIR)) {
+					newTiles.add(tile);
+				}
+			}
+		}
+		return newTiles;
 	}
 
 	public GroundItem getItemAtIndex(Point point) {

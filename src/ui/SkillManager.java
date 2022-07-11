@@ -23,11 +23,13 @@ public class SkillManager {
 		SkillName skill = SkillName.NONE;
 		switch (type) {
 		case TREE:
+		case MAPLE_TREE:
 			skill = SkillName.WOODCUTTING;
 			break;
-		case ROCK:
+		case ROCK_ORE:
 		case COPPER_ORE:
 		case TIN_ORE:
+		case COAL_ORE:
 			skill = SkillName.MINING;
 			break;
 		case FISHING_SPOT:
@@ -56,13 +58,11 @@ public class SkillManager {
 				long tempXP = skill.xp;
 				if (tempXP < 9223372036854775807l) {
 					skill.xp += amount;
-					UIChat.addMessage("System:You gained " + amount + " xp in "
-							+ skill.skill.toUserString() + ".");
+					UIChat.addMessage("System:You gained " + amount + " xp in " + skill.skill.toUserString() + ".");
 				} else {
 					LogUtil.addLog("Max skill xp reached for skill=" + skill.skill.toString());
 
-					UIChat.addMessage("System:You have reached max level for "
-							+ skill.skill.toUserString() + ".");
+					UIChat.addMessage("System:You have reached max level for " + skill.skill.toUserString() + ".");
 				}
 
 				while (skill.xp > skill.nextXP && skill.level < 99) {
@@ -71,7 +71,7 @@ public class SkillManager {
 					skill.xp = skill.xp - skill.nextXP;
 					skill.nextXP = nextXp;
 					skill.level++;
-				
+
 				}
 				UISkillWindow.updateID = true;
 			}

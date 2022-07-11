@@ -107,7 +107,7 @@ public class TaskManager {
 					Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
 					ChunkManager.move(playerIndex, node.toPoint());
-
+					SkillManager.addExperienceByResource(TextureType.GRASS, 1);
 				}
 				if (task.getType() == TaskType.TILL) {
 					ANode node = path.removeFirst();
@@ -121,7 +121,6 @@ public class TaskManager {
 					}
 				} else if (task.getType() == TaskType.RESOURCE) {
 					ANode node = path.removeFirst();
-
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
@@ -131,7 +130,7 @@ public class TaskManager {
 								if (genR == 1) {
 									for (ResourceItemDrop drop : dat.itemDrops) {
 										genR = r.nextInt(drop.getRarity() - 1 + 1) + 1;
-										System.out.println("Rarity:"+genR);
+										System.out.println("Rarity:" + genR);
 										if (genR == 1) {
 											ArrayList<ItemType> types = drop.getDroppedItems();
 											for (ItemType type : types) {

@@ -51,18 +51,19 @@ public class Tile {
 		String str = "";
 		switch (type) {
 		case TREE:
-			str = "Chop !%0,255,0%Tree";
-			break;
-		case ROCK:
-			str = "Mine !%128,128,128%Rock";
+		case MAPLE_TREE:
+			String temp = type.toString();
+			temp = temp.substring(0, 1).toUpperCase() + temp.substring(1, temp.length()).toLowerCase();
+			str = "Chop !%90,192,43%" + temp.replace("_tree", " Tree");
 			break;
 		case COPPER_ORE:
-			Resource res = (Resource) this;
-			str = "Mine !%128,128,128%" + res.getType();
-			break;
 		case TIN_ORE:
-			res = (Resource) this;
-			str = "Mine !%128,128,128%" + res.getType();
+		case ROCK_ORE:
+		case COAL_ORE:
+			Resource res = (Resource) this;
+			temp = res.getType().toString();
+			temp = temp.substring(0, 1).toUpperCase() + temp.substring(1, temp.length()).toLowerCase();
+			str = "Mine !%192,192,192%" + temp.replace("_ore", " Ore");
 			break;
 		case BUSH:
 			str = "Search !%0,224,0%Bush";
@@ -76,7 +77,6 @@ public class Tile {
 		case FISHING_SPOT2:
 		case FISHING_SPOT3:
 		case FISHING_SPOT4:
-
 			str = "Fish !%0,224,0%Fishing Spot";
 			break;
 		default:

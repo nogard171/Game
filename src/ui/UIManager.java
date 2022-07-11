@@ -22,6 +22,7 @@ import core.ChunkManager;
 import core.GameDatabase;
 import core.GroundItem;
 import core.Input;
+import core.Item;
 import core.ItemType;
 import core.Renderer;
 import core.Resource;
@@ -156,9 +157,10 @@ public class UIManager {
 		uiHovered = (UIInventory.isPanelHovered() || UISkillWindow.isPanelHovered() || UIChat.isPanelHovered()
 				|| btnHovered ? true : false);
 		boolean cursorInRange = false;
-		//change hover to hover the object, instead of the tile
-		if (hoverIndex != null) {
-			int range = 20;
+		boolean defaultCursor = false;
+		// change hover to hover the object, instead of the tile
+		if (hoverIndex != null&&playerIndex!=null) {
+			int range = 100;
 			cursorInRange = (hoverIndex.x > playerIndex.x - range && hoverIndex.x < playerIndex.x + range
 					&& hoverIndex.y > playerIndex.y - range && hoverIndex.y < playerIndex.y + range);
 
@@ -190,143 +192,202 @@ public class UIManager {
 								cursorType = UITextureType.CURSOR_WOODCUTTING;
 								break;
 							default:
-								cursorType = UITextureType.CURSOR;
+								defaultCursor = true;
 							}
+						} else {
+							defaultCursor = true;
 						}
+					} else {
+						defaultCursor = true;
 					}
 				}
 			} else if (cursorType != UITextureType.CURSOR_INVALID) {
-
 				cursorType = UITextureType.CURSOR_INVALID;
+			} else {
+				defaultCursor = true;
 			}
-		} else if (cursorType != UITextureType.CURSOR) {
-
+		} else {
+			defaultCursor = true;
+		}
+		if (defaultCursor) {
 			cursorType = UITextureType.CURSOR;
+
 		}
 
 		// fix path finding, if player is next to resource do not run path finding.
-		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
-			boolean canDo = false;
-			Tile tile = ChunkManager.getTile(hoverIndex);
-			if (tile != null) {
-				SkillName skillName = SkillManager.getSkillByType(tile.getBaseType());
-				if (skillName != null) {
-					SkillData dat = GameDatabase.skillData.get(skillName);
-					if (dat != null) {
-						boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
-						if (dat.resourceLevels.containsKey(tile.getBaseType())) {
-							Integer level = dat.resourceLevels.get(tile.getBaseType());
+		// refactor code to work everytime.
 
-							if (level != null) {
-								Skill skill = SkillManager.getSkillByName(skillName);
-								if (skill != null) {
-									if (skill.level > level) {
-										canDo = true;
-									} else {
-										UIChat.addMessage("System:You need to be Level " + level + " in "
-												+ skillName.toUserString() + " interact with that object.");
-									}
+		if (Input.isMousePressed(0) && !UIManager.isHovered()) {
+			processAction();
+		}
+		/*
+		 * if (Input.isMousePressed(0) && !UIManager.isHovered()&&true==false) { boolean
+		 * canDo = false; Tile tile = ChunkManager.getTile(hoverIndex); if (tile !=
+		 * null) { SkillName skillName =
+		 * SkillManager.getSkillByType(tile.getBaseType()); if (skillName != null) {
+		 * SkillData dat = GameDatabase.skillData.get(skillName); if (dat != null) {
+		 * boolean isSearchable = ChunkManager.isSearchable(hoverIndex); if
+		 * (dat.resourceLevels.containsKey(tile.getBaseType())) { Integer level =
+		 * dat.resourceLevels.get(tile.getBaseType());
+		 * 
+		 * if (level != null) { Skill skill = SkillManager.getSkillByName(skillName); if
+		 * (skill != null) { if (skill.level > level) { canDo = true; } else {
+		 * UIChat.addMessage("System:You need to be Level " + level + " in " +
+		 * skillName.toUserString() + " interact with that object."); } } }
+		 * 
+		 * } else if (isSearchable) { canDo = true; } else if
+		 * (tile.getBaseType().equals(TextureType.ITEM)) { canDo = true; } } } } if
+		 * (canDo || tile == null) { if (cursorInRange) { boolean useHoe = false; if
+		 * (UIInventory.dragSlot != null) { if (UIInventory.dragSlot.item != null) { if
+		 * (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) { useHoe = true; }
+		 * } } ANode hoeIndex = null; if (useHoe) { hoeIndex = new ANode(hoverIndex.x,
+		 * hoverIndex.y); hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex,
+		 * hoverIndex); } ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
+		 * boolean isRes = ChunkManager.isResource(hoverIndex); boolean inRange =
+		 * ChunkManager.resourceInRange(playerIndex, hoverIndex); Resource resource =
+		 * null; if (isRes) { resource = ChunkManager.getResource(hoverIndex);
+		 * hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex); }
+		 * boolean isItem = ChunkManager.isItem(hoverIndex);
+		 * System.out.println("Size:"); boolean isSearchable =
+		 * ChunkManager.isSearchable(hoverIndex); System.out.println("test:");
+		 * 
+		 * LinkedList<ANode> path = null;
+		 * 
+		 * if (inRange) { path = new LinkedList<ANode>(); path.add(new
+		 * ANode(hoverIndex)); } else { path = APathFinder.find(new ANode(playerIndex),
+		 * new ANode(hoverIndex)); } if (path != null) { if (path.size() > 0) { for (int
+		 * i = 0; i < path.size() - 1; i++) { ANode node = path.get(i); if (node !=
+		 * null) { ChunkManager.setObjectAtIndex(node.toPoint(),
+		 * TextureType.PATH_DURING); } } ANode node = path.get(path.size() - 1);
+		 * ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+		 * 
+		 * Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+		 * 
+		 * if (useHoe) { Resource temp = new Resource(TextureType.AIR);
+		 * temp.setHealth(5);
+		 * 
+		 * Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
+		 * 
+		 * hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+		 * 
+		 * move.addFollowUp(till); } else if (isRes) {
+		 * 
+		 * if (resource != null) {
+		 * 
+		 * Task chop = new Task(TaskType.RESOURCE, resourceIndex,
+		 * resource.getANode(resourceIndex));
+		 * 
+		 * hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+		 * 
+		 * move.addFollowUp(chop);
+		 * 
+		 * } } else if (isItem) { Tile item = null; if (isItem) { item =
+		 * ChunkManager.getTile(hoverIndex); } if (item != null) {
+		 * 
+		 * Task chop = new Task(TaskType.ITEM, resourceIndex); hoverIndex =
+		 * ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
+		 * move.addFollowUp(chop);
+		 * 
+		 * } } else if (isSearchable) { Task search = new Task(TaskType.SEARCH,
+		 * resourceIndex); hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex,
+		 * hoverIndex); move.addFollowUp(search);
+		 * 
+		 * } TaskManager.addTask(move);
+		 * 
+		 * } } } } }
+		 */
+
+	}
+
+	private void processAction() {
+		Item useItem = null;
+		if (UIInventory.dragSlot != null) {
+			useItem = UIInventory.dragSlot.item;
+		}
+
+		LinkedList<Tile> tiles = ChunkManager.getTiles(hoverIndex);
+		boolean actionable = false;
+		if (tiles.size() >= 1) {
+			Tile topTile = tiles.getFirst();
+			SkillName skillName = SkillManager.getSkillByType(topTile.getBaseType());
+			if (skillName != null) {
+				SkillData dat = GameDatabase.skillData.get(skillName);
+				if (dat != null) {
+					if (dat.resourceLevels.containsKey(topTile.getBaseType())) {
+						Integer level = dat.resourceLevels.get(topTile.getBaseType());
+						if (level != null) {
+							Skill skill = SkillManager.getSkillByName(skillName);
+							if (skill != null) {
+								if (skill.level >= level) {
+									actionable = true;
+								} else {
+									UIChat.addMessage("System:You need to be Level " + level + " in "
+											+ skillName.toUserString() + " interact with that object.");
 								}
 							}
-
-						} else if (isSearchable) {
-							canDo = true;
-						} else if (tile.getBaseType().equals(TextureType.ITEM)) {
-							canDo = true;
 						}
 					}
 				}
 			}
-			if (canDo || tile == null) {
-				if (cursorInRange) {
-					boolean useHoe = false;
-					if (UIInventory.dragSlot != null) {
-						if (UIInventory.dragSlot.item != null) {
-							if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
-								useHoe = true;
+
+			if (topTile.getType().toString().toLowerCase().equals("item")) {
+				actionable = true;
+			}
+		}
+		if (actionable) {
+			LinkedList<ANode> path = APathFinder.findTest(new ANode(playerIndex), new ANode(hoverIndex));
+			if (path != null) {
+				if (path.size() > 0) {
+					if (path.size() > 2) {
+						for (int i = 0; i < path.size() - 2; i++) {
+							ANode node = path.get(i);
+							if (node != null) {
+								ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
 							}
 						}
+						ANode node = path.get(path.size() - 2);
+						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
 					}
-					ANode hoeIndex = null;
-					if (useHoe) {
-						hoeIndex = new ANode(hoverIndex.x, hoverIndex.y);
-						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-					}
-					ANode resourceIndex = new ANode(hoverIndex.x, hoverIndex.y);
-					boolean isRes = ChunkManager.isResource(hoverIndex);
-					boolean inRange = ChunkManager.resourceInRange(playerIndex, hoverIndex);
-					Resource resource = null;
-					if (isRes) {
-						resource = ChunkManager.getResource(hoverIndex);
-						hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-					}
-					boolean isItem = ChunkManager.isItem(hoverIndex);
-					System.out.println("Size:");
-					boolean isSearchable = ChunkManager.isSearchable(hoverIndex);
-					System.out.println("test:");
-
-					LinkedList<ANode> path = null;
-
-					if (inRange) {
-						path = new LinkedList<ANode>();
-						path.add(new ANode(hoverIndex));
-					} else {
-						path = APathFinder.find(new ANode(playerIndex), new ANode(hoverIndex));
-					}
-					if (path != null) {
-						if (path.size() > 0) {
-							for (int i = 0; i < path.size() - 1; i++) {
-								ANode node = path.get(i);
-								if (node != null) {
-									ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
-								}
-							}
-							ANode node = path.get(path.size() - 1);
-							ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
-
+					if (tiles.size() == 1) {
+						if (useItem != null) {
+							System.out.println("Use Item");
+						} else {
 							Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
-
-							if (useHoe) {
-								Resource temp = new Resource(TextureType.AIR);
-								temp.setHealth(5);
-
-								Task till = new Task(TaskType.TILL, hoeIndex, temp.getANode(hoeIndex));
-
-								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-
-								move.addFollowUp(till);
-							} else if (isRes) {
-
-								if (resource != null) {
-
-									Task chop = new Task(TaskType.RESOURCE, resourceIndex,
-											resource.getANode(resourceIndex));
-
-									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-
-									move.addFollowUp(chop);
-
-								}
-							} else if (isItem) {
-								Tile item = null;
-								if (isItem) {
-									item = ChunkManager.getTile(hoverIndex);
-								}
-								if (item != null) {
-
-									Task chop = new Task(TaskType.ITEM, resourceIndex);
-									hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-									move.addFollowUp(chop);
-
-								}
-							} else if (isSearchable) {
-								Task search = new Task(TaskType.SEARCH, resourceIndex);
-								hoverIndex = ChunkManager.findIndexAroundIndex(playerIndex, hoverIndex);
-								move.addFollowUp(search);
-
-							}
 							TaskManager.addTask(move);
-
+						}
+					} else {
+						System.out.println("Walk: " + path.size());
+						if (tiles.size() > 1) {
+							Tile topTile = tiles.removeFirst();
+							ANode actionIndex = path.removeLast();
+							if (path.size() >= 1) {
+								Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+								if (topTile.getType().toString().toLowerCase().contains("tree")
+										|| topTile.getType().toString().toLowerCase().contains("ore")) {
+									Resource resource = ChunkManager.getResource(hoverIndex);
+									if (resource != null) {
+										Task action = new Task(TaskType.RESOURCE, actionIndex,
+												resource.getANode(actionIndex));
+										move.addFollowUp(action);
+									} else {
+										System.out.println("Invalid Resource");
+									}
+								}
+								if (topTile.getType().toString().toLowerCase().contains("bush")) {
+									Task search = new Task(TaskType.SEARCH, actionIndex);
+									move.addFollowUp(search);
+								}
+								if (topTile.getType().toString().toLowerCase().contains("item")) {
+									path.add(actionIndex);
+									move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
+									Task search = new Task(TaskType.ITEM, actionIndex);
+									move.addFollowUp(search);
+								}
+								if (topTile.getType().toString().toLowerCase().contains("plant")) {
+									System.out.println("Harvest Plant");
+								}
+								TaskManager.addTask(move);
+							}
 						}
 					}
 				}
@@ -417,7 +478,7 @@ public class UIManager {
 						int c = text.replaceAll("(%[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}%)", "").length();
 
 						Renderer.renderQuad(
-								new Rectangle(Input.getMousePoint().x, Input.getMousePoint().y + 32, (c * 8) + 10, 20),
+								new Rectangle(Input.getMousePoint().x, Input.getMousePoint().y + 32, (c * 10) + 10, 20),
 								new Color(0, 0, 0, 0.5f));
 
 						String[] data = text.split("%");
@@ -451,7 +512,7 @@ public class UIManager {
 												Renderer.renderText(
 														new Vector2f(Input.getMousePoint().x + tempC + 10,
 																Input.getMousePoint().y + 1 + 32),
-														"(Lvl:" + level + ")", 12, new Color(255, 0, 0), fontType);
+														"(Lvl:" + level + ")", 12, new Color(204, 71, 78), fontType);
 											}
 										}
 									}

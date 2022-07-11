@@ -24,7 +24,7 @@ public class GameDatabase {
 	private static void loadResources() {
 		ResourceData dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.ROCK));
-		resources.put(TextureType.ROCK, dat);
+		resources.put(TextureType.ROCK_ORE, dat);
 		dat.setXPGain(5);
 
 		dat = new ResourceData();
@@ -38,13 +38,22 @@ public class GameDatabase {
 		dat.setXPGain(10);
 
 		dat = new ResourceData();
+		dat.addDrop(new ResourceItemDrop(ItemType.COAL_ORE));
+		resources.put(TextureType.COAL_ORE, dat);
+		dat.setXPGain(20);
+		
+		dat = new ResourceData();
 		dat.addDrop(new ResourceItemDrop(ItemType.LOG));
 		dat.setXPGain(5);
 		resources.put(TextureType.TREE, dat);
-		
 
 		dat = new ResourceData();
-		dat.addDrop(new ResourceItemDrop(ItemType.STICK,0,2,5));
+		dat.addDrop(new ResourceItemDrop(ItemType.LOG));
+		dat.setXPGain(10);
+		resources.put(TextureType.MAPLE_TREE, dat);
+
+		dat = new ResourceData();
+		dat.addDrop(new ResourceItemDrop(ItemType.STICK, 0, 2, 5));
 		dat.isSearchable = true;
 		resources.put(TextureType.BUSH, dat);
 
@@ -90,8 +99,6 @@ public class GameDatabase {
 		newItem = new ItemData(ItemType.HOE, "A Hoe used for tiling.", 20);
 		newItem.setTexture(UITextureType.HOE_ITEM);
 		items.put(newItem.type, newItem);
-		
-		
 
 		newItem = new ItemData(ItemType.STICK, "A few sticks.", 20);
 		newItem.setTexture(UITextureType.STICK_ITEM);
@@ -100,30 +107,29 @@ public class GameDatabase {
 
 	public static void loadSkills() {
 		SkillData fishingSkill = new SkillData(SkillName.FISHING, "Fish for many diferent fish.");
-		fishingSkill.resourceLevels.put(TextureType.FISHING_SPOT,5);
+		fishingSkill.resourceLevels.put(TextureType.FISHING_SPOT, 5);
 		skillData.put(fishingSkill.name, fishingSkill);
 
 		SkillData woodCuttingSkill = new SkillData(SkillName.WOODCUTTING,
 				"Wood cutting allow for the gathering of wood.", UITextureType.WOODCUTTING_SKILL_ICON);
-		woodCuttingSkill.resourceLevels.put(TextureType.TREE,2);
+		woodCuttingSkill.resourceLevels.put(TextureType.TREE, 0);
+		woodCuttingSkill.resourceLevels.put(TextureType.MAPLE_TREE, 2);
 		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
-		
 
-		SkillData miningSkill = new SkillData(SkillName.MINING,
-				"Wood cutting allow for the gathering of wood.", UITextureType.MINING_SKILL_ICON);
-		miningSkill.resourceLevels.put(TextureType.ROCK,0);
-		miningSkill.resourceLevels.put(TextureType.COPPER_ORE,3);
-		miningSkill.resourceLevels.put(TextureType.TIN_ORE,3);
+		SkillData miningSkill = new SkillData(SkillName.MINING, "Wood cutting allow for the gathering of wood.",
+				UITextureType.MINING_SKILL_ICON);
+		miningSkill.resourceLevels.put(TextureType.ROCK_ORE, 0);
+		miningSkill.resourceLevels.put(TextureType.COPPER_ORE, 3);
+		miningSkill.resourceLevels.put(TextureType.TIN_ORE, 3);
+		miningSkill.resourceLevels.put(TextureType.COAL_ORE, 20);
 		skillData.put(miningSkill.name, miningSkill);
-		
-		
 
-		SkillData agilitySkill = new SkillData(SkillName.AGILITY,
-				"Wood cutting allow for the gathering of wood.", UITextureType.MINING_SKILL_ICON);
-		agilitySkill.resourceLevels.put(TextureType.GRASS,0);
-		agilitySkill.resourceLevels.put(TextureType.GRASS0,0);
-		agilitySkill.resourceLevels.put(TextureType.DIRT,0);
-		agilitySkill.resourceLevels.put(TextureType.SAND,0);
+		SkillData agilitySkill = new SkillData(SkillName.AGILITY, "Wood cutting allow for the gathering of wood.",
+				UITextureType.MINING_SKILL_ICON);
+		agilitySkill.resourceLevels.put(TextureType.GRASS, 0);
+		agilitySkill.resourceLevels.put(TextureType.GRASS0, 0);
+		agilitySkill.resourceLevels.put(TextureType.DIRT, 0);
+		agilitySkill.resourceLevels.put(TextureType.SAND, 0);
 		skillData.put(agilitySkill.name, agilitySkill);
 
 	}

@@ -11,15 +11,17 @@ public enum TextureType implements Comparable<TextureType> {
 	GRASS0(64, 64, 64,64),
 	DIRT(128, 0, 64,64), 
 	SAND(0, 192, 64,64), 
-	TREE(192, 0, 128, 128, 0, -96), 
+	TREE(192, 0, 130, 127, 0, -96), 
+	MAPLE_TREE(322, 0, 130, 127, 0, -96), 
 	BUSH(192, 128, 128, 64, 0f, -32),
-	ROCK(64, 128, 128, 64, 0, -32), 
+	ROCK_ORE(68,136, 87, 56, 4, -24), 
 	DEEP_WATER(0, 256, 64, 64), 
 	TILLED_DIRT(192, 192, 64, 64),
 
 	ITEM(0, 0, 0, 0), 
-	TIN_ORE(64, 64 * 4, 64, 64, 0, -32), 
-	COPPER_ORE(64, 64 * 3, 64, 64, 0, -32),
+	TIN_ORE(68,263, 87, 56, 4, -24), 
+	COAL_ORE(200,263, 87, 56, 4, -24), 
+	COPPER_ORE(68,198, 64, 64, 4, -24),
 	SHALLOW_WATER(128, 64,64,64), 
 	FISHING_SPOT(0, 5*64, 64,64), 
 	FISHING_SPOT1(0, 6*64, 64,64), 
@@ -92,7 +94,7 @@ public enum TextureType implements Comparable<TextureType> {
 		switch (this) {
 		case SHALLOW_WATER:
 		case TREE:
-		case ROCK:
+		case ROCK_ORE:
 		case COPPER_ORE:
 		case TIN_ORE:
 		case BUSH:
@@ -121,7 +123,7 @@ public enum TextureType implements Comparable<TextureType> {
 		case DIRT:
 			ci = colorToInt(178, 135, 78, 255);
 			break;
-		case ROCK:
+		case ROCK_ORE:
 			ci = colorToInt(175, 161, 142, 255);
 			break;
 		case GRASS0:
@@ -131,6 +133,7 @@ public enum TextureType implements Comparable<TextureType> {
 			ci = colorToInt(142, 202, 88, 255);
 			break;
 		case TREE:
+		case MAPLE_TREE:
 		case BUSH:
 			ci = colorToInt(142, 202, 88, 128);
 			break;

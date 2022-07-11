@@ -19,7 +19,7 @@ import game.PlayerDatabase;
 import utils.Ticker;
 
 public class UIChat {
-	public static boolean show = true;
+	public static boolean show = false;
 
 	private static Rectangle inputBounds;
 	public static Rectangle chatBounds;

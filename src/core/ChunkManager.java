@@ -31,97 +31,28 @@ public class ChunkManager {
 	static Point chunkDim = new Point(10, 10);
 	public static Rectangle viewRange = new Rectangle(0, 2, 5, 3);
 	Ticker tickerUtil;
+	int chunkCount = 0;
+	int cx = 0;
+	int cy = 0;
+	int chunkI = 0;
 
 	public void setup() {
 		tickerUtil = new Ticker();
-		int chunkCount = chunkDim.x * chunkDim.y;
-		int chunkI = 0;
-		for (int x = 0; x < chunkDim.x; x++) {
-			for (int y = 0; y < chunkDim.y; y++) {
-				Chunk chunk = new Chunk(x, y);
-				chunk.setup();
-				chunks.put(new Point(x, y), chunk);
-				System.out.println("Complete Chunk:" + (chunkI) + " of " + chunkCount);
-				chunkI++;
-			}
-		}
-		// future world output
-		if (true == false) {
-			try {
 
-				BufferedImage tileset = ImageIO.read(new File("assets/textures/tileset.png"));
-				int pCount = (chunkDim.x * Chunk.size.width) * (chunkDim.y * Chunk.size.height);
-				int p = 0;
-				BufferedImage bi = new BufferedImage((chunkDim.x * Chunk.size.width * 64),
-						chunkDim.y * Chunk.size.height * 32, BufferedImage.TYPE_INT_RGB);
-				Graphics2D g = (Graphics2D) bi.getGraphics();
+		chunkCount = chunkDim.x * chunkDim.y;
 
-				for (int x = 0; x <= chunkDim.x; x++) {
-					for (int y = 0; y <= chunkDim.y; y++) {
-						Chunk chunk = chunks.get(new Point(x, y));
+		/*
+		 * for (int x = 0; x < chunkDim.x; x++) { for (int y = 0; y < chunkDim.y; y++) {
+		 * Chunk chunk = new Chunk(x, y); chunk.setup(); chunks.put(new Point(x, y),
+		 * chunk); System.out.println("Complete Chunk:" + (chunkI) + " of " +
+		 * chunkCount); chunkI++; } }
+		 */
 
-						if (chunk != null) {
-							for (int tx = 0; tx < Chunk.size.width; tx++) {
-								for (int ty = 0; ty < Chunk.size.height; ty++) {
-									Tile tile = chunk.tiles.get(new Point(tx, ty));
-
-									if (tile != null) {
-										/*
-										 * bi.setRGB((x * Chunk.size.width) + tx, (y * Chunk.size.height) + ty,
-										 * tile.getType().toColorInt());
-										 */
-										TextureType type = tile.getType();
-										System.out.println("Type:" + type + "=>" + ((int) type.x * 64) + ","
-												+ ((int) type.y * 64));
-										g.drawImage(
-												tileset.getSubimage((int) type.x * 64, (int) type.y * 64, (int) 64,
-														(int) 64),
-												(int) (tile.getPosition().x + ((chunkDim.x * Chunk.size.width * 64) / 2)
-														+ (64 * type.xOffset)),
-												(int) (tile.getPosition().y + (64 * type.yOffset)), null);
-										System.out.println("Complete Pixel:" + p + " of " + pCount);
-										p++;
-									}
-								}
-							}
-						}
-					}
-				}
-
-				for (int x = 0; x <= chunkDim.x; x++) {
-					for (int y = 0; y <= chunkDim.y; y++) {
-						Chunk chunk = chunks.get(new Point(x, y));
-
-						if (chunk != null) {
-							for (int tx = 0; tx < Chunk.size.width; tx++) {
-								for (int ty = 0; ty < Chunk.size.height; ty++) {
-									Object obj = chunk.objects.get(new Point(tx, ty));
-									if (obj != null) {
-										TextureType type = obj.getType();
-										if (!type.equals(TextureType.AIR)) {
-											g.drawImage(
-													tileset.getSubimage((int) (type.x * 64), (int) (type.y * 64),
-															(int) ((type.w * 64)), (int) ((type.h * 64))),
-													(int) (obj.getPosition().x
-															+ ((chunkDim.x * Chunk.size.width * 64) / 2)
-															+ (64 * type.xOffset)),
-													(int) (obj.getPosition().y + (64 * type.yOffset)), null);
-											System.out.println("Complete Pixel:" + type + "=>" + p + " of " + pCount);
-											p++;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				File outputfile = new File("saved0.png");
-				ImageIO.write(bi, "png", outputfile);
-				System.out.println("Saved!");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
+		Chunk chunk = new Chunk(cx, cy);
+		chunk.setup();
+		chunks.put(new Point(cx, cy), chunk);
+		chunkI++;
+		System.out.println("Complete Chunk:" + (chunkI) + " of " + chunkCount);
 	}
 
 	public int colorToInt(int r, int g, int b, int a) {
@@ -275,7 +206,27 @@ public class ChunkManager {
 				}
 			}
 		}
+		if (!chunksLoaded) {
+			if (cx < chunkDim.x - 1) {
+				cx++;
+			} else {
+				if (cy < chunkDim.y - 1) {
+					cy++;
+					cx = 0;
+				} else {
+					chunksLoaded = true;
+				}
+			}
+
+			Chunk chunk = new Chunk(cx, cy);
+			chunk.setup();
+			chunks.put(new Point(cx, cy), chunk);
+			chunkI++;
+			System.out.println("Complete Chunk:" + (chunkI) + " of " + chunkCount);
+		}
 	}
+
+	boolean chunksLoaded = false;
 
 	public void render() {
 		for (Chunk chunk : chunksInView) {
@@ -471,6 +422,22 @@ public class ChunkManager {
 		}
 
 		return tile;
+	}
+
+	public static LinkedList<Tile> getTiles(Point index) {
+		LinkedList<Tile> tiles = new LinkedList<Tile>();
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				tiles.addAll(chunk.getObjectsAtIndex(new Point(objX, objY), true));
+			}
+		}
+
+		return tiles;
 	}
 
 	public static boolean resourceInRange(Point index, Point resourceIndex) {
