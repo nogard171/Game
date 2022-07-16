@@ -105,7 +105,7 @@ public class TaskManager {
 				if (task.getType() == TaskType.WALK) {
 					ANode node = path.removeFirst();
 					Point playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
-					ChunkManager.setObjectAtIndex(playerIndex, TextureType.AIR);
+					ChunkManager.setPathAtIndex(playerIndex, TextureType.AIR);
 					ChunkManager.move(playerIndex, node.toPoint());
 					SkillManager.addExperienceByResource(TextureType.GRASS, 1);
 				}

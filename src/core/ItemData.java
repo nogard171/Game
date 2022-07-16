@@ -14,7 +14,7 @@ public class ItemData {
 	public LinkedList<String> attr = new LinkedList<String>();
 
 	public String getDescription() {
-		
+
 		return description;
 	}
 
@@ -34,6 +34,7 @@ public class ItemData {
 		type = newType;
 		description = newDescription;
 	}
+
 	public ItemData(ItemType newType, String newDescription, int newValue) {
 		type = newType;
 		description = newDescription;
@@ -55,5 +56,16 @@ public class ItemData {
 		Item newItem = new Item(type);
 		newItem.setTexture(texture);
 		return newItem;
+	}
+
+	public boolean hasAttr(String attrName) {
+		boolean hasAttr = false;
+		for (String attr : attr) {
+			if (attr.toLowerCase().equals(attrName.toLowerCase())) {
+				hasAttr = true;
+				break;
+			}
+		}
+		return hasAttr;
 	}
 }

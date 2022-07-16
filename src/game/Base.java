@@ -112,8 +112,8 @@ public class Base {
 		}
 
 		FPS.updateFPS();
-		int forceX = 0;
-		int forceY = 0;
+		float forceX = 0;
+		float forceY = 0;
 
 		if (Input.isKeyDown(Keyboard.KEY_W)) {
 			forceY = -1;
@@ -130,11 +130,29 @@ public class Base {
 		if (Input.isKeyDown(Keyboard.KEY_F1)) {
 			ResourceDatabase.load();
 		}
+		moveDown = Input.isMouseDown(2);
+		if (offsetPosition == null && moveDown) {
+			offsetPosition = new Point((int) (Input.getMousePoint().x + view.x),
+					(int) (Input.getMousePoint().y + view.y));
+		} else if (!moveDown) {
+			offsetPosition = null;
+		}
+		if (offsetPosition != null) {
+			forceX = Input.getMousePoint().x - offsetPosition.x;
+			forceY = Input.getMousePoint().y - offsetPosition.y;
+			view.x = -forceX;
+			view.y = -forceY;
+		}
+		System.out.println("Middle" + offsetPosition);
+
 		// view.x = x;
 		// view.y = y;
-		view.move(forceX, forceY);
+		// view.move(forceX, forceY);
 		// System.out.println("NEW Index: " + playerIndex);
 	}
+
+	boolean moveDown = false;
+	Point offsetPosition;
 
 	public void render() {
 		Window.render();
@@ -149,16 +167,16 @@ public class Base {
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-view.x, -view.y, 0);
-		 chunkMgr.render();
+		chunkMgr.render();
 		GL11.glPopMatrix();
 
-		//GL11.glBegin(GL11.GL_QUADS);
-		//Renderer.renderTexture(TextureType.TREE, 200, 200, 64, 64);
-		//GL11.glEnd();
+		// GL11.glBegin(GL11.GL_QUADS);
+		// Renderer.renderTexture(TextureType.TREE, 200, 200, 64, 64);
+		// GL11.glEnd();
 
 		uiMgr.render();
 
-		Vector2f pos = new Vector2f(Window.width-250, 0);
+		Vector2f pos = new Vector2f(Window.width - 250, 0);
 
 		Renderer.renderQuad(new Rectangle((int) pos.x, (int) pos.y, 250, 80), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(pos.x, pos.y), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);

@@ -98,6 +98,12 @@ public class GameDatabase {
 
 		newItem = new ItemData(ItemType.HOE, "A Hoe used for tiling.", 20);
 		newItem.setTexture(UITextureType.HOE_ITEM);
+		newItem.attr.add("HOE");
+		items.put(newItem.type, newItem);
+		
+		newItem = new ItemData(ItemType.PICKAXE, "A Pickaxe used for mining ore/rocks.", 20);
+		newItem.setTexture(UITextureType.PICKAXE_ITEM);
+		newItem.attr.add("PICKAXE");
 		items.put(newItem.type, newItem);
 
 		newItem = new ItemData(ItemType.STICK, "A few sticks.", 20);
@@ -106,18 +112,18 @@ public class GameDatabase {
 	}
 
 	public static void loadSkills() {
-		SkillData fishingSkill = new SkillData(SkillName.FISHING, "Fish for many diferent fish.");
+		SkillData fishingSkill = new SkillData(SkillName.FISHING, "Fish for many diferent fish.", UITextureType.FISH_ITEM,"FISHING_TOOL");
 		fishingSkill.resourceLevels.put(TextureType.FISHING_SPOT, 5);
 		skillData.put(fishingSkill.name, fishingSkill);
 
 		SkillData woodCuttingSkill = new SkillData(SkillName.WOODCUTTING,
-				"Wood cutting allow for the gathering of wood.", UITextureType.WOODCUTTING_SKILL_ICON);
+				"Wood cutting allow for the gathering of wood.", UITextureType.WOODCUTTING_SKILL_ICON,"AXE");
 		woodCuttingSkill.resourceLevels.put(TextureType.TREE, 0);
 		woodCuttingSkill.resourceLevels.put(TextureType.MAPLE_TREE, 2);
 		skillData.put(woodCuttingSkill.name, woodCuttingSkill);
 
 		SkillData miningSkill = new SkillData(SkillName.MINING, "Wood cutting allow for the gathering of wood.",
-				UITextureType.MINING_SKILL_ICON);
+				UITextureType.MINING_SKILL_ICON,"PICKAXE");
 		miningSkill.resourceLevels.put(TextureType.ROCK_ORE, 0);
 		miningSkill.resourceLevels.put(TextureType.COPPER_ORE, 3);
 		miningSkill.resourceLevels.put(TextureType.TIN_ORE, 3);

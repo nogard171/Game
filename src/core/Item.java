@@ -41,4 +41,5 @@ public class Item {
 	public void setTexture(UITextureType texture) {
 		this.texture = texture;
 	}
+
 }

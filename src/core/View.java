@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class View {
-	public int x = 0;
-	public int y = 0;
+	public float x = 0;
+	public float y = 0;
 	public int w = 0;
 	public int h = 0;
 	public boolean moved = false;
@@ -17,7 +17,7 @@ public class View {
 		h = newH;
 	}
 
-	public void move(int forceX, int forceY) {
+	public void move(float forceX, float forceY) {
 		if (forceX != 0 || forceY != 0) {
 			moved = true;
 		}
@@ -36,6 +36,6 @@ public class View {
 
 	public Rectangle getRect() {
 		// TODO Auto-generated method stub
-		return new Rectangle(x,y,w,h);
+		return new Rectangle((int) x, (int) y, w, h);
 	}
 }

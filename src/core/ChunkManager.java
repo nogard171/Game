@@ -52,7 +52,6 @@ public class ChunkManager {
 		chunk.setup();
 		chunks.put(new Point(cx, cy), chunk);
 		chunkI++;
-		System.out.println("Complete Chunk:" + (chunkI) + " of " + chunkCount);
 	}
 
 	public int colorToInt(int r, int g, int b, int a) {
@@ -183,7 +182,7 @@ public class ChunkManager {
 	public void update() {
 		tickerUtil.poll(200);
 		chunksInView.clear();
-		Point center = new Point(Base.view.x / Chunk.size.width, Base.view.y / Chunk.size.height);// UIManager.playerIndex;
+		Point center = new Point((int) Base.view.x / Chunk.size.width, (int) Base.view.y / Chunk.size.height);// UIManager.playerIndex;
 		int cartX = center.x;
 		int cartY = center.y;
 		int isoX = (cartX / 2 + (cartY));
@@ -222,7 +221,6 @@ public class ChunkManager {
 			chunk.setup();
 			chunks.put(new Point(cx, cy), chunk);
 			chunkI++;
-			System.out.println("Complete Chunk:" + (chunkI) + " of " + chunkCount);
 		}
 	}
 
@@ -296,6 +294,24 @@ public class ChunkManager {
 				Tile obj = chunk.tiles.get(new Point(objX, objY));
 				if (obj != null) {
 					chunk.tiles.put(new Point(objX, objY), new Tile(type));
+					chunk.build();
+
+				}
+			}
+		}
+	}
+
+	public static void setPathAtIndex(Point index, TextureType type) {
+		if (index != null) {
+			int chunkX = (int) (index.x / Chunk.size.width);
+			int chunkY = (int) (index.y / Chunk.size.height);
+			Chunk chunk = ChunkManager.chunks.get(new Point(chunkX, chunkY));
+			if (chunk != null) {
+				int objX = (int) (index.x % 16);
+				int objY = (int) (index.y % 16);
+				Object obj = chunk.objects.get(new Point(objX, objY));
+				if (obj != null) {
+					chunk.pathMap.put(new Point(objX, objY), new Object(type));
 					chunk.build();
 
 				}

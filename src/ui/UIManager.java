@@ -59,8 +59,8 @@ public class UIManager {
 		hud.setup();
 
 		Inventory.setup();
-		Inventory.addItem(ItemType.COINS, 9);
-		Inventory.addItem(ItemType.HOE, 1);
+		// Inventory.addItem(ItemType.COINS, 9);
+		// Inventory.addItem(ItemType.PICKAXE, 1);
 
 		Skill test = new Skill();
 		test.skill = SkillName.WOODCUTTING;
@@ -86,14 +86,6 @@ public class UIManager {
 
 		PlayerDatabase.skills.add(test);
 
-		/*
-		 * Inventory.addItem(ItemType.ROCK); Inventory.addItem(ItemType.ROCK);
-		 * Inventory.addItem(ItemType.ROCK);
-		 * 
-		 * 
-		 * 
-		 * Inventory.printItems();
-		 */
 		menu.add(new UIButton(UITextureType.INVENTORY_ICON, new Rectangle(0, 0, 32, 32), new UIAction() {
 			@Override
 			public void click(UIButton btn) {
@@ -124,8 +116,8 @@ public class UIManager {
 	public static Point hoverIndex;
 
 	private void pollHover() {
-		int cartX = (Input.getMousePoint().x) + Base.view.x;
-		int cartY = (Input.getMousePoint().y) + Base.view.y;
+		int cartX = (Input.getMousePoint().x) + (int) Base.view.x;
+		int cartY = (Input.getMousePoint().y) + (int) Base.view.y;
 		int isoX = (cartX / 2 + (cartY));
 		int isoY = (cartY - cartX / 2);
 
@@ -159,7 +151,7 @@ public class UIManager {
 		boolean cursorInRange = false;
 		boolean defaultCursor = false;
 		// change hover to hover the object, instead of the tile
-		if (hoverIndex != null&&playerIndex!=null) {
+		if (hoverIndex != null && playerIndex != null) {
 			int range = 100;
 			cursorInRange = (hoverIndex.x > playerIndex.x - range && hoverIndex.x < playerIndex.x + range
 					&& hoverIndex.y > playerIndex.y - range && hoverIndex.y < playerIndex.y + range);
@@ -318,11 +310,23 @@ public class UIManager {
 						if (level != null) {
 							Skill skill = SkillManager.getSkillByName(skillName);
 							if (skill != null) {
-								if (skill.level >= level) {
-									actionable = true;
+								boolean hasRequiredItem = false;
+								if (dat.requiredItem != "" && dat.requiredItem != null) {
+									hasRequiredItem = Inventory.hasItemType(dat.requiredItem);
 								} else {
-									UIChat.addMessage("System:You need to be Level " + level + " in "
-											+ skillName.toUserString() + " interact with that object.");
+									hasRequiredItem = true;
+								}
+
+								if (hasRequiredItem) {
+									if (skill.level >= level) {
+										actionable = true;
+									} else {
+										UIChat.addMessage("System:You need to be Level " + level + " in "
+												+ skillName.toUserString() + " to interact with that object.");
+									}
+								} else {
+									UIChat.addMessage("System:You need to has Item " + dat.requiredItem
+											+ " in your inventory to interact with that object.");
 								}
 							}
 						}
@@ -342,11 +346,11 @@ public class UIManager {
 						for (int i = 0; i < path.size() - 2; i++) {
 							ANode node = path.get(i);
 							if (node != null) {
-								ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_DURING);
+								ChunkManager.setPathAtIndex(node.toPoint(), TextureType.PATH_DURING);
 							}
 						}
 						ANode node = path.get(path.size() - 2);
-						ChunkManager.setObjectAtIndex(node.toPoint(), TextureType.PATH_FINISH);
+						ChunkManager.setPathAtIndex(node.toPoint(), TextureType.PATH_FINISH);
 					}
 					if (tiles.size() == 1) {
 						if (useItem != null) {

@@ -10,7 +10,8 @@ public class SkillData {
 	public String description;
 	public boolean unlocked = false;
 	public UITextureType type;
-	public HashMap<TextureType,Integer> resourceLevels = new HashMap<TextureType,Integer>();
+	public HashMap<TextureType, Integer> resourceLevels = new HashMap<TextureType, Integer>();
+	public String requiredItem;
 
 	public SkillData() {
 	}
@@ -28,5 +29,12 @@ public class SkillData {
 		this.name = newName;
 		this.description = newDescription;
 		this.type = newType;
+	}
+
+	public SkillData(SkillName newName, String newDescription, UITextureType newType, String newRequiredItem) {
+		this.name = newName;
+		this.description = newDescription;
+		this.type = newType;
+		this.requiredItem = newRequiredItem;
 	}
 }

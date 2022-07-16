@@ -26,6 +26,7 @@ public class Chunk {
 	Point index;
 
 	public HashMap<Point, Tile> tiles = new HashMap<Point, Tile>();
+	public HashMap<Point, Tile> pathMap = new HashMap<Point, Tile>();
 	public HashMap<Point, GroundItem> droppedItems = new HashMap<Point, GroundItem>();
 	HashMap<Point, LinkedList<GroundItem>> newdroppedItems = new HashMap<Point, LinkedList<GroundItem>>();
 	public HashMap<Point, Object> objects = new HashMap<Point, Object>();
@@ -199,7 +200,7 @@ public class Chunk {
 						}
 					}
 					if (res.getBaseType().equals(TextureType.AIR) && res.getType().equals(TextureType.AIR)) {
-						t = 0 + (int) (Math.random() * ((5 - 0) + 1));
+						t = 0 + (int) (Math.random() * ((20 - 0) + 1));
 						if (t == 1) {
 							GroundItem droppedItem = new GroundItem(TextureType.ITEM);
 							droppedItem.count = 1;
@@ -262,6 +263,11 @@ public class Chunk {
 				if (tile != null) {
 					tile.setPosition(position);
 					Renderer.renderTexture(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
+				}
+				Tile pathTile = pathMap.get(tempIndex);
+				if (pathTile != null) {
+					pathTile.setPosition(position);
+					Renderer.renderTexture(pathTile.getType(), (int) pathTile.getPosition().x, (int) pathTile.getPosition().y);
 				}
 			}
 		}

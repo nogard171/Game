@@ -8,6 +8,7 @@ import core.ChunkManager;
 import core.GameDatabase;
 import core.GroundItem;
 import core.Item;
+import core.ItemData;
 import core.ItemType;
 import core.TextureType;
 import game.PlayerDatabase;
@@ -26,6 +27,20 @@ public class Inventory {
 			ItemSlot slot = new ItemSlot();
 			PlayerDatabase.itemSlots.add(slot);
 		}
+	}
+
+	public static boolean hasItemType(String itemType) {
+		boolean hasItem = false;
+		for (ItemSlot slot : PlayerDatabase.itemSlots) {
+			if (slot.item != null) {
+				ItemData dat = GameDatabase.items.get(slot.item.getType());
+				hasItem = dat.hasAttr(itemType);
+				if (hasItem) {
+					break;
+				}
+			}
+		}
+		return hasItem;
 	}
 
 	public static boolean addItem(ItemType type) {
