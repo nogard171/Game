@@ -114,19 +114,6 @@ public class Base {
 		FPS.updateFPS();
 		float forceX = 0;
 		float forceY = 0;
-
-		if (Input.isKeyDown(Keyboard.KEY_W)) {
-			forceY = -1;
-		}
-		if (Input.isKeyDown(Keyboard.KEY_S)) {
-			forceY = 1;
-		}
-		if (Input.isKeyDown(Keyboard.KEY_A)) {
-			forceX = -1;
-		}
-		if (Input.isKeyDown(Keyboard.KEY_D)) {
-			forceX = 1;
-		}
 		if (Input.isKeyDown(Keyboard.KEY_F1)) {
 			ResourceDatabase.load();
 		}
@@ -143,12 +130,6 @@ public class Base {
 			view.x = -forceX;
 			view.y = -forceY;
 		}
-		System.out.println("Middle" + offsetPosition);
-
-		// view.x = x;
-		// view.y = y;
-		// view.move(forceX, forceY);
-		// System.out.println("NEW Index: " + playerIndex);
 	}
 
 	boolean moveDown = false;
@@ -176,7 +157,7 @@ public class Base {
 
 		uiMgr.render();
 
-		Vector2f pos = new Vector2f(Window.width - 250, 0);
+		Vector2f pos = new Vector2f(Window.width - 350, 0);
 
 		Renderer.renderQuad(new Rectangle((int) pos.x, (int) pos.y, 250, 80), new Color(0, 0, 0, 0.5f));
 		Renderer.renderText(new Vector2f(pos.x, pos.y), "FPS: " + FPS.getDelta() + "/" + FPS.getFPS(), 12, Color.white);

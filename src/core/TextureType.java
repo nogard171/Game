@@ -33,7 +33,8 @@ public enum TextureType implements Comparable<TextureType> {
 	//PATH_DURING(0, 0.75F * 2, 1, 0.75f, 0, 0.1f), 
 	//PATH_FINISH(0, 0.75F * 3, 1, 0.75f, 0, 0.1f)
 
-	WOOD_WALL_E(322,0,36,78,0,-60);
+	WOOD_WALL_E(322,0,36,78,0,-60),
+	CRAFTING_TABLE(0,64, 64, 64);
 
 	float x;
 	float y;

@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -26,23 +25,17 @@ import game.TaskManager;
 import utils.FPS;
 import utils.Ticker;
 
-public class UIInventory {
+public class UIEquipment {
 	private int id = -1;
 	public static Vector2f position = new Vector2f(0, 0);
 	public static boolean updateID = false;
-	// public static ItemSlot UIManager.dragSlot;
 	private static Point slotMargin = new Point(37, 37);
 
-	public Rectangle eatBound = null;
-	public ItemSlot eatSlot;
-	private Ticker eatTicker;
-	public Rectangle dropBound = null;
 	public Ticker hoverTicker;
 
 	public static boolean show = false;
 
 	public void setup() {
-		eatTicker = new Ticker();
 		hoverTicker = new Ticker();
 	}
 
@@ -61,21 +54,19 @@ public class UIInventory {
 	}
 
 	public void build() {
-		slotMargin = new Point(45, 42);
 		id = GL11.glGenLists(1);
-		int slotCount = Inventory.getSlotCount();
-		int slotWidth = Inventory.getSlotWidth();
+		int slotWidth = 3;
 
 		GL11.glNewList(id, GL11.GL_COMPILE_AND_EXECUTE);
 
 		GL11.glBegin(GL11.GL_QUADS);
-		UIPanel.renderPanel((int) position.x, (int) position.y, slotWidth + 3,
-				(int) Math.ceil((float) slotCount / (float) slotWidth) + 2);
+		UIPanel.renderPanel((int) position.x, (int) position.y, slotWidth + 3, (int) (slotWidth + 2));
 
 		int x = 0;
 		int y = 0;
-		for (int index = 0; index < slotCount; index++) {
-			ItemSlot slot = PlayerDatabase.itemSlots.get(index);
+		int[] data = { 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0 };
+		for (int index = 0; index < data.length; index++) {
+			ItemSlot slot = PlayerDatabase.equipmentSlots.get(index);
 			if (slot != null) {
 
 				Item item = slot.item;
@@ -96,55 +87,6 @@ public class UIInventory {
 			}
 		}
 
-		Point pos = new Point((int) position.x + 5 + (5 * slotMargin.x) - 10,
-				(int) position.y + 5 + (0 * slotMargin.y));
-		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y, 32, 32);
-		Renderer.renderUITexture(UITextureType.MOUTH_ICON, pos.x, pos.y, 32, 32);
-
-		eatBound = new Rectangle(pos.x, pos.y, 32, 32);
-
-		Renderer.renderUITexture(UITextureType.ITEM_BACK, pos.x, pos.y + (42 * 5), 32, 32);
-		Renderer.renderUITexture(UITextureType.DROP_ICON, pos.x, pos.y + (42 * 5), 32, 32);
-
-		dropBound = new Rectangle(pos.x, pos.y + (42 * 5), 32, 32);
-
-		GL11.glEnd();
-
-		x = 0;
-		y = 0;
-		for (int index = 0; index < slotCount; index++) {
-			ItemSlot slot = PlayerDatabase.itemSlots.get(index);
-			if (slot != null) {
-
-				Item item = slot.item;
-
-				if (item != null) {
-					if (slot.count > 1) {
-						DecimalFormat df = new DecimalFormat("#.#");
-						df.format(55.544545);
-						String s = (slot.count > 1000000000000000l ? "?"
-								: (slot.count > 1000000000000l ? df.format(slot.count / 1000000000000l) + "T"
-										: (slot.count > 1000000000 ? df.format(slot.count / 1000000000) + "B"
-												: (slot.count > 1000000 ? df.format(slot.count / 1000000) + "M"
-														: (slot.count > 1000 ? df.format(slot.count / 1000) + "K"
-																: slot.count + "")))));
-
-						int l = Renderer.getTextWidth(s, 12);
-						pos = new Point((int) position.x + 36 - (l) + (x * slotMargin.x),
-								(int) position.y + 32 + (y * slotMargin.y));
-
-						Renderer.renderText(new Vector2f(pos.x, pos.y), s, 12, Color.white);
-					}
-				}
-				if (x >= slotWidth - 1) {
-					y++;
-					x = 0;
-				} else {
-					x++;
-				}
-			}
-		}
-
 		GL11.glEndList();
 
 		updateID = false;
@@ -153,8 +95,6 @@ public class UIInventory {
 	int slotIndexHovered = -1;
 	int previousSlotIndexHovered = -2;
 	Point slotPointHovered = new Point(-1, -1);
-
-	ItemSlot contextSlot;
 
 	public void update() {
 		if (Window.wasResized) {
@@ -197,7 +137,7 @@ public class UIInventory {
 				}
 			}
 
-			if (Input.isMousePressed(0) && slotIndexHovered > -1 && !enteredContext) {
+			if (Input.isMousePressed(0) && slotIndexHovered > -1) {
 				if (slotIndexHovered < Inventory.getSlotCount()) {
 					ItemSlot tempSlot = PlayerDatabase.itemSlots.remove(slotIndexHovered);
 					System.out.println("Index: " + slotIndexHovered + "=>" + tempSlot.item);
@@ -238,46 +178,16 @@ public class UIInventory {
 
 				}
 				if (UIManager.dragSlot != null) {
-					// System.out.println("test: " + UIManager.dragSlot.item);
+					// System.out.println("test: " + dragSlot.item);
 				}
 			}
-
-			if (Input.isMousePressed(0)) {
-				if (UIManager.dragSlot != null) {
-					if (UIManager.dragSlot.item != null) {
-						if (eatBound.contains(Input.getMousePoint())) {
-							ItemData dat = GameDatabase.getItemData(UIManager.dragSlot.item.getType());
-							if (dat != null) {
-								if (dat.attr.contains("EDIBLE")) {
-									System.out.println("test");
-									if (eatSlot == null) {
-										eatSlot = new ItemSlot();
-									}
-									if (eatSlot.item == null) {
-										System.out.println("Eat:" + UIManager.dragSlot.item.getType());
-										eatSlot = new ItemSlot();
-										eatSlot.item = UIManager.dragSlot.item;
-										eatSlot.count = UIManager.dragSlot.count;
-
-										UIManager.dragSlot = null;
-									}
-
-								}
-							}
-						}
-						if (dropBound.contains(Input.getMousePoint())) {
-							GroundItem droppedItem = new GroundItem(TextureType.ITEM);
-							droppedItem.count = UIManager.dragSlot.count;
-							droppedItem.item = UIManager.dragSlot.item.getType();
-							droppedItem.type = UIManager.dragSlot.item.getTexture();
-							ChunkManager.dropItem(droppedItem);
-
-							UIManager.dragSlot.item = null;
-							UIManager.dragSlot = null;
-						}
-					}
-				}
+			if (slotIndexHovered != previousSlotIndexHovered) {
+				showContext = false;
 			}
+			if (Input.isMousePressed(1) && slotPointHovered != null) {
+				showContext = true;
+			}
+
 		}
 	}
 
@@ -292,7 +202,7 @@ public class UIInventory {
 				GL11.glCallList(id);
 			}
 
-			if (slotIndexHovered != -1 && !enteredContext) {
+			if (slotIndexHovered != -1) {
 				Point tempPos = new Point((int) position.x + 6 + (slotPointHovered.x * slotMargin.x),
 						(int) position.y + 6 + (slotPointHovered.y * slotMargin.y));
 
@@ -347,130 +257,9 @@ public class UIInventory {
 				}
 			}
 
-			if (eatSlot != null) {
-				if (eatSlot.item != null) {
-					eatTicker.poll(500);
-					Renderer.bindTexture(ResourceDatabase.uiTexture);
-					GL11.glBegin(GL11.GL_QUADS);
-					Renderer.renderUITexture(eatSlot.item.getTexture(), eatBound.x, eatBound.y, 32, 32, eatCount, 0);
-					GL11.glEnd();
-					if (eatTicker.ticked()) {
-						eatCount--;
-					}
-					if (eatCount <= 0) {
-						eatCount = 32;
-						eatSlot.item = null;
-					}
-				}
-			}
-		}
-
-		if (slotIndexHovered > -1) {
-			if (Input.isMousePressed(1) && !showContext) {
-				buildContext();
-				showContext = true;
-			}
-			if (contextStrings.size() <= 0) {
-				showContext = false;
-			}
-		}
-
-		if (showContext) {
-			if (contextBounds != null) {
-				Renderer.renderQuad(contextBounds, new Color(0, 0, 0, 0.5f));
-				int y = 0;
-				for (String s : contextStrings) {
-					Renderer.renderText(contextBounds.x + 5, contextBounds.y + (y * 14) - 0, s, 12, Color.white);
-					y++;
-				}
-			}
-		}
-		if (showContext) {
-			if (contextBounds != null) {
-				if (contextBounds.contains(Input.mousePoint)) {
-					int temp = (Input.mousePoint.y - contextBounds.y) / 12;
-					if (temp >= 0 && temp < contextStrings.size()) {
-						String value = contextStrings.get(temp);
-						if (Input.isMousePressed(0)) {
-
-							System.out.println("Temp:" + value);
-							if (value.toLowerCase().equals("drop")) {
-								GroundItem droppedItem = new GroundItem(TextureType.ITEM);
-								droppedItem.count = contextItemSlot.count;
-								droppedItem.item = contextItemSlot.item.getType();
-								droppedItem.type = contextItemSlot.item.getTexture();
-								ChunkManager.dropItem(droppedItem);
-								PlayerDatabase.itemSlots.set(contextIndex, new ItemSlot());
-								this.updateID = true;
-							}
-						}
-						// Renderer.renderQuad(contextBounds, new Color(1, 0, 0, 0.5f));
-					}
-					enteredContext = true;
-				} else if (enteredContext) {
-					enteredContext = false;
-					showContext = false;
-				}
-			}
-		} else {
-			enteredContext = false;
-			contextIndex = -1;
-			contextItemSlot = null;
 		}
 	}
 
-	ItemSlot contextItemSlot;
-	boolean enteredContext = false;
-	int contextIndex = -1;
-
-	Rectangle contextBounds;
-
-	LinkedList<String> contextStrings = new LinkedList<String>();
-
-	public void buildContext() {
-		contextItemSlot = null;
-		contextStrings.clear();
-		Point pos = new Point((int) position.x + (slotPointHovered.x * slotMargin.x),
-				(int) position.y + 32 + (slotPointHovered.y * slotMargin.y));
-		contextIndex = slotIndexHovered;
-
-		ItemSlot slot = PlayerDatabase.itemSlots.get(contextIndex);
-
-		System.out.println("Slot" + slot.item);
-		Item item = null;
-		if (slot != null) {
-			if (slot.item != null) {
-				item = slot.item;
-				if (item != null) {
-					buildList(slot);
-				}
-				contextBounds = new Rectangle(pos.x, pos.y, 60, (contextStrings.size() * 15));
-				showContext = true;
-			}
-		}
-	}
-
-	public void buildList(ItemSlot slot) {
-		Item item = slot.item;
-		switch (item.texture) {
-		case FISH_ITEM:
-			contextStrings.add("Eat");
-			break;
-		case HOE_ITEM:
-			contextStrings.add("Use");
-			break;
-		case LOG_ITEM:
-			contextStrings.add("Light");
-			break;
-		default:
-		}
-		contextStrings.add("Drop");
-		contextStrings.add("Examine");
-		contextStrings.add("Cancel");
-		contextItemSlot = slot;
-	}
-
-	int eatCount = 32;
 	boolean showContext = false;
 
 	public void destroy() {

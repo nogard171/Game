@@ -64,8 +64,8 @@ public class Renderer {
 					Vector2f textureVec = textureVectors[i];
 					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
 							(textureVec.y * height) / currentTexture.getImageHeight());
-					GL11.glVertex2f(
-							((vec.x) + x) + (((width * type.xOffset)) / width), ((vec.y) + y) + (((height * type.yOffset)) / height));
+					GL11.glVertex2f(((vec.x) + x) + (((width * type.xOffset)) / width),
+							((vec.y) + y) + (((height * type.yOffset)) / height));
 					i++;
 				}
 			}
@@ -81,15 +81,14 @@ public class Renderer {
 				Vector2f[] textureVectors = { new Vector2f(((type.x) / width), ((type.y) / height)),
 						new Vector2f(((type.x + type.w) / width), ((type.y) / height)),
 						new Vector2f(((type.x + type.w) / width), ((type.y + type.h) / height)),
-						new Vector2f(((type.x) / width), ((type.y + type.h) / height))
-				};
+						new Vector2f(((type.x) / width), ((type.y + type.h) / height)) };
 				int i = 0;
 				for (Vector2f vec : vectors) {
 					Vector2f textureVec = textureVectors[i];
 					GL11.glTexCoord2f((textureVec.x * width) / currentTexture.getImageWidth(),
 							(textureVec.y * height) / currentTexture.getImageHeight());
-					GL11.glVertex2f(
-							((vec.x) + x) + (((width * type.xOffset)) / width), ((vec.y) + y) + (((height * type.yOffset)) / height));
+					GL11.glVertex2f(((vec.x) + x) + (((width * type.xOffset)) / width),
+							((vec.y) + y) + (((height * type.yOffset)) / height));
 					i++;
 				}
 			}

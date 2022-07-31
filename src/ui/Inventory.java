@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -10,6 +11,7 @@ import core.GroundItem;
 import core.Item;
 import core.ItemData;
 import core.ItemType;
+import core.RecipeItemData;
 import core.TextureType;
 import game.PlayerDatabase;
 
@@ -136,5 +138,59 @@ public class Inventory {
 
 	public static int getSlotWidth() {
 		return slotWidth;
+	}
+
+	public static boolean hasRecipeItems(ArrayList<RecipeItemData> recipeItems) {
+		boolean hasItems = false;
+		int hasItemCount = 0;
+		for (RecipeItemData dat : recipeItems) {
+			int itemCount = 0;
+			for (int i = 0; i < slotCount; i++) {
+				ItemSlot slot = PlayerDatabase.itemSlots.get(i);
+				if (slot != null) {
+					if (slot.item != null) {
+						if (slot.item.texture.equals(dat.type)) {
+							if (slot.count > 0) {
+								itemCount += slot.count;
+							}
+						}
+					}
+				}
+			}
+			if (itemCount >= dat.amount) {
+				hasItemCount++;
+			}
+		}
+		if (hasItemCount >= recipeItems.size() - 1) {
+			hasItems = true;
+		}
+		return hasItems;
+	}
+
+	public static void removeRecipeItems(ArrayList<RecipeItemData> recipeItems) {
+		for (RecipeItemData dat : recipeItems) {
+			int removeCount = 0;
+			for (int i = 0; i < slotCount; i++) {
+				if (removeCount < dat.amount) {
+					ItemSlot slot = PlayerDatabase.itemSlots.get(i);
+					if (slot != null) {
+						if (slot.item != null) {
+							if (slot.item.texture.equals(dat.type)) {
+								System.out.println("Removed:" + slot.item.texture);
+								if (slot.count > 0) {
+									slot.count--;
+									removeCount++;
+								}
+								if (slot.count <= 0) {
+									slot.item = null;
+								}
+							}
+						}
+					}
+				} else {
+					break;
+				}
+			}
+		}
 	}
 }

@@ -40,10 +40,13 @@ public class UIManager {
 	UIInventory uiInventory;
 	UISkillWindow uiSkill;
 	UIChat uiChat;
+	UIEquipment uiEquipment;
+	UICrafting uiCrafting;
 
 	UIHud hud;
 
 	public static boolean uiHovered = false;
+	public static ItemSlot dragSlot;
 
 	LinkedList<UIButton> menu = new LinkedList<UIButton>();
 
@@ -54,13 +57,25 @@ public class UIManager {
 		uiSkill.setup();
 		uiChat = new UIChat();
 		uiChat.setup();
+		uiEquipment = new UIEquipment();
+		uiEquipment.setup();
+
+		uiCrafting = new UICrafting();
+		uiCrafting.setup();
 
 		hud = new UIHud();
 		hud.setup();
 
+		PlayerDatabase.knownRecipes.add("Pickaxe");
+
 		Inventory.setup();
-		// Inventory.addItem(ItemType.COINS, 9);
-		// Inventory.addItem(ItemType.PICKAXE, 1);
+		Inventory.addItem(ItemType.ROCK);
+		Inventory.addItem(ItemType.ROCK);
+		Inventory.addItem(ItemType.ROCK);
+		Inventory.addItem(ItemType.STICK);
+		Inventory.addItem(ItemType.STICK);
+		Inventory.addItem(ItemType.STICK);
+		Inventory.addItem(ItemType.HOE, 1);
 
 		Skill test = new Skill();
 		test.skill = SkillName.WOODCUTTING;
@@ -86,6 +101,12 @@ public class UIManager {
 
 		PlayerDatabase.skills.add(test);
 
+		test = new Skill();
+		test.skill = SkillName.FARMING;
+		test.level = 1;
+
+		PlayerDatabase.skills.add(test);
+
 		menu.add(new UIButton(UITextureType.INVENTORY_ICON, new Rectangle(0, 0, 32, 32), new UIAction() {
 			@Override
 			public void click(UIButton btn) {
@@ -100,6 +121,14 @@ public class UIManager {
 				uiInventory.show = false;
 				uiChat.show = false;
 				uiSkill.show = !uiSkill.show;
+			}
+		}));
+		menu.add(new UIButton(UITextureType.CHAT_ICON, new Rectangle(64, 0, 32, 32), new UIAction() {
+			@Override
+			public void click(UIButton btn) {
+				uiInventory.show = false;
+				uiSkill.show = false;
+				uiChat.show = !uiChat.show;
 			}
 		}));
 		menu.add(new UIButton(UITextureType.CHAT_ICON, new Rectangle(64, 0, 32, 32), new UIAction() {
@@ -134,6 +163,8 @@ public class UIManager {
 		uiInventory.update();
 		uiSkill.update();
 		uiChat.update();
+		// uiEquipment.update();
+		uiCrafting.update();
 		hud.update();
 
 		pollHover();
@@ -146,8 +177,8 @@ public class UIManager {
 			btnHovered = (!btnHovered ? btn.hovered : btnHovered);
 		}
 
-		uiHovered = (UIInventory.isPanelHovered() || UISkillWindow.isPanelHovered() || UIChat.isPanelHovered()
-				|| btnHovered ? true : false);
+		uiHovered = (UIInventory.isPanelHovered() || UISkillWindow.isPanelHovered() || UICrafting.isPanelHovered()
+				|| UIChat.isPanelHovered() || btnHovered ? true : false);
 		boolean cursorInRange = false;
 		boolean defaultCursor = false;
 		// change hover to hover the object, instead of the tile
@@ -162,9 +193,9 @@ public class UIManager {
 					playerIndex = ChunkManager.getIndexByType(TextureType.CHARACTER);
 				}
 				boolean useHoe = false;
-				if (UIInventory.dragSlot != null) {
-					if (UIInventory.dragSlot.item != null) {
-						if (UIInventory.dragSlot.item.getType().equals(ItemType.HOE)) {
+				if (dragSlot != null) {
+					if (dragSlot.item != null) {
+						if (dragSlot.item.getType().equals(ItemType.HOE)) {
 							useHoe = true;
 						}
 					}
@@ -293,8 +324,8 @@ public class UIManager {
 
 	private void processAction() {
 		Item useItem = null;
-		if (UIInventory.dragSlot != null) {
-			useItem = UIInventory.dragSlot.item;
+		if (dragSlot != null) {
+			useItem = dragSlot.item;
 		}
 
 		LinkedList<Tile> tiles = ChunkManager.getTiles(hoverIndex);
@@ -353,12 +384,31 @@ public class UIManager {
 						ChunkManager.setPathAtIndex(node.toPoint(), TextureType.PATH_FINISH);
 					}
 					if (tiles.size() == 1) {
+						Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
 						if (useItem != null) {
-							System.out.println("Use Item");
-						} else {
-							Task move = new Task(TaskType.WALK, path.getFirst(), path, 1000);
-							TaskManager.addTask(move);
+							Tile topTile = tiles.removeFirst();
+							ANode actionIndex = path.removeLast();
+							SkillName skillName = SkillManager.getSkillByTypeAndItem(topTile.getBaseType(),
+									useItem.texture);
+							SkillData dat = GameDatabase.skillData.get(skillName);
+							if (dat != null) {
+								if (dat.resourceLevels.containsKey(topTile.getBaseType())) {
+									Integer level = dat.resourceLevels.get(topTile.getBaseType());
+									if (level != null) {
+										Skill skill = SkillManager.getSkillByName(skillName);
+										if (skill != null) {
+											if (skill.level >= level) {
+												if (skillName.equals(SkillName.FARMING)) {
+													Task search = new Task(TaskType.TILL, actionIndex);
+													move.addFollowUp(search);
+												}
+											}
+										}
+									}
+								}
+							}
 						}
+						TaskManager.addTask(move);
 					} else {
 						System.out.println("Walk: " + path.size());
 						if (tiles.size() > 1) {
@@ -435,7 +485,8 @@ public class UIManager {
 		uiInventory.render();
 		uiSkill.render();
 		uiChat.render();
-
+		// uiEquipment.render();
+		uiCrafting.render();
 		hud.render();
 
 		Renderer.bindTexture(ResourceDatabase.uiTexture);

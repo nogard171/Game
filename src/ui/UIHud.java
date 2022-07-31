@@ -8,6 +8,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 
 import core.Renderer;
+import core.ResourceDatabase;
+import core.Window;
 import game.PlayerDatabase;
 
 public class UIHud {

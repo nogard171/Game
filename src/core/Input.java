@@ -56,25 +56,22 @@ public class Input {
 			buttonCount[b] = (buttonDown[b] == true ? 1 : 0);
 			buttonDown[b] = Mouse.isButtonDown(buttons[b]);
 		}
-		
-			for (int k = 0; k < 256; k++) {
-				keysCount[k] = (keysDown[k] == true ? 1 : 0);
-				keysDown[k] = Keyboard.isKeyDown(k);
-			}
+
+		for (int k = 0; k < 256; k++) {
+			keysCount[k] = (keysDown[k] == true ? 1 : 0);
+			keysDown[k] = Keyboard.isKeyDown(k);
+		}
 	}
 
 	public static boolean isKeyPressed(int index) {
-		boolean isPressed = 
-				(UIChat.isAllowedKeyboard()
-						?(keysDown[index] == true && keysCount[index] == 0 
-						? true 
-								: false)
-								:false);
+		boolean isPressed = (UIChat.isAllowedKeyboard()
+				? (keysDown[index] == true && keysCount[index] == 0 ? true : false)
+				: false);
 		return isPressed;
 	}
 
 	public static boolean isKeyDown(int index) {
-		return (UIChat.isAllowedKeyboard()?keysDown[index]:false);
+		return (UIChat.isAllowedKeyboard() ? keysDown[index] : false);
 	}
 
 	public static boolean isMousePressed(int index) {
@@ -97,5 +94,9 @@ public class Input {
 			previousMousePoint = mousePoint;
 		}
 		return mousePoint;
+	}
+
+	public static int getMouseWheel() {
+		return Mouse.getDWheel();
 	}
 }

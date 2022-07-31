@@ -1,5 +1,6 @@
 package ui;
 
+import core.GameDatabase;
 import core.TaskType;
 import core.TextureType;
 import game.PlayerDatabase;
@@ -37,6 +38,23 @@ public class SkillManager {
 			break;
 		default:
 			skill = SkillName.AGILITY;
+		}
+		return skill;
+	} 
+
+	public static SkillName getSkillByTypeAndItem(TextureType type, UITextureType itemType) {
+		SkillName skill = SkillName.NONE;
+		for (SkillData dat : GameDatabase.skillData.values()) {
+			System.out.println("test" + dat.requiredItem + "/" + itemType);
+			if (dat.requiredItem != null) {
+				if (dat.requiredItem.toLowerCase().equals(itemType.toString().toLowerCase())) {
+					Integer level = dat.resourceLevels.get(type);
+					if (level != null) {
+						skill = dat.name;
+						break;
+					}
+				}
+			}
 		}
 		return skill;
 	}

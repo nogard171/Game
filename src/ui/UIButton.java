@@ -20,14 +20,15 @@ public class UIButton {
 	}
 
 	public void poll() {
-		this.hovered = this.bounds.contains(Input.mousePoint);
-		this.clicked = (this.hovered && Input.isMousePressed(0) ? true : false);
+		if (Input.mousePoint != null) {
+			this.hovered = this.bounds.contains(Input.mousePoint);
+			this.clicked = (this.hovered && Input.isMousePressed(0) ? true : false);
 
-		if (clicked) {
-			if (action != null) {
-				action.click(this);
+			if (clicked) {
+				if (action != null) {
+					action.click(this);
+				}
 			}
 		}
-
 	}
 }
