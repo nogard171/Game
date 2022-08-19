@@ -48,10 +48,10 @@ public class UICrafting {
 							if (has) {
 								ItemType type = ItemType.valueOf(recipe.outputItem.toUpperCase());
 								if (type != null) {
-									System.out.println("Type:" + type);
 									Inventory.removeRecipeItems(recipe.recipeItems);
-
-									Inventory.addItem(type);
+									for (int c = 0; c < recipe.outputItemCount; c++) {
+										Inventory.addItem(type);
+									}
 								}
 							}
 						}
@@ -127,9 +127,7 @@ public class UICrafting {
 
 		if (indexHovered > -1 && Input.isMousePressed(0)) {
 			int i = (shownIndex + indexHovered);
-
 			String name = PlayerDatabase.knownRecipes.get(i);
-
 			if (name != "") {
 				recipe = GameDatabase.recipeData.get(name.toLowerCase());
 			}

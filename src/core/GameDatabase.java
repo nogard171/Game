@@ -33,6 +33,34 @@ public class GameDatabase {
 		recipe.recipeItems.add(new RecipeItemData(3, UITextureType.ROCK_ITEM));
 		recipe.recipeItems.add(new RecipeItemData(2, UITextureType.STICK_ITEM));
 		recipeData.put(recipe.name.toLowerCase(), recipe);
+		
+
+		recipe = new RecipeData();
+		recipe.name = "Axe";
+		recipe.description = "This is a tool used for chopping trees.";
+		recipe.outputItem = "Axe";
+		recipe.outputType = UITextureType.AXE_ITEM;
+		recipe.recipeItems.add(new RecipeItemData(3, UITextureType.ROCK_ITEM));
+		recipe.recipeItems.add(new RecipeItemData(2, UITextureType.STICK_ITEM));
+		recipeData.put(recipe.name.toLowerCase(), recipe);
+		
+
+		recipe = new RecipeData();
+		recipe.name = "Stick";
+		recipe.description = "Sticks used in crafting.";
+		recipe.outputItem = "STICK";
+		recipe.outputType = UITextureType.STICK_ITEM;
+		recipe.recipeItems.add(new RecipeItemData(1, UITextureType.LOG_ITEM));
+		recipeData.put(recipe.name.toLowerCase(), recipe);
+		
+		recipe = new RecipeData();
+		recipe.name = "Maple Stick";
+		recipe.description = "Sticks used in crafting.";
+		recipe.outputItem = "STICK";
+		recipe.outputType = UITextureType.STICK_ITEM;
+		recipe.outputItemCount=2;
+		recipe.recipeItems.add(new RecipeItemData(1, UITextureType.MAPLE_LOG_ITEM));
+		recipeData.put(recipe.name.toLowerCase(), recipe);
 	}
 
 	private static void loadResources() {
@@ -62,8 +90,8 @@ public class GameDatabase {
 		resources.put(TextureType.TREE, dat);
 
 		dat = new ResourceData();
-		dat.addDrop(new ResourceItemDrop(ItemType.LOG));
-		dat.setXPGain(10);
+		dat.addDrop(new ResourceItemDrop(ItemType.MAPLE_LOG,1,3,1));
+		dat.setXPGain(30);
 		resources.put(TextureType.MAPLE_TREE, dat);
 
 		dat = new ResourceData();
@@ -105,6 +133,10 @@ public class GameDatabase {
 		newItem.setTexture(UITextureType.LOG_ITEM);
 		items.put(newItem.type, newItem);
 
+		newItem = new ItemData(ItemType.MAPLE_LOG, "Long sturdy piece of Maple Wood.", 20);
+		newItem.setTexture(UITextureType.MAPLE_LOG_ITEM);
+		items.put(newItem.type, newItem);
+
 		newItem = new ItemData(ItemType.FISH, "Floppy fish.", 20);
 		newItem.setTexture(UITextureType.FISH_ITEM);
 		newItem.attr.add("EDIBLE");
@@ -119,8 +151,14 @@ public class GameDatabase {
 		newItem.setTexture(UITextureType.PICKAXE_ITEM);
 		newItem.attr.add("PICKAXE");
 		items.put(newItem.type, newItem);
+		
+		newItem = new ItemData(ItemType.AXE, "A Pickaxe used for chopping trees.", 20);
+		newItem.setTexture(UITextureType.AXE_ITEM);
+		newItem.attr.add("AXE");
+		items.put(newItem.type, newItem);
 
 		newItem = new ItemData(ItemType.STICK, "A few sticks.", 20);
+		newItem.stackable = true;
 		newItem.setTexture(UITextureType.STICK_ITEM);
 		items.put(newItem.type, newItem);
 	}

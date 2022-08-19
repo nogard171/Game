@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class ResourceItemDrop {
 	public ItemType type = ItemType.NONE;
-	private int minRange = 1;
+	private int minRange = 0;
 	private int maxRange = 1;
 	private int rarity = 1;// 1 in 1 chance
 
@@ -28,8 +28,7 @@ public class ResourceItemDrop {
 		ArrayList<ItemType> items = new ArrayList<ItemType>();
 
 		Random ran = new Random();
-		int c = ran.nextInt(maxRange) + minRange;
-
+		int c = ran.nextInt(maxRange + minRange) + minRange;
 		for (int i = 0; i < c; i++) {
 			items.add(type);
 		}

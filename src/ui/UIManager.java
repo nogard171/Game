@@ -67,6 +67,9 @@ public class UIManager {
 		hud.setup();
 
 		PlayerDatabase.knownRecipes.add("Pickaxe");
+		PlayerDatabase.knownRecipes.add("Axe");
+		PlayerDatabase.knownRecipes.add("Stick");
+		PlayerDatabase.knownRecipes.add("Maple Stick");
 
 		Inventory.setup();
 		Inventory.addItem(ItemType.ROCK);

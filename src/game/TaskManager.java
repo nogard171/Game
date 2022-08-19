@@ -124,13 +124,13 @@ public class TaskManager {
 					if (path.size() == 0) {
 						Resource res = ChunkManager.getResource(node.toPoint());
 						if (res != null) {
+
 							ResourceData dat = GameDatabase.resources.get(res.getBaseType());
 							if (dat != null) {
 								int genR = r.nextInt(dat.rarity - 1 + 1) + 1;
 								if (genR == 1) {
 									for (ResourceItemDrop drop : dat.itemDrops) {
 										genR = r.nextInt(drop.getRarity() - 1 + 1) + 1;
-										System.out.println("Rarity:" + genR);
 										if (genR == 1) {
 											ArrayList<ItemType> types = drop.getDroppedItems();
 											for (ItemType type : types) {

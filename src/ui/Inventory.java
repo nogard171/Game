@@ -75,6 +75,8 @@ public class Inventory {
 				groundItem.count = count;
 				ChunkManager.dropItem(groundItem);
 			}
+		} else {
+			System.out.println("Item '" + type.toString() + "' does not exist in item database.");
 		}
 		return pickedUp;
 	}
@@ -161,9 +163,11 @@ public class Inventory {
 				hasItemCount++;
 			}
 		}
-		if (hasItemCount >= recipeItems.size() - 1) {
+		if (hasItemCount >= recipeItems.size()) {
 			hasItems = true;
 		}
+
+		System.out.println("tesT:" + hasItemCount + "/" + (recipeItems.size()));
 		return hasItems;
 	}
 
@@ -176,7 +180,6 @@ public class Inventory {
 					if (slot != null) {
 						if (slot.item != null) {
 							if (slot.item.texture.equals(dat.type)) {
-								System.out.println("Removed:" + slot.item.texture);
 								if (slot.count > 0) {
 									slot.count--;
 									removeCount++;

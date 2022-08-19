@@ -10,4 +10,5 @@ public class RecipeData {
 	public String description = "";
 	public ArrayList<RecipeItemData> recipeItems = new ArrayList<RecipeItemData>();
 	public String outputItem;
+	public int outputItemCount=1;
 }
