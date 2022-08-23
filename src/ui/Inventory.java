@@ -141,7 +141,6 @@ public class Inventory {
 	public static int getSlotWidth() {
 		return slotWidth;
 	}
-
 	public static boolean hasRecipeItems(ArrayList<RecipeItemData> recipeItems) {
 		boolean hasItems = false;
 		int hasItemCount = 0;
@@ -166,11 +165,8 @@ public class Inventory {
 		if (hasItemCount >= recipeItems.size()) {
 			hasItems = true;
 		}
-
-		System.out.println("tesT:" + hasItemCount + "/" + (recipeItems.size()));
 		return hasItems;
 	}
-
 	public static void removeRecipeItems(ArrayList<RecipeItemData> recipeItems) {
 		for (RecipeItemData dat : recipeItems) {
 			int removeCount = 0;

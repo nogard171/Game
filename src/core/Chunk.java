@@ -115,6 +115,7 @@ public class Chunk {
 		return new Vector2f(posX, posY);
 	}
 
+	
 	Random r = new Random();
 
 	public void setup() {
@@ -122,7 +123,7 @@ public class Chunk {
 
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
-
+				int t = heightMap[x][y];// r.nextFloat();
 				Vector2f position = getPosition(x, y);
 				boolean isSolid = true;
 				Tile tile = new Tile(TextureType.DIRT);
@@ -131,7 +132,7 @@ public class Chunk {
 				Point tileIndex = new Point(x, y);
 				tile.setIndex(tileIndex);
 
-				int t = heightMap[x][y];// r.nextFloat();
+				
 				//t = 3;
 
 				float g = 0.5f;// r.nextFloat();
@@ -160,6 +161,7 @@ public class Chunk {
 				tiles.put(tileIndex, tile);
 
 				Resource res = new Resource(TextureType.AIR);
+				
 				res.setPosition(position);
 
 				if (isSolid) {
@@ -255,19 +257,18 @@ public class Chunk {
 		GL11.glBegin(GL11.GL_QUADS);
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
-
-				Vector2f position = getPosition(x, y);
-
 				Point tempIndex = new Point(x, y);
 				Tile tile = tiles.get(tempIndex);
 				if (tile != null) {
-					tile.setPosition(position);
 					Renderer.renderTexture(tile.getType(), (int) tile.getPosition().x, (int) tile.getPosition().y);
 				}
 				Tile pathTile = pathMap.get(tempIndex);
 				if (pathTile != null) {
-					pathTile.setPosition(position);
-					Renderer.renderTexture(pathTile.getType(), (int) pathTile.getPosition().x, (int) pathTile.getPosition().y);
+					Vector2f temp = pathTile.getPosition();
+					if(temp!=null)
+					{
+						Renderer.renderTexture(pathTile.getType(), (int) temp.x, (int) temp.y);						
+					}
 				}
 			}
 		}
@@ -281,9 +282,7 @@ public class Chunk {
 		GL11.glBegin(GL11.GL_QUADS);
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
-
 				Vector2f position = getPosition(x, y);
-
 				Point tempIndex = new Point(x, y);
 				GroundItem tile = droppedItems.get(tempIndex);
 				if (tile != null) {

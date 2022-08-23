@@ -37,9 +37,12 @@ public class UICrafting {
 
 	UIButton craftBtn;
 
+	Ticker tickerUtil;
+
 	public void setup() {
+		tickerUtil = new Ticker();
 		showCount = (size.y * 32) / 15;
-		craftBtn = new UIButton(UITextureType.CHAT_ICON,
+		craftBtn = new UIButton(UITextureType.BLANK,
 				new Rectangle((int) (position.x + 120), (int) (position.y + 176), 100, 20), new UIAction() {
 					@Override
 					public void click(UIButton btn) {
@@ -50,7 +53,9 @@ public class UICrafting {
 								if (type != null) {
 									Inventory.removeRecipeItems(recipe.recipeItems);
 									for (int c = 0; c < recipe.outputItemCount; c++) {
-										Inventory.addItem(type);
+										crafting = true;
+										craftingTicks = recipe.tickCount;
+										// Inventory.addItem(type);
 									}
 								}
 							}
@@ -92,6 +97,8 @@ public class UICrafting {
 	Point slotPointHovered = new Point(-1, -1);
 
 	ItemSlot contextSlot;
+	boolean crafting = false;
+	int craftingTicks = 0;
 
 	public void update() {
 		if (Window.wasResized) {
@@ -101,6 +108,20 @@ public class UICrafting {
 		}
 		if (show) {
 			craftBtn.poll();
+
+			if (crafting == true) {
+				tickerUtil.poll(1000);
+				if (tickerUtil.ticked()) {
+					craftingTicks--;
+				}
+				if (craftingTicks <= 0) {
+					ItemType type = ItemType.valueOf(recipe.outputItem.toUpperCase());
+					if (type != null) {
+						Inventory.addItem(type);
+						crafting = false;
+					}
+				}
+			}
 
 			if (scrollBounds != null) {
 				if (scrollBounds.contains(Input.mousePoint)) {
@@ -229,6 +250,11 @@ public class UICrafting {
 						craftBtn.bounds.height), new Color(128, 128, 128, 255));
 				Renderer.renderText(new Vector2f(craftBtn.bounds.x + 8, craftBtn.bounds.y - 4), craftBtn.value, 20,
 						Color.white);
+
+				if (recipe != null) {
+					Renderer.renderText(new Vector2f(craftBtn.bounds.x + 100, craftBtn.bounds.y - 4),
+							craftingTicks + "", 20, Color.white);
+				}
 			}
 			/*
 			 * for (String s : PlayerDatabase.knownRecipes) {

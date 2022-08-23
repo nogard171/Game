@@ -50,6 +50,7 @@ public class GameDatabase {
 		recipe.description = "Sticks used in crafting.";
 		recipe.outputItem = "STICK";
 		recipe.outputType = UITextureType.STICK_ITEM;
+		recipe.tickCount = 3;
 		recipe.recipeItems.add(new RecipeItemData(1, UITextureType.LOG_ITEM));
 		recipeData.put(recipe.name.toLowerCase(), recipe);
 		
@@ -58,6 +59,7 @@ public class GameDatabase {
 		recipe.description = "Sticks used in crafting.";
 		recipe.outputItem = "STICK";
 		recipe.outputType = UITextureType.STICK_ITEM;
+		recipe.tickCount = 5;
 		recipe.outputItemCount=2;
 		recipe.recipeItems.add(new RecipeItemData(1, UITextureType.MAPLE_LOG_ITEM));
 		recipeData.put(recipe.name.toLowerCase(), recipe);

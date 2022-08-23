@@ -62,6 +62,7 @@ public class UIManager {
 
 		uiCrafting = new UICrafting();
 		uiCrafting.setup();
+		uiCrafting.show =false;
 
 		hud = new UIHud();
 		hud.setup();
@@ -457,19 +458,28 @@ public class UIManager {
 			uiSkill.show = false;
 			uiInventory.show = !uiInventory.show;
 			uiChat.show = false;
+			uiCrafting.show = false;
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_K)) {
 			uiInventory.show = false;
 			uiSkill.show = !uiSkill.show;
 			uiChat.show = false;
+			uiCrafting.show = false;
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_C)) {
 			uiInventory.show = false;
 			uiSkill.show = false;
 			uiChat.show = !uiChat.show;
-			System.out.println("Chat:" + uiChat.show);
+			uiCrafting.show = false;
+		}
+
+		if (Input.isKeyPressed(Keyboard.KEY_J)) {
+			uiInventory.show = false;
+			uiSkill.show = false;
+			uiChat.show = false;
+			uiCrafting.show = !uiCrafting.show;
 		}
 
 		if (Input.isKeyPressed(Keyboard.KEY_1)) {
