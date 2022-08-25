@@ -18,7 +18,8 @@ public class Region {
 	Point regionPosition;
 	// y,x,z
 	Size size;
-	public Cell[][][][] cellData;
+	// fix array to use 3 dimensions
+	public Cell[][][] cellData;
 	public LinkedList<Cell> knownCells = new LinkedList<Cell>();
 	public LinkedList<Cell> visibleCells = new LinkedList<Cell>();
 
@@ -45,7 +46,7 @@ public class Region {
 		this.bounds = rb;
 
 		size = Database.regionSize;
-		cellData = new Cell[size.getHeight()][size.getWidth()][size.getDepth()][10];
+		cellData = new Cell[size.getHeight()][size.getWidth()][size.getDepth()];
 		for (int y = size.getHeight() - 1; y >= 0; y--) {
 			for (int x = 0; x < size.getWidth(); x++) {
 				for (int z = 0; z < size.getDepth(); z++) {
@@ -75,16 +76,9 @@ public class Region {
 					Cell cell = new Cell(cellIndex, texture);
 					if (index.x == 0 && index.y == 0 && index.z == 0 && y == 0 && x == 5 && z == 5) {
 						Character charc = new Character(cellIndex, "character");
-						cellIndex.i = 0;
 						setCell(cellIndex, charc);
 						knownCells.add(charc);
 						Database.agentMgr.addAgent(charc.getHash());
-					}
-					if (index.x == 0 && index.y == 0 && index.z == 0 && y == 0 && x == 5 && z == 5) {
-						cell = new Cell(cellIndex, "tree");
-						cellIndex.i = 1;
-						setCell(cellIndex, cell);
-						knownCells.add(cell);
 					}
 					setCell(cellIndex, cell);
 					if (y == 1) {
@@ -93,20 +87,19 @@ public class Region {
 					if (y <= 1) {
 						knownCells.add(cell);
 					}
-					knownCells.add(cell);
+					if (lowestKnownLevel < index.y) {
+						lowestKnownLevel = index.y;
+					}
+					//knownCells.add(cell);
 				}
 			}
 		}
 	}
 
 	public void setCell(Index newIndex, Cell newCell) {
-		for (int c = 0; c < 10; c++) {
-			Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z][c];
-			if (cell == null) {
-				newCell.setIndex(new Index(newIndex.y, newIndex.x, newIndex.z, newIndex.i));
-				cellData[newIndex.y][newIndex.x][newIndex.z][c] = newCell;
-				break;
-			}
+		Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z];
+		if (cell == null) {
+			cellData[newIndex.y][newIndex.x][newIndex.z] = newCell;
 		}
 	}
 
@@ -174,7 +167,7 @@ public class Region {
 		} else {
 			GL11.glCallList(list);
 		}
-		 Renderer.renderBounds(bounds, Color.red);
+		Renderer.renderBounds(bounds, Color.red);
 	}
 
 	public void rebuild() {
@@ -196,8 +189,8 @@ public class Region {
 	public LinkedList<Cell> getCells(Index newIndex) {
 		LinkedList<Cell> cells = new LinkedList<Cell>();
 		// for (int c = 0; c < 10; c++) {
-		if (newIndex.y >= 0 && newIndex.x >= 0 && newIndex.z >= 0 && newIndex.i >= 0) {
-			Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z][newIndex.i];
+		if (newIndex.y >= 0 && newIndex.x >= 0 && newIndex.z >= 0 ) {
+			Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z];
 			if (cell != null) {
 				cells.add(cell);
 			}
@@ -206,7 +199,7 @@ public class Region {
 	}
 
 	public Cell getCell(Index newIndex) {
-		Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z][0];
+		Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z];
 		return cell;
 	}
 }

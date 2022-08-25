@@ -68,7 +68,7 @@ public class World {
 					if (c.getBounds().contains(mousePoint)) {
 						Index index = new Index((r.getIndex().y * Database.regionSize.getHeight()) + c.getIndex().y,
 								(r.getIndex().x * Database.regionSize.getWidth()) + c.getIndex().x,
-								(r.getIndex().z * Database.regionSize.getDepth()) + c.getIndex().z, c.getIndex().i);
+								(r.getIndex().z * Database.regionSize.getDepth()) + c.getIndex().z);
 						if (!indexes.contains(index)) {
 							indexes.add(index);
 						}
@@ -83,7 +83,7 @@ public class World {
 		return textureCount;
 	}
 
-	int range = 2;
+	int range = 7;
 	Index[] indexes;
 
 	private ArrayList<Region> getRegionsInView(int y, int x, int z) {
@@ -131,7 +131,7 @@ public class World {
 			int cellX = i.x % Database.regionSize.getWidth();
 			int cellY = i.y % Database.regionSize.getHeight();
 			int cellZ = i.z % Database.regionSize.getDepth();
-			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, i.i));
+			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ));
 			if (cells != null) {
 				for (Cell cell : cells) {
 					c.add(cell);// reg.cellData[cellY][cellX][cellZ];
@@ -153,7 +153,7 @@ public class World {
 				int cellX = i.x % Database.regionSize.getWidth();
 				int cellY = i.y % Database.regionSize.getHeight();
 				int cellZ = i.z % Database.regionSize.getDepth();
-				LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, i.i));
+				LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ));
 				if (cells != null) {
 					for (Cell cell : cells) {
 						c.add(cell);// reg.cellData[cellY][cellX][cellZ];
@@ -177,7 +177,7 @@ public class World {
 			int cellX = i.x % Database.regionSize.getWidth();
 			int cellY = i.y % Database.regionSize.getHeight();
 			int cellZ = i.z % Database.regionSize.getDepth();
-			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ, 0));
+			LinkedList<Cell> cells = reg.getCells(new Index(cellY, cellX, cellZ));
 			if (cells != null) {
 				if (cells.size() > 0) {
 					// for (Cell cell : cells) {

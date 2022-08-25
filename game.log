@@ -3278,3 +3278,452 @@
 2022-08-23 19:36:15	General:Data Textures Building Tree Texture
 2022-08-23 19:36:15	General:Data Textures Successfully Loaded
 2022-08-23 19:36:16	General:Base Complete Setup
+2022-08-24 18:54:29	General:Application Stated
+2022-08-24 18:54:30	General:Base Stated
+2022-08-24 18:54:30	General:Base Begin Setup
+2022-08-24 18:54:30	General:Looking for Desired Display Mode
+2022-08-24 18:54:33	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 18:54:33	General:Display Set Resizable Mode to: true
+2022-08-24 18:54:33	General:Display Set Fullscreen Mode to: false
+2022-08-24 18:54:33	General:Display created
+2022-08-24 18:54:33	General:Input Setup Started
+2022-08-24 18:54:33	General:Input Mouse Button Count: 5
+2022-08-24 18:54:33	General:Input Completed Variable Initlization
+2022-08-24 18:54:33	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 18:54:33	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 18:54:33	General:FPS Util Setup Started
+2022-08-24 18:54:33	General:FPS Util Completed Setup
+2022-08-24 18:54:33	General:Data Setup Started
+2022-08-24 18:54:33	General:Data Setting Up Textures
+2022-08-24 18:54:33	General:Data Textures Building Grass Texture
+2022-08-24 18:54:33	General:Data Textures Building Dirt Texture
+2022-08-24 18:54:33	General:Data Textures Building Sand Texture
+2022-08-24 18:54:33	General:Data Textures Building Stone Texture
+2022-08-24 18:54:33	General:Data Textures Building Character Texture
+2022-08-24 18:54:33	General:Data Textures Building Tree Texture
+2022-08-24 18:54:33	General:Data Textures Successfully Loaded
+2022-08-24 18:54:34	General:Base Complete Setup
+2022-08-24 18:59:35	General:Application Stated
+2022-08-24 18:59:35	General:Base Stated
+2022-08-24 18:59:35	General:Base Begin Setup
+2022-08-24 18:59:35	General:Looking for Desired Display Mode
+2022-08-24 18:59:38	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 18:59:38	General:Display Set Resizable Mode to: true
+2022-08-24 18:59:38	General:Display Set Fullscreen Mode to: false
+2022-08-24 18:59:38	General:Display created
+2022-08-24 18:59:38	General:Input Setup Started
+2022-08-24 18:59:38	General:Input Mouse Button Count: 5
+2022-08-24 18:59:38	General:Input Completed Variable Initlization
+2022-08-24 18:59:38	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 18:59:38	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 18:59:38	General:FPS Util Setup Started
+2022-08-24 18:59:38	General:FPS Util Completed Setup
+2022-08-24 18:59:38	General:Data Setup Started
+2022-08-24 18:59:38	General:Data Setting Up Textures
+2022-08-24 18:59:38	General:Data Textures Building Grass Texture
+2022-08-24 18:59:38	General:Data Textures Building Dirt Texture
+2022-08-24 18:59:38	General:Data Textures Building Sand Texture
+2022-08-24 18:59:38	General:Data Textures Building Stone Texture
+2022-08-24 18:59:38	General:Data Textures Building Character Texture
+2022-08-24 18:59:38	General:Data Textures Building Tree Texture
+2022-08-24 18:59:38	General:Data Textures Successfully Loaded
+2022-08-24 18:59:39	General:Base Complete Setup
+2022-08-24 19:00:33	General:Application Stated
+2022-08-24 19:00:34	General:Base Stated
+2022-08-24 19:00:34	General:Base Begin Setup
+2022-08-24 19:00:34	General:Looking for Desired Display Mode
+2022-08-24 19:00:36	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:00:36	General:Display Set Resizable Mode to: true
+2022-08-24 19:00:36	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:00:36	General:Display created
+2022-08-24 19:00:36	General:Input Setup Started
+2022-08-24 19:00:36	General:Input Mouse Button Count: 5
+2022-08-24 19:00:36	General:Input Completed Variable Initlization
+2022-08-24 19:00:36	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:00:36	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:00:36	General:FPS Util Setup Started
+2022-08-24 19:00:36	General:FPS Util Completed Setup
+2022-08-24 19:00:36	General:Data Setup Started
+2022-08-24 19:00:36	General:Data Setting Up Textures
+2022-08-24 19:00:36	General:Data Textures Building Grass Texture
+2022-08-24 19:00:36	General:Data Textures Building Dirt Texture
+2022-08-24 19:00:36	General:Data Textures Building Sand Texture
+2022-08-24 19:00:36	General:Data Textures Building Stone Texture
+2022-08-24 19:00:36	General:Data Textures Building Character Texture
+2022-08-24 19:00:36	General:Data Textures Building Tree Texture
+2022-08-24 19:00:36	General:Data Textures Successfully Loaded
+2022-08-24 19:00:37	General:Base Complete Setup
+2022-08-24 19:01:12	General:Application Stated
+2022-08-24 19:01:13	General:Base Stated
+2022-08-24 19:01:13	General:Base Begin Setup
+2022-08-24 19:01:13	General:Looking for Desired Display Mode
+2022-08-24 19:01:15	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:01:15	General:Display Set Resizable Mode to: true
+2022-08-24 19:01:15	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:01:16	General:Display created
+2022-08-24 19:01:16	General:Input Setup Started
+2022-08-24 19:01:16	General:Input Mouse Button Count: 5
+2022-08-24 19:01:16	General:Input Completed Variable Initlization
+2022-08-24 19:01:16	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:01:16	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:01:16	General:FPS Util Setup Started
+2022-08-24 19:01:16	General:FPS Util Completed Setup
+2022-08-24 19:01:16	General:Data Setup Started
+2022-08-24 19:01:16	General:Data Setting Up Textures
+2022-08-24 19:01:16	General:Data Textures Building Grass Texture
+2022-08-24 19:01:16	General:Data Textures Building Dirt Texture
+2022-08-24 19:01:16	General:Data Textures Building Sand Texture
+2022-08-24 19:01:16	General:Data Textures Building Stone Texture
+2022-08-24 19:01:16	General:Data Textures Building Character Texture
+2022-08-24 19:01:16	General:Data Textures Building Tree Texture
+2022-08-24 19:01:16	General:Data Textures Successfully Loaded
+2022-08-24 19:01:16	General:Base Complete Setup
+2022-08-24 19:01:45	General:Application Stated
+2022-08-24 19:01:45	General:Base Stated
+2022-08-24 19:01:45	General:Base Begin Setup
+2022-08-24 19:01:45	General:Looking for Desired Display Mode
+2022-08-24 19:01:48	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:01:48	General:Display Set Resizable Mode to: true
+2022-08-24 19:01:48	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:01:48	General:Display created
+2022-08-24 19:01:48	General:Input Setup Started
+2022-08-24 19:01:48	General:Input Mouse Button Count: 5
+2022-08-24 19:01:48	General:Input Completed Variable Initlization
+2022-08-24 19:01:48	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:01:48	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:01:48	General:FPS Util Setup Started
+2022-08-24 19:01:48	General:FPS Util Completed Setup
+2022-08-24 19:01:48	General:Data Setup Started
+2022-08-24 19:01:48	General:Data Setting Up Textures
+2022-08-24 19:01:48	General:Data Textures Building Grass Texture
+2022-08-24 19:01:48	General:Data Textures Building Dirt Texture
+2022-08-24 19:01:48	General:Data Textures Building Sand Texture
+2022-08-24 19:01:48	General:Data Textures Building Stone Texture
+2022-08-24 19:01:48	General:Data Textures Building Character Texture
+2022-08-24 19:01:48	General:Data Textures Building Tree Texture
+2022-08-24 19:01:48	General:Data Textures Successfully Loaded
+2022-08-24 19:01:49	General:Base Complete Setup
+2022-08-24 19:02:23	General:Application Stated
+2022-08-24 19:02:23	General:Base Stated
+2022-08-24 19:02:23	General:Base Begin Setup
+2022-08-24 19:02:23	General:Looking for Desired Display Mode
+2022-08-24 19:02:26	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:02:26	General:Display Set Resizable Mode to: true
+2022-08-24 19:02:26	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:02:26	General:Display created
+2022-08-24 19:02:26	General:Input Setup Started
+2022-08-24 19:02:26	General:Input Mouse Button Count: 5
+2022-08-24 19:02:26	General:Input Completed Variable Initlization
+2022-08-24 19:02:26	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:02:26	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:02:26	General:FPS Util Setup Started
+2022-08-24 19:02:26	General:FPS Util Completed Setup
+2022-08-24 19:02:26	General:Data Setup Started
+2022-08-24 19:02:26	General:Data Setting Up Textures
+2022-08-24 19:02:26	General:Data Textures Building Grass Texture
+2022-08-24 19:02:26	General:Data Textures Building Dirt Texture
+2022-08-24 19:02:26	General:Data Textures Building Sand Texture
+2022-08-24 19:02:26	General:Data Textures Building Stone Texture
+2022-08-24 19:02:26	General:Data Textures Building Character Texture
+2022-08-24 19:02:26	General:Data Textures Building Tree Texture
+2022-08-24 19:02:26	General:Data Textures Successfully Loaded
+2022-08-24 19:02:27	General:Base Complete Setup
+2022-08-24 19:03:09	General:Application Stated
+2022-08-24 19:03:09	General:Base Stated
+2022-08-24 19:03:09	General:Base Begin Setup
+2022-08-24 19:03:09	General:Looking for Desired Display Mode
+2022-08-24 19:03:12	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:03:12	General:Display Set Resizable Mode to: true
+2022-08-24 19:03:12	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:03:12	General:Display created
+2022-08-24 19:03:12	General:Input Setup Started
+2022-08-24 19:03:12	General:Input Mouse Button Count: 5
+2022-08-24 19:03:12	General:Input Completed Variable Initlization
+2022-08-24 19:03:12	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:03:12	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:03:12	General:FPS Util Setup Started
+2022-08-24 19:03:12	General:FPS Util Completed Setup
+2022-08-24 19:03:12	General:Data Setup Started
+2022-08-24 19:03:12	General:Data Setting Up Textures
+2022-08-24 19:03:12	General:Data Textures Building Grass Texture
+2022-08-24 19:03:12	General:Data Textures Building Dirt Texture
+2022-08-24 19:03:12	General:Data Textures Building Sand Texture
+2022-08-24 19:03:12	General:Data Textures Building Stone Texture
+2022-08-24 19:03:12	General:Data Textures Building Character Texture
+2022-08-24 19:03:12	General:Data Textures Building Tree Texture
+2022-08-24 19:03:12	General:Data Textures Successfully Loaded
+2022-08-24 19:03:13	General:Base Complete Setup
+2022-08-24 19:04:00	General:Application Stated
+2022-08-24 19:04:00	General:Base Stated
+2022-08-24 19:04:00	General:Base Begin Setup
+2022-08-24 19:04:00	General:Looking for Desired Display Mode
+2022-08-24 19:04:02	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 19:04:02	General:Display Set Resizable Mode to: true
+2022-08-24 19:04:02	General:Display Set Fullscreen Mode to: false
+2022-08-24 19:04:03	General:Display created
+2022-08-24 19:04:03	General:Input Setup Started
+2022-08-24 19:04:03	General:Input Mouse Button Count: 5
+2022-08-24 19:04:03	General:Input Completed Variable Initlization
+2022-08-24 19:04:03	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 19:04:03	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 19:04:03	General:FPS Util Setup Started
+2022-08-24 19:04:03	General:FPS Util Completed Setup
+2022-08-24 19:04:03	General:Data Setup Started
+2022-08-24 19:04:03	General:Data Setting Up Textures
+2022-08-24 19:04:03	General:Data Textures Building Grass Texture
+2022-08-24 19:04:03	General:Data Textures Building Dirt Texture
+2022-08-24 19:04:03	General:Data Textures Building Sand Texture
+2022-08-24 19:04:03	General:Data Textures Building Stone Texture
+2022-08-24 19:04:03	General:Data Textures Building Character Texture
+2022-08-24 19:04:03	General:Data Textures Building Tree Texture
+2022-08-24 19:04:03	General:Data Textures Successfully Loaded
+2022-08-24 19:04:03	General:Base Complete Setup
+2022-08-24 20:37:18	General:Application Stated
+2022-08-24 20:37:18	General:Base Stated
+2022-08-24 20:37:18	General:Base Begin Setup
+2022-08-24 20:37:18	General:Looking for Desired Display Mode
+2022-08-24 20:37:20	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:37:20	General:Display Set Resizable Mode to: true
+2022-08-24 20:37:20	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:37:21	General:Display created
+2022-08-24 20:37:21	General:Input Setup Started
+2022-08-24 20:37:21	General:Input Mouse Button Count: 5
+2022-08-24 20:37:21	General:Input Completed Variable Initlization
+2022-08-24 20:37:21	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:37:21	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:37:21	General:FPS Util Setup Started
+2022-08-24 20:37:21	General:FPS Util Completed Setup
+2022-08-24 20:37:21	General:Data Setup Started
+2022-08-24 20:37:21	General:Data Setting Up Textures
+2022-08-24 20:37:21	General:Data Textures Building Grass Texture
+2022-08-24 20:37:21	General:Data Textures Building Dirt Texture
+2022-08-24 20:37:21	General:Data Textures Building Sand Texture
+2022-08-24 20:37:21	General:Data Textures Building Stone Texture
+2022-08-24 20:37:21	General:Data Textures Building Character Texture
+2022-08-24 20:37:21	General:Data Textures Building Tree Texture
+2022-08-24 20:37:21	General:Data Textures Successfully Loaded
+2022-08-24 20:37:21	General:Base Complete Setup
+2022-08-24 20:38:19	General:Application Stated
+2022-08-24 20:38:19	General:Base Stated
+2022-08-24 20:38:19	General:Base Begin Setup
+2022-08-24 20:38:19	General:Looking for Desired Display Mode
+2022-08-24 20:38:22	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:38:22	General:Display Set Resizable Mode to: true
+2022-08-24 20:38:22	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:38:22	General:Display created
+2022-08-24 20:38:22	General:Input Setup Started
+2022-08-24 20:38:22	General:Input Mouse Button Count: 5
+2022-08-24 20:38:22	General:Input Completed Variable Initlization
+2022-08-24 20:38:22	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:38:22	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:38:22	General:FPS Util Setup Started
+2022-08-24 20:38:22	General:FPS Util Completed Setup
+2022-08-24 20:38:22	General:Data Setup Started
+2022-08-24 20:38:22	General:Data Setting Up Textures
+2022-08-24 20:38:22	General:Data Textures Building Grass Texture
+2022-08-24 20:38:22	General:Data Textures Building Dirt Texture
+2022-08-24 20:38:22	General:Data Textures Building Sand Texture
+2022-08-24 20:38:22	General:Data Textures Building Stone Texture
+2022-08-24 20:38:22	General:Data Textures Building Character Texture
+2022-08-24 20:38:22	General:Data Textures Building Tree Texture
+2022-08-24 20:38:22	General:Data Textures Successfully Loaded
+2022-08-24 20:38:23	General:Base Complete Setup
+2022-08-24 20:38:42	General:Application Stated
+2022-08-24 20:38:42	General:Base Stated
+2022-08-24 20:38:42	General:Base Begin Setup
+2022-08-24 20:38:42	General:Looking for Desired Display Mode
+2022-08-24 20:38:44	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:38:44	General:Display Set Resizable Mode to: true
+2022-08-24 20:38:44	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:38:45	General:Display created
+2022-08-24 20:38:45	General:Input Setup Started
+2022-08-24 20:38:45	General:Input Mouse Button Count: 5
+2022-08-24 20:38:45	General:Input Completed Variable Initlization
+2022-08-24 20:38:45	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:38:45	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:38:45	General:FPS Util Setup Started
+2022-08-24 20:38:45	General:FPS Util Completed Setup
+2022-08-24 20:38:45	General:Data Setup Started
+2022-08-24 20:38:45	General:Data Setting Up Textures
+2022-08-24 20:38:45	General:Data Textures Building Grass Texture
+2022-08-24 20:38:45	General:Data Textures Building Dirt Texture
+2022-08-24 20:38:45	General:Data Textures Building Sand Texture
+2022-08-24 20:38:45	General:Data Textures Building Stone Texture
+2022-08-24 20:38:45	General:Data Textures Building Character Texture
+2022-08-24 20:38:45	General:Data Textures Building Tree Texture
+2022-08-24 20:38:45	General:Data Textures Successfully Loaded
+2022-08-24 20:38:45	General:Base Complete Setup
+2022-08-24 20:39:31	General:Application Stated
+2022-08-24 20:39:32	General:Base Stated
+2022-08-24 20:39:32	General:Base Begin Setup
+2022-08-24 20:39:32	General:Looking for Desired Display Mode
+2022-08-24 20:39:34	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:39:34	General:Display Set Resizable Mode to: true
+2022-08-24 20:39:34	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:39:34	General:Display created
+2022-08-24 20:39:34	General:Input Setup Started
+2022-08-24 20:39:34	General:Input Mouse Button Count: 5
+2022-08-24 20:39:34	General:Input Completed Variable Initlization
+2022-08-24 20:39:34	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:39:34	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:39:34	General:FPS Util Setup Started
+2022-08-24 20:39:34	General:FPS Util Completed Setup
+2022-08-24 20:39:34	General:Data Setup Started
+2022-08-24 20:39:34	General:Data Setting Up Textures
+2022-08-24 20:39:34	General:Data Textures Building Grass Texture
+2022-08-24 20:39:34	General:Data Textures Building Dirt Texture
+2022-08-24 20:39:34	General:Data Textures Building Sand Texture
+2022-08-24 20:39:34	General:Data Textures Building Stone Texture
+2022-08-24 20:39:34	General:Data Textures Building Character Texture
+2022-08-24 20:39:34	General:Data Textures Building Tree Texture
+2022-08-24 20:39:34	General:Data Textures Successfully Loaded
+2022-08-24 20:39:35	General:Base Complete Setup
+2022-08-24 20:40:15	General:Application Stated
+2022-08-24 20:40:15	General:Base Stated
+2022-08-24 20:40:15	General:Base Begin Setup
+2022-08-24 20:40:15	General:Looking for Desired Display Mode
+2022-08-24 20:40:18	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:40:18	General:Display Set Resizable Mode to: true
+2022-08-24 20:40:18	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:40:18	General:Display created
+2022-08-24 20:40:18	General:Input Setup Started
+2022-08-24 20:40:18	General:Input Mouse Button Count: 5
+2022-08-24 20:40:18	General:Input Completed Variable Initlization
+2022-08-24 20:40:18	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:40:18	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:40:18	General:FPS Util Setup Started
+2022-08-24 20:40:18	General:FPS Util Completed Setup
+2022-08-24 20:40:18	General:Data Setup Started
+2022-08-24 20:40:18	General:Data Setting Up Textures
+2022-08-24 20:40:18	General:Data Textures Building Grass Texture
+2022-08-24 20:40:18	General:Data Textures Building Dirt Texture
+2022-08-24 20:40:18	General:Data Textures Building Sand Texture
+2022-08-24 20:40:18	General:Data Textures Building Stone Texture
+2022-08-24 20:40:18	General:Data Textures Building Character Texture
+2022-08-24 20:40:18	General:Data Textures Building Tree Texture
+2022-08-24 20:40:18	General:Data Textures Successfully Loaded
+2022-08-24 20:40:22	General:Application Stated
+2022-08-24 20:40:22	General:Base Stated
+2022-08-24 20:40:22	General:Base Begin Setup
+2022-08-24 20:40:22	General:Looking for Desired Display Mode
+2022-08-24 20:40:25	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:40:25	General:Display Set Resizable Mode to: true
+2022-08-24 20:40:25	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:40:25	General:Display created
+2022-08-24 20:40:25	General:Input Setup Started
+2022-08-24 20:40:25	General:Input Mouse Button Count: 5
+2022-08-24 20:40:25	General:Input Completed Variable Initlization
+2022-08-24 20:40:25	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:40:25	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:40:25	General:FPS Util Setup Started
+2022-08-24 20:40:25	General:FPS Util Completed Setup
+2022-08-24 20:40:25	General:Data Setup Started
+2022-08-24 20:40:25	General:Data Setting Up Textures
+2022-08-24 20:40:25	General:Data Textures Building Grass Texture
+2022-08-24 20:40:25	General:Data Textures Building Dirt Texture
+2022-08-24 20:40:25	General:Data Textures Building Sand Texture
+2022-08-24 20:40:25	General:Data Textures Building Stone Texture
+2022-08-24 20:40:25	General:Data Textures Building Character Texture
+2022-08-24 20:40:25	General:Data Textures Building Tree Texture
+2022-08-24 20:40:25	General:Data Textures Successfully Loaded
+2022-08-24 20:40:26	General:Base Complete Setup
+2022-08-24 20:42:02	General:Application Stated
+2022-08-24 20:42:02	General:Base Stated
+2022-08-24 20:42:02	General:Base Begin Setup
+2022-08-24 20:42:02	General:Looking for Desired Display Mode
+2022-08-24 20:42:05	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:42:05	General:Display Set Resizable Mode to: true
+2022-08-24 20:42:05	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:42:05	General:Display created
+2022-08-24 20:42:05	General:Input Setup Started
+2022-08-24 20:42:05	General:Input Mouse Button Count: 5
+2022-08-24 20:42:05	General:Input Completed Variable Initlization
+2022-08-24 20:42:05	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:42:05	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:42:05	General:FPS Util Setup Started
+2022-08-24 20:42:05	General:FPS Util Completed Setup
+2022-08-24 20:42:05	General:Data Setup Started
+2022-08-24 20:42:05	General:Data Setting Up Textures
+2022-08-24 20:42:05	General:Data Textures Building Grass Texture
+2022-08-24 20:42:05	General:Data Textures Building Dirt Texture
+2022-08-24 20:42:05	General:Data Textures Building Sand Texture
+2022-08-24 20:42:05	General:Data Textures Building Stone Texture
+2022-08-24 20:42:05	General:Data Textures Building Character Texture
+2022-08-24 20:42:05	General:Data Textures Building Tree Texture
+2022-08-24 20:42:05	General:Data Textures Successfully Loaded
+2022-08-24 20:42:06	General:Base Complete Setup
+2022-08-24 20:42:19	General:Application Stated
+2022-08-24 20:42:20	General:Base Stated
+2022-08-24 20:42:20	General:Base Begin Setup
+2022-08-24 20:42:20	General:Looking for Desired Display Mode
+2022-08-24 20:42:22	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:42:22	General:Display Set Resizable Mode to: true
+2022-08-24 20:42:22	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:42:23	General:Display created
+2022-08-24 20:42:23	General:Input Setup Started
+2022-08-24 20:42:23	General:Input Mouse Button Count: 5
+2022-08-24 20:42:23	General:Input Completed Variable Initlization
+2022-08-24 20:42:23	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:42:23	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:42:23	General:FPS Util Setup Started
+2022-08-24 20:42:23	General:FPS Util Completed Setup
+2022-08-24 20:42:23	General:Data Setup Started
+2022-08-24 20:42:23	General:Data Setting Up Textures
+2022-08-24 20:42:23	General:Data Textures Building Grass Texture
+2022-08-24 20:42:23	General:Data Textures Building Dirt Texture
+2022-08-24 20:42:23	General:Data Textures Building Sand Texture
+2022-08-24 20:42:23	General:Data Textures Building Stone Texture
+2022-08-24 20:42:23	General:Data Textures Building Character Texture
+2022-08-24 20:42:23	General:Data Textures Building Tree Texture
+2022-08-24 20:42:23	General:Data Textures Successfully Loaded
+2022-08-24 20:42:23	General:Base Complete Setup
+2022-08-24 20:42:52	General:Application Stated
+2022-08-24 20:42:52	General:Base Stated
+2022-08-24 20:42:52	General:Base Begin Setup
+2022-08-24 20:42:52	General:Looking for Desired Display Mode
+2022-08-24 20:42:54	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:42:54	General:Display Set Resizable Mode to: true
+2022-08-24 20:42:54	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:42:55	General:Display created
+2022-08-24 20:42:55	General:Input Setup Started
+2022-08-24 20:42:55	General:Input Mouse Button Count: 5
+2022-08-24 20:42:55	General:Input Completed Variable Initlization
+2022-08-24 20:42:55	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:42:55	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:42:55	General:FPS Util Setup Started
+2022-08-24 20:42:55	General:FPS Util Completed Setup
+2022-08-24 20:42:55	General:Data Setup Started
+2022-08-24 20:42:55	General:Data Setting Up Textures
+2022-08-24 20:42:55	General:Data Textures Building Grass Texture
+2022-08-24 20:42:55	General:Data Textures Building Dirt Texture
+2022-08-24 20:42:55	General:Data Textures Building Sand Texture
+2022-08-24 20:42:55	General:Data Textures Building Stone Texture
+2022-08-24 20:42:55	General:Data Textures Building Character Texture
+2022-08-24 20:42:55	General:Data Textures Building Tree Texture
+2022-08-24 20:42:55	General:Data Textures Successfully Loaded
+2022-08-24 20:42:55	General:Base Complete Setup
+2022-08-24 20:43:08	General:Application Stated
+2022-08-24 20:43:08	General:Base Stated
+2022-08-24 20:43:08	General:Base Begin Setup
+2022-08-24 20:43:09	General:Looking for Desired Display Mode
+2022-08-24 20:43:11	General:Found Desired Display Mode(800px by 600 @ 72Hz
+2022-08-24 20:43:11	General:Display Set Resizable Mode to: true
+2022-08-24 20:43:11	General:Display Set Fullscreen Mode to: false
+2022-08-24 20:43:11	General:Display created
+2022-08-24 20:43:11	General:Input Setup Started
+2022-08-24 20:43:11	General:Input Mouse Button Count: 5
+2022-08-24 20:43:11	General:Input Completed Variable Initlization
+2022-08-24 20:43:11	General:Input Completed Zeroing Mouse Buttons
+2022-08-24 20:43:11	General:Input Completed Zeroing Keyboard Buttons
+2022-08-24 20:43:11	General:FPS Util Setup Started
+2022-08-24 20:43:11	General:FPS Util Completed Setup
+2022-08-24 20:43:11	General:Data Setup Started
+2022-08-24 20:43:11	General:Data Setting Up Textures
+2022-08-24 20:43:11	General:Data Textures Building Grass Texture
+2022-08-24 20:43:11	General:Data Textures Building Dirt Texture
+2022-08-24 20:43:11	General:Data Textures Building Sand Texture
+2022-08-24 20:43:11	General:Data Textures Building Stone Texture
+2022-08-24 20:43:11	General:Data Textures Building Character Texture
+2022-08-24 20:43:11	General:Data Textures Building Tree Texture
+2022-08-24 20:43:11	General:Data Textures Successfully Loaded
+2022-08-24 20:43:12	General:Base Complete Setup
