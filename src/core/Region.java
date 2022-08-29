@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import game.Database;
@@ -122,42 +123,70 @@ public class Region {
 		Renderer.begin();
 		for (Cell c : knownCells) {
 			Index index = c.getIndex();
-
-			if (lowestKnownLevel < index.y) {
-				lowestKnownLevel = index.y;
-			}
-			String texture = c.getTexture();
-			if (texture != "air") {
-				if (index.y >= visibleLevel) {
-					TextureData data = c.data;
-					if (data == null) {
-						data = Database.textureData.get(texture);
-						c.data = data;
-					}
-					if (data != null) {
-						float localX = (index.x - index.z) * 32;
-						float localY = index.y * 32;
-						float localZ = ((index.z + index.x) * 16) + localY;
-						if (c.getBounds() == null) {
-							Polygon b = new Polygon();
-							for (int p = 0; p < data.bounds.npoints; p++) {
-								Point point = new Point(
-										(int) localX + regionPosition.x + data.bounds.xpoints[p] + data.centerX,
-										(int) localZ + regionPosition.y + data.bounds.ypoints[p] + data.centerY);
-								b.addPoint(point.x, point.y);
-							}
-							c.setBounds(b);
+			boolean visible = isVisible(index.x, index.y, index.z);
+			if (visible) {
+				if (lowestKnownLevel < index.y) {
+					lowestKnownLevel = index.y;
+				}
+				String texture = c.getTexture();
+				if (texture != "air") {
+					if (index.y >= visibleLevel) {
+						TextureData data = c.data;
+						if (data == null) {
+							data = Database.textureData.get(texture);
+							c.data = data;
 						}
-						Renderer.renderTexture(
-								new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y), c.data);
-						visibleCells.add(c);
-						textureCount++;
+						if (data != null) {
+							float localX = (index.x - index.z) * 32;
+							float localY = index.y * 32;
+							float localZ = ((index.z + index.x) * 16) + localY;
+							if (c.getBounds() == null) {
+								Polygon b = new Polygon();
+								for (int p = 0; p < data.bounds.npoints; p++) {
+									Point point = new Point(
+											(int) localX + regionPosition.x + data.bounds.xpoints[p] + data.centerX,
+											(int) localZ + regionPosition.y + data.bounds.ypoints[p] + data.centerY);
+									b.addPoint(point.x, point.y);
+								}
+								c.setBounds(b);
+							}
+							Renderer.renderTexture(
+									new Point((int) localX + regionPosition.x, (int) localZ + regionPosition.y),
+									c.data);
+							visibleCells.add(c);
+							textureCount++;
+						}
 					}
 				}
 			}
 		}
 		Renderer.end();
 		GL11.glEndList();
+	}
+
+	final Vector3f[] indexes = { new Vector3f(1, 0, 0), new Vector3f(0, -1, 0), new Vector3f(0, 0, 1) };
+
+	public boolean isVisible(int x, int y, int z) {
+		boolean isVisible = false;
+		int visibleCount = 0;
+		for (Vector3f vec : indexes) {
+			if (x + vec.x < size.getWidth() && y + vec.y >= 0 && z + vec.z < size.getDepth()) {
+				Vector3f newVec = new Vector3f(x + vec.x, y + vec.y, z + vec.z);
+				Cell c = cellData[(int) newVec.y][(int) newVec.x][(int) newVec.z];
+				if (c != null) {
+					if (c.getTexture().equals("air")||c.getTexture().equals("tree")) {
+						visibleCount++;
+					}
+				}
+			} else {
+				visibleCount++;
+			}
+		}
+		System.out.println("Count:" + visibleCount);
+		if (visibleCount > 0) {
+			isVisible = true;
+		}
+		return isVisible;
 	}
 
 	public void render() {
@@ -189,7 +218,7 @@ public class Region {
 	public LinkedList<Cell> getCells(Index newIndex) {
 		LinkedList<Cell> cells = new LinkedList<Cell>();
 		// for (int c = 0; c < 10; c++) {
-		if (newIndex.y >= 0 && newIndex.x >= 0 && newIndex.z >= 0 ) {
+		if (newIndex.y >= 0 && newIndex.x >= 0 && newIndex.z >= 0) {
 			Cell cell = cellData[newIndex.y][newIndex.x][newIndex.z];
 			if (cell != null) {
 				cells.add(cell);

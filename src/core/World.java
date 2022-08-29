@@ -14,15 +14,18 @@ import game.Database;
 import utils.Generator;
 import utils.Input;
 import utils.Renderer;
+import utils.Ticker;
 
 public class World {
 	private static ArrayList<Region> regionsInView = new ArrayList<Region>();
 	private static int regionCount = 0;
 	public static int textureCount = 0;
+	Ticker ticker;
 
 	public void setup() {
-		for (int x = 0; x < 10; x++) {
-			for (int z = 0; z < 10; z++) {
+		ticker = new Ticker();
+		for (x = 0; x < 10; x++) {
+			for (z = 0; z < 10; z++) {
 				Generator.generateRegion(0, x, z);
 			}
 		}
@@ -31,6 +34,9 @@ public class World {
 			r.render();
 		}
 	}
+
+	int x = 0;
+	int z = 0;
 
 	public void update() {
 		if (View.Moved()) {
@@ -90,22 +96,17 @@ public class World {
 		if (indexes == null) {
 			int i = 0;
 			indexes = new Index[(range * 2) * (range * 2)];
-			System.out.println("size:"+indexes.length);
-			for (int tx = 0 - (range/2); tx <= (range/2); tx++) {
-				for (int tz = 0 - (range/2); tz <= (range/2); tz++) {
+			System.out.println("size:" + indexes.length);
+			for (int tx = 0 - (range / 2); tx <= (range / 2); tx++) {
+				for (int tz = 0 - (range / 2); tz <= (range / 2); tz++) {
 					indexes[i] = new Index(0, tx, tz);
 					i++;
 				}
 			}
 		}
-		/*
-		 * Index[] indexes = new Index[] { new Index(y, x, z), new Index(y, x - range,
-		 * z), new Index(y, x + range, z), new Index(y, x, z - range), new Index(y, x, z
-		 * + range), new Index(y, x - range, z - range), new Index(y, x + range, z +
-		 * range) };
-		 */
 		ArrayList<Region> regionsInView = new ArrayList<Region>();
 		for (Index i : indexes) {
+			// add logic to pick up on chunks in view index.
 			Region reg = Database.regions.get(i);
 			if (reg != null) {
 				regionsInView.add(reg);

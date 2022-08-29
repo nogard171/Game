@@ -33,6 +33,8 @@ public class Telemetry {
 				Color.white);
 		Renderer.renderText(0, (count + 3) * 16, "Agents Active Count: " + Database.agentMgr.activeAgentSize(), 12,
 				Color.white);
+		Renderer.renderText(0, (count + 4) * 16, "Chunk Count: " + Database.regions.size(), 12,
+				Color.white);
 
 	}
 }
