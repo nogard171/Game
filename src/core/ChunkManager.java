@@ -202,6 +202,12 @@ public class ChunkManager {
 						chunk.update(tickerUtil.ticked());
 						chunksInView.add(chunk);
 					}
+					else if(true==false)
+					{
+						Chunk newChunk = new Chunk(x,y);
+						newChunk.setup();
+						chunks.put(key, newChunk);
+					}
 				}
 			}
 		}

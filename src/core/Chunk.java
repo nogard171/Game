@@ -115,7 +115,6 @@ public class Chunk {
 		return new Vector2f(posX, posY);
 	}
 
-	
 	Random r = new Random();
 
 	public void setup() {
@@ -132,8 +131,7 @@ public class Chunk {
 				Point tileIndex = new Point(x, y);
 				tile.setIndex(tileIndex);
 
-				
-				//t = 3;
+				// t = 3;
 
 				float g = 0.5f;// r.nextFloat();
 				if (g < 0.5f) {
@@ -141,27 +139,28 @@ public class Chunk {
 				} else if (g >= 0.5f) {
 					tile.setType(TextureType.GRASS);
 				}
-				g = 1;// r.nextFloat();
-				if (g < 0.2f || (x % 2 == 0 && y % 2 == 0)) {
+				g = r.nextFloat();
+				if (g < 0.2f) {
 					tile.setType(TextureType.DIRT);
 				}
-				if (t <= 2) {
-					tile.setType(TextureType.SAND);
-				}
-				if (t < 2) {
-					tile.setType(TextureType.SHALLOW_WATER);
-					isSolid = false;
-
-				}
+				
 				if (t < -5) {
 					tile.setType(TextureType.DEEP_WATER);
 					isSolid = false;
 				}
+				else if (t < 1) {
+					tile.setType(TextureType.SHALLOW_WATER);
+					isSolid = false;
+
+				}else if (t <= 2) {
+					tile.setType(TextureType.SAND);
+				}
+				
 
 				tiles.put(tileIndex, tile);
 
 				Resource res = new Resource(TextureType.AIR);
-				
+
 				res.setPosition(position);
 
 				if (isSolid) {
@@ -228,22 +227,23 @@ public class Chunk {
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {
 				Point tileIndex = new Point(x, y);
-
 				Tile tile = tiles.get(tileIndex);
-				if (tile.getType() == TextureType.SHALLOW_WATER) {
-					float g = r.nextFloat();
-					boolean beach = ChunkManager.checkSurroundingTilesFor(
-							new Point(tileIndex.x + (index.x * size.width), tileIndex.y + (index.y * size.height)),
-							TextureType.SAND);
+				if (tile != null) {
+					if (tile.getType() == TextureType.SHALLOW_WATER) {
+						float g = r.nextFloat();
+						boolean beach = ChunkManager.checkSurroundingTilesFor(
+								new Point(tileIndex.x + (index.x * size.width), tileIndex.y + (index.y * size.height)),
+								TextureType.SAND);
 
-					if (g < 0.3f && beach) {
-						Vector2f position = getPosition(x, y);
-						Resource animatedRes = new Resource(TextureType.AIR);
-						animatedRes.setIndex(tileIndex);
-						animatedRes.setPosition(position);
-						animatedRes.setType(TextureType.FISHING_SPOT);
-						animatedRes.setAnimated(true);
-						animatedObjects.add(animatedRes);
+						if (g < 0.3f && beach) {
+							Vector2f position = getPosition(x, y);
+							Resource animatedRes = new Resource(TextureType.AIR);
+							animatedRes.setIndex(tileIndex);
+							animatedRes.setPosition(position);
+							animatedRes.setType(TextureType.FISHING_SPOT);
+							animatedRes.setAnimated(true);
+							animatedObjects.add(animatedRes);
+						}
 					}
 				}
 			}
@@ -265,9 +265,8 @@ public class Chunk {
 				Tile pathTile = pathMap.get(tempIndex);
 				if (pathTile != null) {
 					Vector2f temp = pathTile.getPosition();
-					if(temp!=null)
-					{
-						Renderer.renderTexture(pathTile.getType(), (int) temp.x, (int) temp.y);						
+					if (temp != null) {
+						Renderer.renderTexture(pathTile.getType(), (int) temp.x, (int) temp.y);
 					}
 				}
 			}

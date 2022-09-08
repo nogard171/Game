@@ -27,7 +27,7 @@ public class Window {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setResizable(isResizable);
 			Display.create();
-			
+
 			hideCursor();
 
 		} catch (LWJGLException e) {
@@ -90,7 +90,7 @@ public class Window {
 		setupViewport();
 	}
 
-	private static int targetFPS = 165;
+	private static int targetFPS = 9999;
 	private static int menuFPS = 60;
 	private static int inactiveFPS = 60;
 
@@ -101,7 +101,7 @@ public class Window {
 			Display.sync(inactiveFPS);
 		} else if (true == false) {
 			Display.sync(menuFPS);
-		} else if (targetFPS < 0||targetFPS>0) {
+		} else if (targetFPS < 0 || targetFPS > 0) {
 			Display.sync(targetFPS);
 		} else {
 			Display.sync(120);
