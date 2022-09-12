@@ -42,17 +42,7 @@ public class World {
 		if (View.Moved()) {
 			regionsInView = getRegionsInView(0, 0, 0);
 		}
-		float wheel = Mouse.getDWheel();
-		if (wheel > 0) {
-			if (visibleLevel > 0) {
-				visibleLevel--;
-			}
-		}
-		if (wheel < 0) {
-			if (visibleLevel < Database.regionSize.getHeight() - 1) {
-				visibleLevel++;
-			}
-		}
+		
 	}
 
 	int visibleLevel = 0;

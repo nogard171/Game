@@ -15,6 +15,8 @@ import utils.Renderer;
 
 public class Region {
 	private Index index;
+	//change to layered rendering
+	
 	private int list = -1;
 	Point regionPosition;
 	// y,x,z
@@ -91,7 +93,7 @@ public class Region {
 					if (lowestKnownLevel < index.y) {
 						lowestKnownLevel = index.y;
 					}
-					//knownCells.add(cell);
+					knownCells.add(cell);
 				}
 			}
 		}

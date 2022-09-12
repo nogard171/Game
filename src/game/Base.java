@@ -108,6 +108,17 @@ public class Base {
 			if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 				forceY = (int) speed;
 			}
+			float wheel = Mouse.getDWheel();
+			if (wheel > 0&&scale.x<2f) {
+
+				scale.x += 0.1f;
+				scale.y += 0.1f;
+			}
+			else if (wheel < 0&&scale.x>0.2f) {
+				System.out.println("Wheel:" + scale.x);
+				scale.x -= 0.1f;
+				scale.y -= 0.1f;
+			}
 			Database.viewFrame.move(forceX, forceY);
 
 			Database.world.update();
@@ -118,6 +129,9 @@ public class Base {
 		}
 	}
 
+	int keyCount = 0;
+
+	Vector2f scale = new Vector2f(1, 1);
 	Agent currentTask;
 
 	public void render() {
@@ -126,6 +140,8 @@ public class Base {
 		Renderer.bindTexture();
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-Database.viewFrame.x, -Database.viewFrame.y, 0);
+
+		GL11.glScalef(scale.x, scale.y, 1);
 
 		Database.world.render();
 		Database.hud.render(Database.world);
